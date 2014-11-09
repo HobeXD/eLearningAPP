@@ -25,34 +25,80 @@ function scene:create( event )
 
 	local sceneGroup = self.view
 
-	-- create a grey rectangle as the backdrop
-	local background = display.newRect( 0, 0, screenW, screenH )
-	background.anchorX = 0
-	background.anchorY = 0
-	background:setFillColor( .5 )
-	
-	-- make a crate (off-screen), position it, and rotate slightly
-	local crate = display.newImageRect( "crate.png", 90, 90 )
-	crate.x, crate.y = 160, -100
-	crate.rotation = 15
-	
-	-- add physics to the crate
-	physics.addBody( crate, { density=1.0, friction=0.3, bounce=0.3 } )
-	
-	-- create a grass object and add physics (with custom shape)
-	local grass = display.newImageRect( "grass.png", screenW, 82 )
-	grass.anchorX = 0
-	grass.anchorY = 1
-	grass.x, grass.y = 0, display.contentHeight
-	
-	-- define a shape that's slightly shorter than image bounds (set draw mode to "hybrid" or "debug" to see)
-	local grassShape = { -halfW,-34, halfW,-34, halfW,34, -halfW,34 }
-	physics.addBody( grass, "static", { friction=0.3, shape=grassShape } )
-	
-	-- all display objects must be inserted into group
-	sceneGroup:insert( background )
-	sceneGroup:insert( grass)
-	sceneGroup:insert( crate )
+	local wave = display.newImageRect( sceneGroup, "wave.png", display.contentWidth, display.contentHeight)
+    wave.x, wave.y = display.contentWidth/2, display.contentHeight/2
+    wave.ydir = 1
+	wave.yspeed = 2
+
+	local function newBall( params )
+		local xpos = display.contentWidth*0.5
+		local ypos = display.contentHeight*0.5
+		local circle = display.newCircle( xpos, ypos, params.radius );
+		circle:setFillColor( params.r, params.g, params.b, 255 );
+		circle.xdir = params.xdir
+		circle.ydir = params.ydir
+		circle.xspeed = params.xspeed
+		circle.yspeed = params.yspeed
+		circle.radius = params.radius
+
+		return circle
+	end
+
+	local params = {
+		{ radius=20, xdir=1, ydir=1, xspeed=2.8, yspeed=6.1, r=255, g=0, b=0 },
+		{ radius=12, xdir=1, ydir=1, xspeed=3.8, yspeed=4.2, r=255, g=255, b=0 },
+		{ radius=15, xdir=1, ydir=-1, xspeed=5.8, yspeed=5.5, r=255, g=0, b=255 },
+	--	newBall{ radius=10, xdir=-1, ydir=1, xspeed=3.8, yspeed=1.2 }
+	}
+
+	local collection = {}
+
+	-- Iterate through params array and add new balls into an array
+	for _,item in ipairs( params ) do
+		local ball = newBall( item )
+		collection[ #collection + 1 ] = ball
+	end
+
+	-- Get current edges of visible screen (accounting for the areas cropped by "zoomEven" scaling mode in config.lua)
+	local screenTop = display.screenOriginY
+	local screenBottom = display.viewableContentHeight + display.screenOriginY
+	local screenLeft = display.screenOriginX
+	local screenRight = display.viewableContentWidth + display.screenOriginX
+
+	function collection:enterFrame( event )
+		for _,ball in ipairs( collection ) do
+			local dx = ( ball.xspeed * ball.xdir );
+			local dy = ( ball.yspeed * ball.ydir );
+			local xNew, yNew = ball.x + dx, ball.y + dy
+
+			local radius = ball.radius
+			if ( xNew > screenRight - radius or xNew < screenLeft + radius ) then
+				ball.xdir = -ball.xdir
+			end
+			if ( yNew > screenBottom - radius or yNew < screenTop + radius ) then
+				ball.ydir = -ball.ydir
+			end
+
+			ball:translate( dx, dy )
+		end
+	end
+
+	function wave:enterFrame( event )
+		local dy = ( wave.yspeed * wave.ydir );
+		local yNew = wave.y + dy
+
+		if ( yNew > screenBottom + wave.height / 2 or yNew < screenBottom - wave.height / 2) then
+			print(yNew)
+			print(screenBottom + wave.height)
+			print(screenBottom - 1)
+			wave.ydir = -wave.ydir
+		end
+
+		wave:translate( 0, dy )
+	end
+
+	Runtime:addEventListener( "enterFrame", collection );
+	Runtime:addEventListener( "enterFrame", wave );
 end
 
 
@@ -66,8 +112,8 @@ function scene:show( event )
 		-- Called when the scene is now on screen
 		-- 
 		-- INSERT code here to make the scene come alive
-		-- e.g. start timers, begin animation, play audio, etc.
-		physics.start()
+		-- e.g. start timers, begin animation, play audio, etc.   
+		-- physics.start()
 	end
 end
 
@@ -81,7 +127,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
-		physics.stop()
+		-- physics.stop()
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -96,8 +142,8 @@ function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
 	
-	package.loaded[physics] = nil
-	physics = nil
+	-- package.loaded[physics] = nil
+	-- physics = nil
 end
 
 ---------------------------------------------------------------------------------
