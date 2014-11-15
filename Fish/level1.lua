@@ -25,10 +25,31 @@ function scene:create( event )
 
 	local sceneGroup = self.view
 
+
 	local wave = display.newImageRect( sceneGroup, "wave.png", display.contentWidth, display.contentHeight)
-    wave.x, wave.y = display.contentWidth/2, display.contentHeight/2
+    wave.x, wave.y = display.contentWidth/2, display.contentHeight - wave.contentHeight/2
     wave.ydir = 1
 	wave.yspeed = 2
+
+	local fish_left_img = { type="image", filename="fish_left.png" }
+	local fish_right_img = { type="image", filename="fish_right.png" }
+
+	-- local fish = display.newImageRect( sceneGroup, "fish_left.png", 90, 45)
+	local fish = display.newRect( sceneGroup, display.contentWidth/2, display.contentHeight/2, 90, 45)
+	fish.fill = fish_right_img
+    -- fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
+    fish.xdir = 1
+	fish.xspeed = 2
+    fish.ydir = 1
+	fish.yspeed = 2
+
+	print(display.contentWidth)
+	print(display.contentHeight)
+	print(wave.contentWidth)
+	print(wave.contentHeight)
+
+	local circle = display.newCircle( display.contentWidth*0.5, 0, 10 );
+	circle:setFillColor( 255, 255, 255, 255 );
 
 	local function newBall( params )
 		local xpos = display.contentWidth*0.5
@@ -87,18 +108,37 @@ function scene:create( event )
 		local dy = ( wave.yspeed * wave.ydir );
 		local yNew = wave.y + dy
 
-		if ( yNew > screenBottom + wave.height / 2 or yNew < screenBottom - wave.height / 2) then
-			print(yNew)
-			print(screenBottom + wave.height)
-			print(screenBottom - 1)
+		if ( yNew > screenBottom + wave.height / 2 - 4 * fish.contentHeight or yNew < screenBottom - wave.height / 2) then
 			wave.ydir = -wave.ydir
 		end
 
 		wave:translate( 0, dy )
 	end
 
+	function fish:enterFrame( event )
+		local dy = ( fish.yspeed * fish.ydir );
+		local dx = ( fish.xspeed * fish.xdir );
+		local yNew = fish.y + dy
+		local xNew = fish.x + dx
+
+		if ( xNew > screenRight - fish.contentWidth/2 or xNew < screenLeft + fish.contentWidth/2 ) then
+			fish.xdir = -fish.xdir
+			if (fish.xdir < 0) then
+				fish.fill = fish_left_img
+			else
+				fish.fill = fish_right_img
+			end
+		end		
+		if ( fish.ydir >= 0 and yNew > screenBottom - fish.contentHeight/2 or fish.ydir < 0 and yNew < wave.y - wave.contentHeight / 2 + 2 * fish.contentHeight ) then
+			fish.ydir = -fish.ydir
+		end
+
+		fish:translate( dx, dy )
+	end
+
 	Runtime:addEventListener( "enterFrame", collection );
 	Runtime:addEventListener( "enterFrame", wave );
+	Runtime:addEventListener( "enterFrame", fish );
 end
 
 
