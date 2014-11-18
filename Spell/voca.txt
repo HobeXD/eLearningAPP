@@ -1,0 +1,3 @@
+cat 貓
+dog 狗
+egg 蛋
