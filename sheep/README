@@ -1,0 +1,9 @@
+* white sheep:
+	perfect: +100
+	great: +80
+	good: +20
+	wrong: -70 & loss one live
+
+* black sheep:
+	correct: -30
+	wrong: -100 & loss one live
