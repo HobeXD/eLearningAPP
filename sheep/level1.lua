@@ -9,6 +9,7 @@ local scene = composer.newScene()
 local widget = require "widget"
 local math = require "math"
 local initGroup = display.newGroup()
+local sheepGroup = display.newGroup()
 --local localGroup = display.newGroup()
 
 --------------------------------------------
@@ -18,6 +19,7 @@ local screenW, screenH, halfW , halfH= display.contentWidth, display.contentHeig
 local tags = {}
 local questionNum = 0
 local chinese
+local questionSheep
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -29,13 +31,23 @@ local function nextQuestion( event )
 end
 
 local function onTagsRelease( event )
+	local points
+
 	if( event.target:getLabel() == answer[questionNum] )then
-		score = score + 10
-		showScore.text = score
+		if (questionSheep.x < screenW * 0.45) or (questionSheep.x > screenW * 0.65) then
+			points = 20
+		elseif (questionSheep.x > screenW * 0.48) and (questionSheep.x < screenW * 0.65) then
+			points = 100
+		else
+			points = 80
+		end
 	else
-		score = score - 10
-		showScore.text = score
+		points = -70
 	end
+	
+	score = score + points
+	showScore.text = score
+
 	nextQuestion()
 	return true	-- indicates successful touch
 end
@@ -51,6 +63,7 @@ function scene:create( event )
 
 	ready_go()
 	timer.performWithDelay( 3700, init )
+	--init()
 
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
@@ -95,8 +108,24 @@ function scene:destroy( event )
 end
 
 function sheep( event )
-	chinese = display.newText(question[questionNum], halfW, halfH, native.systemFont, 30, right)
+	chinese = display.newText(question[questionNum], halfW, 50, native.systemFont, 30, right)
 	showScore:setFillColor( 1, 211/255, 0 )
+
+	questionSheep = display.newImage("./level1/sheep.png")
+	questionSheep.x = -80
+	questionSheep.y = screenH * 0.6
+	questionSheep.xScale = 0.05
+	questionSheep.yScale = 0.05
+
+	transition.to(questionSheep, {time = 3000, x = screenW * 0.45})
+	transition.to(questionSheep, {time = 100, delay = 3000, rotation = -30})
+	transition.to(questionSheep, {time = 400, delay = 3100, x = screenW * 0.48, y = screenH * 0.48})
+	transition.to(questionSheep, {time = 800, delay = 3500, x = screenW * 0.6, rotation = 30})
+	transition.to(questionSheep, {time = 400, delay = 4300, x = screenW * 0.65, y = screenH * 0.6})
+	transition.to(questionSheep, {time = 100, delay = 4700, rotation = 0})
+	transition.to(questionSheep, {time = 3000, delay = 4800,x = screenW + 80})
+
+	sheepGroup:insert( questionSheep )
 end
 
 function init( event )
@@ -127,6 +156,7 @@ function init( event )
 	score = 0
 	showScore = display.newText(score, 280, 20, native.systemFont, 30, right)
 	showScore:setFillColor( 1, 211/255, 0 )
+	showScore.alpha = 0
 
 	initGroup:insert( tags[0] )
 	initGroup:insert( tags[1] )
@@ -134,7 +164,9 @@ function init( event )
 	initGroup:insert( score_logo )
 
 	transition.to(initGroup, {time = 300, alpha = 1})
-	sheep()
+	transition.to(showScore, {time = 300, alpha = 1})
+	timer.performWithDelay( 300, sheep )
+	--sheep()
 end
 
 function ready_go( event )
