@@ -1,26 +1,13 @@
------------------------------------------------------------------------------------------
---
--- menu.lua
---
------------------------------------------------------------------------------------------
-
-local composer = require( "composer" )
+local composer = require "composer"
 local scene = composer.newScene()
-
--- include Corona's "widget" library
 local widget = require "widget"
-
 --------------------------------------------
-
 -- forward declarations and other locals
 local playBtn
 
 -- 'onRelease' event listener for playBtn
 local function onPlayBtnRelease()
-	
-	-- go to level1.lua scene
-	composer.gotoScene( "level1", "fade", 500 )
-	
+	composer.gotoScene( "level", "fade", 500 )
 	return true	-- indicates successful touch
 end
 
@@ -28,7 +15,6 @@ function scene:create( event )
 	local sceneGroup = self.view
 
 	-- Called when the scene's view does not exist.
-	-- 
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
@@ -43,7 +29,7 @@ function scene:create( event )
 	titleLogo.x = display.contentWidth * 0.5
 	titleLogo.y = 100
 	
-	-- create a widget button (which will loads level1.lua on release)
+	-- create a widget button (which will loads level.lua on release)
 	playBtn = widget.newButton{
 		label="Play Now",
 		labelColor = { default={255}, over={128} },
@@ -93,7 +79,6 @@ function scene:destroy( event )
 	local sceneGroup = self.view
 	
 	-- Called prior to the removal of scene's "view" (sceneGroup)
-	-- 
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	
