@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- menu.lua
+-- game_over.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -13,10 +13,10 @@ local widget = require "widget"
 --------------------------------------------
 
 -- forward declarations and other locals
-local playBtn
+local returnBtn
 
 -- 'onRelease' event listener for playBtn
-local function onPlayBtnRelease()
+local function onReturnBtnRelease()
 	
 	composer.gotoScene( "level_selection", "fade", 500 )
 	
@@ -32,32 +32,26 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- display a background image
-	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
-	background.anchorX = 0
-	background.anchorY = 0
-	background.x, background.y = 0, 0
-	
-	-- create/position logo/title image on upper-half of the screen
-	local titleLogo = display.newImageRect( "logo.png", 264, 42 )
-	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = 100
+	local background = display.newImageRect( "game_over.jpg", 1.3 * display.contentWidth, display.contentHeight )
+	-- background.anchorX = 0
+	-- background.anchorY = 0
+	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
 	
 	-- create a widget button (which will loads level1.lua on release)
-	playBtn = widget.newButton{
-		label="Play Now",
+	returnBtn = widget.newButton{
+		label="Return To Menu",
 		labelColor = { default={255}, over={128} },
 		default="button.png",
 		over="button-over.png",
 		width=154, height=40,
-		onRelease = onPlayBtnRelease	-- event listener function
+		onRelease = onReturnBtnRelease	-- event listener function
 	}
-	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 125
+	returnBtn.x = display.contentWidth*0.5
+	returnBtn.y = display.contentHeight - 125
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
-	sceneGroup:insert( titleLogo )
-	sceneGroup:insert( playBtn )
+	sceneGroup:insert( returnBtn )
 end
 
 function scene:show( event )
@@ -96,9 +90,9 @@ function scene:destroy( event )
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	
-	if playBtn then
-		playBtn:removeSelf()	-- widgets must be manually removed
-		playBtn = nil
+	if returnBtn then
+		returnBtn:removeSelf()	-- widgets must be manually removed
+		returnBtn = nil
 	end
 end
 
