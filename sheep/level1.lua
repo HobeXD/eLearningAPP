@@ -125,12 +125,21 @@ local function onTagsRelease( event )
 		getPoints[points].alpha = 1
 		transition.to(getPoints[points], {time = 300, delay = 700, alpha = 0})
 	end
-	
+
 	score = score + points
 	showScore.text = score
 
 	nextQuestion()
 	return true	-- indicates successful touch
+end
+
+function sheepMissed( event )
+	if (questionSheep.x > screenW * 0.65)then
+		--miss
+		miss.alpha = 1
+		transition.to(miss, {time = 300, delay = 700, alpha = 0})
+		nextQuestion()
+	end
 end
 
 function scene:create( event )
