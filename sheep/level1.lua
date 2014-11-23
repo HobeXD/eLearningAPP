@@ -19,6 +19,8 @@ local screenW, screenH, halfW , halfH= display.contentWidth, display.contentHeig
 local tags = {}
 local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
 local life = {}
+local perfect, great, good, miss, wrong
+local getPoints = {}
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -70,21 +72,29 @@ local function onTagsRelease( event )
 	local points
 
 	if( event.target:getLabel() == answer[questionNum] )then
-		if (questionSheep.x < screenW * 0.35) or (questionSheep.x > screenW * 0.75)then
+		if (questionSheep.x < screenW * 0.45) or (questionSheep.x > screenW * 0.65)then
 			--miss
+			miss.alpha = 1
+			transition.to(miss, {time = 300, delay = 700, alpha = 0})
 			points = 0
-		elseif (questionSheep.x < screenW * 0.45) or (questionSheep.x > screenW * 0.65) then
+		elseif (questionSheep.x < screenW * 0.48) or (questionSheep.x > screenW * 0.6) then
 			--good
+			good.alpha = 1
+			transition.to(good, {time = 300, delay = 700, alpha = 0})
 			points = 20
-		elseif (questionSheep.x > screenW * 0.48) and (questionSheep.x < screenW * 0.65) then
+		elseif (questionSheep.x > screenW * 0.52) and (questionSheep.x < screenW * 0.56) then
 			--perfect
+			perfect.alpha = 1
+			transition.to(perfect, {time = 300, delay = 700, alpha = 0})
 			points = 100
 		else
 			--great
+			great.alpha = 1
+			transition.to(great, {time = 300, delay = 700, alpha = 0})
 			points = 80
 		end
 		correct = correct + 1
-		if (correct == 1) and (livesNum < 5)then
+		if (correct == 10) and (livesNum < 5)then
 			livesNum = livesNum + 1
 			transition.to(life[livesNum], {time = 300, alpha = 1})
 			correct = 0
@@ -95,6 +105,9 @@ local function onTagsRelease( event )
 		end
 	else
 		--wrong
+		wrong.alpha = 1
+		transition.to(wrong, {time = 300, delay = 700, alpha = 0})
+		
 		loss_life.x = 0.05 * livesNum * screenW + 10
 		transition.to(loss_life, {time = 200, alpha = 1})
 		transition.to(loss_life, {time = 300, delay = 700, alpha = 0})
@@ -106,6 +119,11 @@ local function onTagsRelease( event )
 		end
 		points = -70
 		correct = 0
+	end
+
+	if (points ~= 0) then
+		getPoints[points].alpha = 1
+		transition.to(getPoints[points], {time = 300, delay = 700, alpha = 0})
 	end
 	
 	score = score + points
@@ -298,6 +316,79 @@ function declare( event )
 	get_life.y = 0.07 * screenH
 	get_life.alpha = 0
 	initGroup:insert(get_life)
+
+	perfect = display.newImage("./level1/perfect.png")
+	perfect.xScale = 0.15
+	perfect.yScale = 0.15
+	perfect.x = 0.8 * screenW
+	perfect.y = 0.4 * screenH
+	perfect.alpha = 0
+	initGroup:insert(perfect)
+
+	great = display.newImage("./level1/great.png")
+	great.xScale = 0.15
+	great.yScale = 0.15
+	great.x = 0.8 * screenW
+	great.y = 0.4 * screenH
+	great.alpha = 0
+	initGroup:insert(great)
+
+	good = display.newImage("./level1/good.png")
+	good.xScale = 0.15
+	good.yScale = 0.15
+	good.x = 0.8 * screenW
+	good.y = 0.4 * screenH
+	good.alpha = 0
+	initGroup:insert(good)
+
+	miss = display.newImage("./level1/miss.png")
+	miss.xScale = 0.25
+	miss.yScale = 0.25
+	miss.x = 0.8 * screenW
+	miss.y = 0.4 * screenH
+	miss.alpha = 0
+	initGroup:insert(miss)
+
+	wrong = display.newImage("./level1/wrong.png")
+	wrong.xScale = 0.25
+	wrong.yScale = 0.25
+	wrong.x = 0.8 * screenW
+	wrong.y = 0.4 * screenH
+	wrong.alpha = 0
+	initGroup:insert(wrong)
+
+	getPoints[-70] = display.newImage("./level1/loss_70.png")
+	getPoints[-70].xScale = 0.6
+	getPoints[-70].yScale = 0.6
+	getPoints[-70].x = 0.72 * screenW
+	getPoints[-70].y = 0.18 * screenH
+	getPoints[-70].alpha = 0
+	initGroup:insert(getPoints[-70])
+
+	getPoints[100] = display.newImage("./level1/get_100.png")
+	getPoints[100].xScale = 0.6
+	getPoints[100].yScale = 0.6
+	getPoints[100].x = 0.72 * screenW
+	getPoints[100].y = 0.18 * screenH
+	getPoints[100].alpha = 0
+	initGroup:insert(getPoints[100])
+
+	getPoints[20] = display.newImage("./level1/get_20.png")
+	getPoints[20].xScale = 0.6
+	getPoints[20].yScale = 0.6
+	getPoints[20].x = 0.72 * screenW
+	getPoints[20].y = 0.18 * screenH
+	getPoints[20].alpha = 0
+	initGroup:insert(getPoints[20])
+
+	getPoints[80] = display.newImage("./level1/get_80.png")
+	getPoints[80].xScale = 0.6
+	getPoints[80].yScale = 0.6
+	getPoints[80].x = 0.72 * screenW
+	getPoints[80].y = 0.18 * screenH
+	getPoints[80].alpha = 0
+	initGroup:insert(getPoints[80])
+	
 end
 
 function init( event )
