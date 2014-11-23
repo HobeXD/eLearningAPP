@@ -10,8 +10,7 @@ local widget = require "widget"
 local math = require "math"
 local physics = require "physics"
 local initGroup = display.newGroup()
---local sheepGroup = display.newGroup()
---local localGroup = display.newGroup()
+local sheepGroup = display.newGroup()
 
 --------------------------------------------
 
@@ -25,7 +24,7 @@ local lives
 local score
 local showScore
 local gameOver
-local floor, ready, go, retry, score_logo
+local floor, ready, go, retry, score_logo, quit
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -42,23 +41,27 @@ local function onRetryRelease( event )
 	transition.to(retry, {time = 800, alpha = 0})
 	transition.to(showScore, {time = 800, alpha = 0})
 	transition.to(score_logo, {time = 800, alpha = 0})
+	transition.to(quit, {time = 800, alpha = 0})
 	ready_go()
 	timer.performWithDelay( 3700, init )	
 	return true
 end
 
+local function onQuitRelease( event )
+	physics.stop()	
+	composer.removeScene("level1")
+	composer.gotoScene( "select_level", "fade", 500 )
+	return true
+end
+
 local function game_over( event )	
-	-- make a crate (off-screen), position it, and rotate slightly
-	--local gameOver = display.newImage("./level1/game_over.png")
-	
 	gameOver.x = halfW
 	gameOver.y = -120
 	gameOver.rotation = 15
 	gameOver.alpha = 1
-	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.7 } )
-	
-	--local floor = display.newRect(halfW, screenH * 1.15, screenW, screenH * 0.1)
+
 	physics.addBody( floor, "static", { friction=0.3 })
+	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.7 } )
 
 	tags[0]:setEnabled(false)
 	tags[1]:setEnabled(false)
@@ -117,6 +120,16 @@ function scene:create( event )
 
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
+	sceneGroup:insert( initGroup )
+	sceneGroup:insert( sheepGroup )
+	sceneGroup:insert( showScore )
+	sceneGroup:insert( gameOver )
+	sceneGroup:insert( floor )
+	sceneGroup:insert( ready )
+	sceneGroup:insert( go )
+	sceneGroup:insert( retry )
+	sceneGroup:insert( score_logo )
+	sceneGroup:insert( quit )
 end
 
 
@@ -175,6 +188,8 @@ function sheep( event )
 	transition.to(questionSheep, {time = 400, delay = 4300, x = screenW * 0.65, y = screenH * 0.6})
 	transition.to(questionSheep, {time = 100, delay = 4700, rotation = 0})
 	transition.to(questionSheep, {time = 3000, delay = 4800,x = screenW + 80})
+
+	sheepGroup:insert( questionSheep )
 end
 
 function declare( event )
@@ -239,6 +254,16 @@ function declare( event )
 	retry.alpha = 0
 	retry.x = screenW * 0.9
 	retry.y = screenH * 0.9
+
+	quit = widget.newButton{
+		defaultFile="./level1/quit.png",
+		overFile="./level1/quit-over.png",
+		width=30, height=30,
+		onRelease = onQuitRelease
+	}
+	quit.alpha = 0
+	quit.x = screenW * 0.93
+	quit.y = screenH * 0.07
 end
 
 function init( event )
@@ -256,6 +281,7 @@ function init( event )
 	transition.to(initGroup, {time = 300, alpha = 1})
 	transition.to(showScore, {time = 300, alpha = 1})
 	transition.to(score_logo, {time = 300, alpha = 1})
+	transition.to(quit, {time = 300, alpha = 1})
 end
 
 function ready_go( event )
