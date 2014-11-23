@@ -17,14 +17,8 @@ local sheepGroup = display.newGroup()
 -- forward declarations and other locals
 local screenW, screenH, halfW , halfH= display.contentWidth, display.contentHeight, display.contentWidth*0.5, display.contentHeight*0.5
 local tags = {}
-local questionNum
-local chinese
-local questionSheep
-local lives
-local score
-local showScore
-local gameOver
-local floor, ready, go, retry, score_logo, quit
+local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
+local life = {}
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -89,13 +83,29 @@ local function onTagsRelease( event )
 			--great
 			points = 80
 		end
+		correct = correct + 1
+		if (correct == 1) and (livesNum < 5)then
+			livesNum = livesNum + 1
+			transition.to(life[livesNum], {time = 300, alpha = 1})
+			correct = 0
+
+			get_life.x = 0.05 * (livesNum + 1) * screenW + 10
+			transition.to(get_life, {time = 200, alpha = 1})
+			transition.to(get_life, {time = 300, delay = 700, alpha = 0})
+		end
 	else
 		--wrong
-		lives = lives - 1
-		if (lives == 0) then
+		loss_life.x = 0.05 * livesNum * screenW + 10
+		transition.to(loss_life, {time = 200, alpha = 1})
+		transition.to(loss_life, {time = 300, delay = 700, alpha = 0})
+
+		life[livesNum].alpha = 0
+		livesNum = livesNum - 1
+		if (livesNum == 0) then
 			game_over()
 		end
 		points = -70
+		correct = 0
 	end
 	
 	score = score + points
@@ -215,13 +225,13 @@ function declare( event )
 	end
 
 	score_logo = display.newImage( "./level1/score.png")
-	score_logo.x = screenH * 0.55
+	score_logo.x = screenH * 0.65
 	score_logo.y = screenW * 0.05
 	score_logo.xScale = 0.1
 	score_logo.yScale = 0.1
 	score_logo.alpha = 0
 
-	showScore = display.newText(" ", 280, 20, native.systemFont, 30, right)
+	showScore = display.newText(" ", 320, 20, native.systemFont, 30, right)
 	showScore.alpha = 0
 
 	chinese = display.newText(" ", halfW, 50, native.systemFont, 30, right)
@@ -264,10 +274,35 @@ function declare( event )
 	quit.alpha = 0
 	quit.x = screenW * 0.93
 	quit.y = screenH * 0.07
+
+	for i = 1, 5 do
+		life[i] = display.newImage("./level1/life.png")
+		life[i].xScale = 0.07
+		life[i].yScale = 0.07
+		life[i].x = 0.05 * i * screenW
+		life[i].y = 0.07 * screenH
+		life[i].alpha = 0
+		initGroup:insert(life[i])
+	end
+
+	loss_life = display.newImage("./level1/loss_life.png")
+	loss_life.xScale = 0.2
+	loss_life.yScale = 0.2
+	loss_life.y = 0.07 * screenH
+	loss_life.alpha = 0
+	initGroup:insert(loss_life)
+
+	get_life = display.newImage("./level1/get_life.png")
+	get_life.xScale = 0.2
+	get_life.yScale = 0.2
+	get_life.y = 0.07 * screenH
+	get_life.alpha = 0
+	initGroup:insert(get_life)
 end
 
 function init( event )
-	lives = 3
+	livesNum = 3
+	correct = 0
 
 	score = 0
 	showScore.text = score
@@ -278,6 +313,9 @@ function init( event )
 	tags[2]:setEnabled(true)
 
 	nextQuestion()
+	transition.to(life[1], {time = 300, alpha = 1})
+	transition.to(life[2], {time = 300, alpha = 1})
+	transition.to(life[3], {time = 300, alpha = 1})
 	transition.to(initGroup, {time = 300, alpha = 1})
 	transition.to(showScore, {time = 300, alpha = 1})
 	transition.to(score_logo, {time = 300, alpha = 1})
