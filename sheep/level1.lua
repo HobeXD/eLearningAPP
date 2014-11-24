@@ -4,11 +4,12 @@
 --
 -----------------------------------------------------------------------------------------
 
-local composer = require( "composer" )
+local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
 local math = require "math"
 local physics = require "physics"
+--local graphics = require "graphics"
 local initGroup = display.newGroup()
 local sheepGroup = display.newGroup()
 
@@ -21,6 +22,7 @@ local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver,
 local life = {}
 local perfect, great, good, miss, wrong
 local getPoints = {}
+local options, sheepSheet, sequenceData
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -212,11 +214,12 @@ function scene:destroy( event )
 end
 
 function sheep( event )
-	questionSheep = display.newImage("./level1/sheep.png")
+	questionSheep = display.newSprite( sheepSheet, sequenceData )
+	questionSheep:play()
 	questionSheep.x = -80
 	questionSheep.y = screenH * 0.6
-	questionSheep.xScale = 0.05
-	questionSheep.yScale = 0.05
+	questionSheep.xScale = 0.1
+	questionSheep.yScale = 0.1
 
 	transition.to(questionSheep, {time = 3000, x = screenW * 0.45})
 	transition.to(questionSheep, {time = 100, delay = 3000, rotation = -30})
@@ -224,9 +227,14 @@ function sheep( event )
 	transition.to(questionSheep, {time = 800, delay = 3500, x = screenW * 0.6, rotation = 30})
 	transition.to(questionSheep, {time = 400, delay = 4300, x = screenW * 0.65, y = screenH * 0.6})
 	transition.to(questionSheep, {time = 100, delay = 4700, rotation = 0})
-	transition.to(questionSheep, {time = 3000, delay = 4800,x = screenW + 80})
+	transition.to(questionSheep, {time = 3000, delay = 4700,x = screenW + 80})
 
+	--timer.performWithDelay( 3000, questionSheep:pause())
+	--timer.performWithDelay( 4700, questionSheep:play())
+	
 	sheepGroup:insert( questionSheep )
+	--animation:setFrame( frame ) --用來指定播放第幾格
+	--animation:pause() --用來暫停播放
 end
 
 function declare( event )
@@ -397,6 +405,19 @@ function declare( event )
 	getPoints[80].y = 0.18 * screenH
 	getPoints[80].alpha = 0
 	initGroup:insert(getPoints[80])
+
+	options = {
+	    width = 702, 
+	    height = 638, 
+	    numFrames = 2
+	}
+ 	sheepSheet = graphics.newImageSheet( "./level1/running_sheep.png", options )
+ 	sequenceData = {
+	    name="running",
+	    start=1,
+	    count=2,
+	    time=300
+	}
 	
 end
 
