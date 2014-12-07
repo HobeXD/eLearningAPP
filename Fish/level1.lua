@@ -23,6 +23,15 @@ local question, answerBtn1, answerBtn2, correct_ans
 local score, score_word, score_text
 local en = {}
 local ch = {}
+local timeLeft, time_word, time_text
+
+local function timerDown()
+   timeLeft = timeLeft-1
+   time_text.text = timeLeft
+     if(timeLeft == 0)then
+        composer.gotoScene( "level_clear", "fade", 500 )
+     end
+  end
 
 math.randomseed(os.time())
 
@@ -136,7 +145,13 @@ function scene:create( event )
 	score_word = display.newText( {parent=sceneGroup, text="Score: ", font=native.systemFont, fontSize=20} )
 	score_word.x, score_word.y = score_word.width/2 + 10, score_word.height/2 + 10
 	score_text = display.newText( {parent=sceneGroup, text="0", font=native.systemFont, fontSize=20} )
-	score_text.x, score_text.y = score_word.x + score_word.width/2 + score_text.width/2 + 10, score_word.height
+	score_text.x, score_text.y = score_word.x + score_word.width/2 + score_text.width/2 + 10, score_word.y
+
+
+	time_word = display.newText( {parent=sceneGroup, text="Timeleft: ", font=native.systemFont, fontSize=20} )
+	time_word.x, time_word.y = display.contentWidth*3/4 - time_word.width/2 + 10, time_word.height/2 + 10
+	time_text = display.newText( {parent=sceneGroup, text="60", font=native.systemFont, fontSize=20} )
+	time_text.x, time_text.y = time_word.x + time_word.width/2 + time_text.width/2 + 10, time_word.y
 
 	answerBtn1 = widget.newButton{
 		labelColor = { default={255}, over={128} },
@@ -235,6 +250,9 @@ function scene:show( event )
 
 		score = 0
 		score_text.text = score
+		timeLeft = 10
+		time_text.text = timeLeft
+		timer.performWithDelay(1000, timerDown, timeLeft)
 	end
 end
 
