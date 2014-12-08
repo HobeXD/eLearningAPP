@@ -1,0 +1,15 @@
+settings =
+{
+	orientation =
+	{
+		
+		default = "landscapeRight"
+	},
+	android =
+    {
+        usesPermissions =
+        {
+            "android.permission.INTERNET",
+        },
+    },
+}
