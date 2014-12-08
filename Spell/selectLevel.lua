@@ -1,13 +1,19 @@
+-- select level scene
 local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
+local common = require "common"
 --------------------------------------------
 -- forward declarations and other locals
-local playBtn
 
 -- 'onRelease' event listener for playBtn
-local function onPlayBtnRelease()
-	composer.gotoScene( "selectLevel", "fade", 500 )
+local function onPlayBtnRelease(event)
+	local options = {
+    effect = "fade",
+    time = 500,
+    params = { level=event.target.id }
+}
+	composer.gotoScene( "level", options)
 	return true	-- indicates successful touch
 end
 
@@ -20,31 +26,31 @@ function scene:create( event )
 
 	-- display a background image
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
+	background.x, background.y = screenLeft, screenTop
 	background.anchorX = 0
 	background.anchorY = 0
-	background.x, background.y = 0, 0
-	
-	-- create/position logo/title image on upper-half of the screen
-	local titleLogo = display.newImageRect( "logo.png", 264, 42 )
-	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = 100
+	sceneGroup:insert( background )
 	
 	-- create a widget button (which will loads level.lua on release)
-	playBtn = widget.newButton{
-		label="Play Now",
-		labelColor = { default={255}, over={128} },
-		default="button.png",
-		over="button-over.png",
-		width=154, height=40,
-		onRelease = onPlayBtnRelease	-- event listener function
-	}
-	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 125
+	for i = 1,5 do
+		local playBtn = widget.newButton{
+			label="level"..i,
+			id = i,
+			labelColor = { default={255}, over={128} },
+			default="button.png",
+			over="button-over.png",
+			width=154, height=40,
+			onRelease = onPlayBtnRelease	-- event listener function
+		}
+		playBtn.x = screencx
+		playBtn.anchorX = 0.5
+		playBtn.y = screency + (i-3)*50
+		playBtn.anchorY = 0.5
+		sceneGroup:insert(playBtn)
+	end
 	
 	-- all display objects must be inserted into group
-	sceneGroup:insert( background )
-	sceneGroup:insert( titleLogo )
-	sceneGroup:insert( playBtn )
+	
 end
 
 function scene:show( event )

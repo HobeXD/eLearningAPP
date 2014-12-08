@@ -3,13 +3,14 @@ application = {
 		width = 320,
 		height = 480, 
 		scale = "letterBox",
-		fps = 30,
+		fps = 60,
 		
-		--[[
+		
         imageSuffix = {
-		    ["@2x"] = 2,
+		    ["-small"] = 0.375,
+			["@2x"] = 1.5
 		}
-		--]]
+		
 	},
 
     --[[
