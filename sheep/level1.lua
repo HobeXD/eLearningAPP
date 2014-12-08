@@ -9,6 +9,7 @@ local scene = composer.newScene()
 local widget = require "widget"
 local math = require "math"
 local physics = require "physics"
+--local media = require "media"
 --local graphics = require "graphics"
 local initGroup = display.newGroup()
 local sheepGroup = display.newGroup()
@@ -73,10 +74,12 @@ end
 local function onTagsRelease( event )
 	local points
 	local tagAnimation = display.newImage("./level1/tag.png")
-	transition.to(tagAnimation, {time = 200, x = tagged.x - 12, y = tagged.y - 7, xScale = tagged.xScale, yScale = tagged.yScale, rotation = tagged.rotation})
-	transition.to(tagAnimation, {time = 1, delay = 200, alpha = 0})
-	transition.to(questionSheep, {time = 1, delay = 200, alpha = 0})
-	transition.to(tagged, {time = 1, delay = 200, alpha = 1})
+	transition.to(tagAnimation, {time = 150, x = tagged.x - 12, y = tagged.y - 7, xScale = tagged.xScale, yScale = tagged.yScale, rotation = tagged.rotation})
+	transition.to(tagAnimation, {time = 1, delay = 150, alpha = 0})
+	transition.to(questionSheep, {time = 1, delay = 150, alpha = 0})
+	transition.to(tagged, {time = 1, delay = 150, alpha = 1})
+
+	media.playSound( "./sounds/".. event.target:getLabel() ..".mp3" )
 
 	if( event.target:getLabel() == answer[questionNum] )then
 		if (questionSheep.x < screenW * 0.45) or (questionSheep.x > screenW * 0.65)then

@@ -13,7 +13,8 @@ local composer = require "composer"
 -- load menu screen
 composer.gotoScene( "menu" )
 
-vocNum = 20
+--vocNum = 20
+vocNum = 19
 
 question = {
 	[0] = "禮物",
@@ -29,13 +30,13 @@ question = {
 	[10] = "字典",
 	[11] = "信",
 	[12] = "地圖",
-	[13] = "筆記本",
-	[14] = "橡皮擦",
-	[15] = "頁",
-	[16] = "紙",
-	[17] = "筆",
-	[18] = "鉛筆",
-	[19] = "圖片"
+	--[19] = "筆記本",
+	[13] = "橡皮擦",
+	[14] = "頁",
+	[15] = "紙",
+	[16] = "筆",
+	[17] = "鉛筆",
+	[18] = "圖片"
 }
 
 answer = {
@@ -52,11 +53,11 @@ answer = {
 	[10] = "dictionary",
 	[11] = "letter",
 	[12] = "map",
-	[13] = "notebook",
-	[14] = "eraser",
-	[15] = "page",
-	[16] = "paper",
-	[17] = "pen",
-	[18] = "pencil",
-	[19] = "picture"
+	--[19] = "notebook",
+	[13] = "eraser",
+	[14] = "page",
+	[15] = "paper",
+	[16] = "pen",
+	[17] = "pencil",
+	[18] = "picture"
 }
