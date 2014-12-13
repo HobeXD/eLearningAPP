@@ -14,12 +14,12 @@ local widget = require "widget"
 
 -- forward declarations and other locals
 local playBtn
-
 -- 'onRelease' event listener for playBtn
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
-	composer.gotoScene( "select_level", "fade", 500 )
+	audio.fade( { channel = backgroundMusicChannel, time = 700, volume = 0 } )
+	composer.gotoScene( "select", "fade", 500 )
 	--composer.gotoScene( "level1", "fade", 500 )
 	
 	return true	-- indicates successful touch
@@ -32,7 +32,9 @@ function scene:create( event )
 	-- 
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
-
+	local backgroundMusic = audio.loadSound( "./welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
+	local backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
+	audio.setVolume( 0.8, { channel = backgroundMusicChannel } )
 	-- display a background image
 	local background = display.newImageRect( "./welcome/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
