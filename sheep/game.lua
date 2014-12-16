@@ -69,6 +69,8 @@ local function game_over( event )
 	physics.addBody( floor, "static", { friction=0.3 })
 	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.7 } )
 
+	Runtime:removeEventListener("enterFrame", sheepMissed)
+
 	tags[0]:setEnabled(false)
 	tags[1]:setEnabled(false)
 	tags[2]:setEnabled(false)
