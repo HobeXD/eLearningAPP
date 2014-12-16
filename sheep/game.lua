@@ -31,9 +31,9 @@ local correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
 local function nextQuestion( event )
 	local tmp = math.random(3)
 	questionNum = math.random(vocNum - 1)
-	chinese.text = question[level + questionNum]
+	chinese.text = question[class][questionNum]
 	for i = 0, 2 do
-		tags[(tmp + i) % 3]:setLabel(answer[level + (questionNum + i * math.random(vocNum / 2 - 1)) % vocNum])
+		tags[(tmp + i) % 3]:setLabel(answer[class][(questionNum + i * math.random(vocNum / 2 - 1)) % vocNum])
 	end
 	sheep()
 end
@@ -52,7 +52,8 @@ end
 local function onQuitRelease( event )
 	physics.stop()	
 	composer.removeScene("game")
-	audio.fade( { channel = backgroundMusicChannel, time = 700, volume = 0 } )
+	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
+	media.stopSound()
 	composer.gotoScene( "select", "fade", 500 )
 	return true
 end
@@ -83,9 +84,10 @@ local function onTagsRelease( event )
 	transition.to(questionSheep, {time = 1, delay = 150, alpha = 0})
 	transition.to(tagged, {time = 1, delay = 150, alpha = 1})
 
+	media.stopSound()
 	media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 
-	if( event.target:getLabel() == answer[level + questionNum] )then
+	if( event.target:getLabel() == answer[class][questionNum] )then
 		media.playEventSound( correctSound )
 		if (questionSheep.x < screenW * 0.45) or (questionSheep.x > screenW * 0.65)then
 			--miss

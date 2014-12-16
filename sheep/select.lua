@@ -17,10 +17,9 @@ local selectMusicChannel
 local btnGroup = display.newGroup()
 
 local function onBtnRelease( event )
-	local class = event.target:getLabel()
+	class = event.target:getLabel()
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
-	level = levelIdx[class]
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
 	composer.gotoScene( "game", "fade", 500 )
 	return true	-- indicates successful touch
@@ -34,10 +33,6 @@ function scene:create( event )
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
-	--local backgroundMusic = audio.loadSound( "select/Claudio_The_Worm.mp3"  )
-	selectMusicChannel = audio.play( selectMusic, { loops = -1 } )
-	audio.setVolume( 0, { channel = selectMusicChannel } )
-	audio.fade( { channel = selectMusicChannel, time = 800, volume = audio.getVolume() } )
 	-- display a background image
 	local background = display.newImageRect( "select/background.jpeg", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
@@ -73,7 +68,11 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	audio.fade( { channel = backgroundMusicChannel, time = 800, volume = audio.getVolume() } )
+	
+	selectMusicChannel = audio.play( selectMusic, { loops = -1 } )	
+	audio.setVolume( 0, { channel = selectMusicChannel } )
+	audio.fade( { channel = selectMusicChannel, time = 800, volume = audio.getVolume() } )
+
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
