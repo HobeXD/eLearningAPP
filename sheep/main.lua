@@ -10,8 +10,42 @@ display.setStatusBar( display.HiddenStatusBar )
 -- include the Corona "composer" module
 local composer = require "composer"
 
+menuMusic = audio.loadStream("welcome/Mary_Had_A_Little_Lamb_(vocal).mp3")
+
 -- load menu screen
 composer.gotoScene( "menu" )
+
+selectMusic = audio.loadStream( "select/Claudio_The_Worm.mp3"  )
+gameMusic = {
+	["School"] = audio.loadStream( "sounds/music/Bubble_Bath.mp3"  ),
+	["Places and Location"] = audio.loadStream( "sounds/music/Bike_Rides.mp3"  ),
+	["Transportation"] = audio.loadStream( "sounds/music/Dancing_on_Green_Grass.mp3"  ),
+	["Personal Characteristics"] = audio.loadStream( "sounds/music/Itsy_Bitsy_Spider_(instrumental).mp3"  )
+}
+
+class = {
+	[1] = "School",
+	[2] = "Places and Location",
+	[3] = "Transportation",
+	[4] = "Personal Characteristics",
+}
+
+classNum = 4
+
+vocNumTable = {
+	["School"] = 82,
+	["Places and Location"] = 38,
+	["Transportation"] = 30,
+	["Personal Characteristics"] = 50
+}
+
+levelIdx = {
+	["School"] = 1000,
+	["Places and Location"] = 2000,
+	["Transportation"] = 3000,
+	["Personal Characteristics"] = 4000
+}
+
 
 question = {
 	[1000] = "國小",

@@ -25,8 +25,8 @@ local perfect, great, good, miss, wrong
 local getPoints = {}
 local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet
 local speed = 1
-local wrongSound = media.newEventSound( "./sounds/Music/wrong.mp3"  )
-local correctSound = media.newEventSound( "./sounds/Music/correct.mp3"  )
+local wrongSound = media.newEventSound( "sounds/Music/wrong.mp3"  )
+local correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
 
 local function nextQuestion( event )
 	local tmp = math.random(3)
@@ -77,13 +77,13 @@ end
 
 local function onTagsRelease( event )
 	local points
-	local tagAnimation = display.newImage("./game/tag.png")
+	local tagAnimation = display.newImage("game/tag.png")
 	transition.to(tagAnimation, {time = 150, x = tagged.x - 12, y = tagged.y - 7, xScale = tagged.xScale, yScale = tagged.yScale, rotation = tagged.rotation})
 	transition.to(tagAnimation, {time = 1, delay = 150, alpha = 0})
 	transition.to(questionSheep, {time = 1, delay = 150, alpha = 0})
 	transition.to(tagged, {time = 1, delay = 150, alpha = 1})
 
-	media.playSound( "./sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
+	media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 
 	if( event.target:getLabel() == answer[level + questionNum] )then
 		media.playEventSound( correctSound )
@@ -166,12 +166,12 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
-	local backgroundMusic = audio.loadSound( backgroundSound  )
+	--local backgroundMusic = audio.loadSound( backgroundSound  )
 	local backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
 	audio.setVolume( 0, { channel = backgroundMusicChannel } )
-	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = 0.8 } )
+	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = audio.getVolume() } )
 	-- display a background image
-	local background = display.newImageRect( "./game/background.png", screenW, screenH )
+	local background = display.newImageRect( "game/background.png", screenW, screenH )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
@@ -278,7 +278,7 @@ function sheep( event )
 end
 
 function declare( event )
-	gameOver = display.newImage("./game/game_over.png")
+	gameOver = display.newImage("game/game_over.png")
 	gameOver.alpha = 0
 	gameOver.xScale = 0.45
 	gameOver.yScale = 0.45
@@ -290,8 +290,8 @@ function declare( event )
 		tags[i] = widget.newButton{
 			labelColor = { default={000}, over={159/255, 80/255, 0} },
 			fontSize = "18",
-			defaultFile="./game/tag.png",
-			overFile="./game/tag-over.png",
+			defaultFile="game/tag.png",
+			overFile="game/tag-over.png",
 			width=100, height=80,
 			onRelease = onTagsRelease
 		}
@@ -299,7 +299,7 @@ function declare( event )
 		tags[i].y = display.contentHeight*0.85
 	end
 
-	score_logo = display.newImage( "./game/score.png")
+	score_logo = display.newImage( "game/score.png")
 	score_logo.x = screenH * 0.65
 	score_logo.y = screenW * 0.05
 	score_logo.xScale = 0.1
@@ -318,21 +318,21 @@ function declare( event )
 	initGroup:insert( chinese )
 	initGroup.alpha = 0
 
-	ready = display.newImage("./game/ready.png")
+	ready = display.newImage("game/ready.png")
 	ready.xScale = 0.05
 	ready.yScale = 0.05
 	ready.x = -150
 	ready.y = screenH/2
 
-	go = display.newImage("./game/go.png")
+	go = display.newImage("game/go.png")
 	go.xScale = 0.1
 	go.yScale = 0.1
 	go.x = -150
 	go.y = screenH/2
 
 	retry = widget.newButton{
-		defaultFile="./game/retry.png",
-		overFile="./game/retry-over.png",
+		defaultFile="game/retry.png",
+		overFile="game/retry-over.png",
 		width=60, height=60,
 		onRelease = onRetryRelease
 	}
@@ -341,8 +341,8 @@ function declare( event )
 	retry.y = screenH * 0.9
 
 	quit = widget.newButton{
-		defaultFile="./game/quit.png",
-		overFile="./game/quit-over.png",
+		defaultFile="game/quit.png",
+		overFile="game/quit-over.png",
 		width=30, height=30,
 		onRelease = onQuitRelease
 	}
@@ -351,7 +351,7 @@ function declare( event )
 	quit.y = screenH * 0.07
 
 	for i = 1, 5 do
-		life[i] = display.newImage("./game/life.png")
+		life[i] = display.newImage("game/life.png")
 		life[i].xScale = 0.07
 		life[i].yScale = 0.07
 		life[i].x = 0.05 * i * screenW
@@ -360,21 +360,21 @@ function declare( event )
 		initGroup:insert(life[i])
 	end
 
-	loss_life = display.newImage("./game/loss_life.png")
+	loss_life = display.newImage("game/loss_life.png")
 	loss_life.xScale = 0.2
 	loss_life.yScale = 0.2
 	loss_life.y = 0.07 * screenH
 	loss_life.alpha = 0
 	initGroup:insert(loss_life)
 
-	get_life = display.newImage("./game/get_life.png")
+	get_life = display.newImage("game/get_life.png")
 	get_life.xScale = 0.2
 	get_life.yScale = 0.2
 	get_life.y = 0.07 * screenH
 	get_life.alpha = 0
 	initGroup:insert(get_life)
 
-	perfect = display.newImage("./game/perfect.png")
+	perfect = display.newImage("game/perfect.png")
 	perfect.xScale = 0.15
 	perfect.yScale = 0.15
 	perfect.x = 0.8 * screenW
@@ -382,7 +382,7 @@ function declare( event )
 	perfect.alpha = 0
 	initGroup:insert(perfect)
 
-	great = display.newImage("./game/great.png")
+	great = display.newImage("game/great.png")
 	great.xScale = 0.15
 	great.yScale = 0.15
 	great.x = 0.8 * screenW
@@ -390,7 +390,7 @@ function declare( event )
 	great.alpha = 0
 	initGroup:insert(great)
 
-	good = display.newImage("./game/good.png")
+	good = display.newImage("game/good.png")
 	good.xScale = 0.15
 	good.yScale = 0.15
 	good.x = 0.8 * screenW
@@ -398,7 +398,7 @@ function declare( event )
 	good.alpha = 0
 	initGroup:insert(good)
 
-	miss = display.newImage("./game/miss.png")
+	miss = display.newImage("game/miss.png")
 	miss.xScale = 0.25
 	miss.yScale = 0.25
 	miss.x = 0.8 * screenW
@@ -406,7 +406,7 @@ function declare( event )
 	miss.alpha = 0
 	initGroup:insert(miss)
 
-	wrong = display.newImage("./game/wrong.png")
+	wrong = display.newImage("game/wrong.png")
 	wrong.xScale = 0.25
 	wrong.yScale = 0.25
 	wrong.x = 0.8 * screenW
@@ -414,7 +414,7 @@ function declare( event )
 	wrong.alpha = 0
 	initGroup:insert(wrong)
 
-	getPoints[-70] = display.newImage("./game/loss_70.png")
+	getPoints[-70] = display.newImage("game/loss_70.png")
 	getPoints[-70].xScale = 0.6
 	getPoints[-70].yScale = 0.6
 	getPoints[-70].x = 0.72 * screenW
@@ -422,7 +422,7 @@ function declare( event )
 	getPoints[-70].alpha = 0
 	initGroup:insert(getPoints[-70])
 
-	getPoints[100] = display.newImage("./game/get_100.png")
+	getPoints[100] = display.newImage("game/get_100.png")
 	getPoints[100].xScale = 0.6
 	getPoints[100].yScale = 0.6
 	getPoints[100].x = 0.72 * screenW
@@ -430,7 +430,7 @@ function declare( event )
 	getPoints[100].alpha = 0
 	initGroup:insert(getPoints[100])
 
-	getPoints[20] = display.newImage("./game/get_20.png")
+	getPoints[20] = display.newImage("game/get_20.png")
 	getPoints[20].xScale = 0.6
 	getPoints[20].yScale = 0.6
 	getPoints[20].x = 0.72 * screenW
@@ -438,7 +438,7 @@ function declare( event )
 	getPoints[20].alpha = 0
 	initGroup:insert(getPoints[20])
 
-	getPoints[80] = display.newImage("./game/get_80.png")
+	getPoints[80] = display.newImage("game/get_80.png")
 	getPoints[80].xScale = 0.6
 	getPoints[80].yScale = 0.6
 	getPoints[80].x = 0.72 * screenW
@@ -451,8 +451,8 @@ function declare( event )
 	    height = 638, 
 	    numFrames = 2
 	}
- 	sheepSheet = graphics.newImageSheet( "./game/running_sheep.png", options )
- 	sheepTaggedSheet = graphics.newImageSheet( "./game/running_sheep_tagged.png", options )
+ 	sheepSheet = graphics.newImageSheet( "game/running_sheep.png", options )
+ 	sheepTaggedSheet = graphics.newImageSheet( "game/running_sheep_tagged.png", options )
  	sequenceData = {
 	    start=1,
 	    count=2,

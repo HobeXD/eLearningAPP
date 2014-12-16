@@ -14,11 +14,13 @@ local widget = require "widget"
 
 -- forward declarations and other locals
 local playBtn
+local menuMusicChannel
 -- 'onRelease' event listener for playBtn
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
-	audio.fade( { channel = backgroundMusicChannel, time = 700, volume = 0 } )
+	audio.fadeOut( { channel=menuMusicChannel, time=700 } )
+	--audio.fade( { channel = menuMusicChannel, time = 700, volume = 0 } )
 	composer.gotoScene( "select", "fade", 500 )
 	--composer.gotoScene( "level1", "fade", 500 )
 	
@@ -32,17 +34,18 @@ function scene:create( event )
 	-- 
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
-	local backgroundMusic = audio.loadSound( "./welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
-	local backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
-	audio.setVolume( 0.8, { channel = backgroundMusicChannel } )
+	--local menuMusic = audio.loadSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
+	menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
+	--audio.setVolume( audio.getVolume(), { channel = menuMusicChannel } )
+
 	-- display a background image
-	local background = display.newImageRect( "./welcome/background.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "welcome/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
 	
 	-- create/position logo/title image on upper-half of the screen
-	local titleLogo = display.newImageRect( "./welcome/logo.png", 264, 70 )
+	local titleLogo = display.newImageRect( "welcome/logo.png", 264, 70 )
 	titleLogo.x = display.contentWidth * 0.5
 	titleLogo.y = 200
 	
@@ -52,16 +55,18 @@ function scene:create( event )
 		labelColor = { default={255}, over={128} },
 		default="button.png",
 		over="button-over.png",
-		width=display.contentWidth, height=display.contentHeight,
+		width=display.contentWidth, height=display.contentHeight*1.55,
 		onRelease = onPlayBtnRelease	-- event listener function
 	}
 	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 50
+	playBtn.y = display.contentHeight*0.75
+	--local begin = display.newText("點一下開始遊戲", display.contentWidth*0.5, display.contentHeight*0.75, native.systemFont, 20, right)
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
 	sceneGroup:insert( titleLogo )
 	sceneGroup:insert( playBtn )
+	--sceneGroup:insert( begin )
 end
 
 function scene:show( event )
