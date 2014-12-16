@@ -17,7 +17,7 @@ local sheepGroup = display.newGroup()
 --------------------------------------------
 
 -- forward declarations and other locals
-local screenW, screenH, halfW , halfH= display.contentWidth, display.contentHeight, display.contentWidth*0.5, display.contentHeight*0.5
+local screenW, screenH, halfW , halfH = display.contentWidth, display.contentHeight, display.contentWidth*0.5, display.contentHeight*0.5
 local tags = {}
 local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
 local life = {}
@@ -29,12 +29,12 @@ local wrongSound = media.newEventSound( "sounds/Music/wrong.mp3"  )
 local correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
 
 local function nextQuestion( event )
-	local tmp = math.random(3)
-	questionNum = math.random(vocNum - 1)
+	local tmp = math.random(0, 2)
+	questionNum = math.random(0, vocNum - 1)
 	chinese.text = question[class][questionNum]
-	for i = 0, 2 do
-		tags[(tmp + i) % 3]:setLabel(answer[class][(questionNum + i * math.random(vocNum / 2 - 1)) % vocNum])
-	end
+	tags[tmp]:setLabel(answer[class][questionNum])
+	tags[(tmp + 1) % 3]:setLabel(answer[class][(questionNum + math.random(vocNum / 2)) % vocNum])
+	tags[(tmp + 2) % 3]:setLabel(answer[class][(questionNum + vocNum / 2 + math.random(vocNum / 2 - 1)) % vocNum])
 	sheep()
 end
 
@@ -44,6 +44,7 @@ local function onRetryRelease( event )
 	transition.to(showScore, {time = 800, alpha = 0})
 	transition.to(score_logo, {time = 800, alpha = 0})
 	transition.to(quit, {time = 800, alpha = 0})
+	Runtime:removeEventListener("enterFrame", sheepMissed)
 	ready_go()
 	timer.performWithDelay( 3700, init )	
 	return true
@@ -51,9 +52,10 @@ end
 
 local function onQuitRelease( event )
 	physics.stop()	
-	composer.removeScene("game")
 	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
 	media.stopSound()
+	Runtime:removeEventListener("enterFrame", sheepMissed)
+	composer.removeScene("game")
 	composer.gotoScene( "select", "fade", 500 )
 	return true
 end
@@ -151,17 +153,34 @@ local function onTagsRelease( event )
 
 	score = score + points
 	showScore.text = score
+	Runtime:removeEventListener("enterFrame", sheepMissed)
 
 	nextQuestion()
 	return true	-- indicates successful touch
 end
 
+
 function sheepMissed( event )
 	if (questionSheep.x > screenW * 0.65)then
 		--miss
+		Runtime:removeEventListener("enterFrame", sheepMissed)
+		media.stopSound()
+		media.playEventSound( wrongSound )
+		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
 		miss.alpha = 1
 		transition.to(miss, {time = 300, delay = 700, alpha = 0})
 		nextQuestion()
+
+		loss_life.x = 0.05 * livesNum * screenW + 10
+		transition.to(loss_life, {time = 200, alpha = 1})
+		transition.to(loss_life, {time = 300, delay = 700, alpha = 0})
+
+		life[livesNum].alpha = 0
+		livesNum = livesNum - 1
+		if (livesNum == 0) then
+			game_over()
+		end
+		correct = 0
 	end
 end
 
@@ -275,6 +294,7 @@ function sheep( event )
 	
 	sheepGroup:insert( questionSheep )
 	sheepGroup:insert( tagged )
+	Runtime:addEventListener("enterFrame", sheepMissed)
 	--animation:setFrame( frame ) --用來指定播放第幾格
 	--animation:pause() --用來暫停播放
 end
