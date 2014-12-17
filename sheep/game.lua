@@ -71,8 +71,6 @@ local function game_over( event )
 	physics.addBody( floor, "static", { friction=0.3 })
 	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.7 } )
 
-	Runtime:removeEventListener("enterFrame", sheepMissed)
-
 	tags[0]:setEnabled(false)
 	tags[1]:setEnabled(false)
 	tags[2]:setEnabled(false)
@@ -143,9 +141,7 @@ local function onTagsRelease( event )
 
 		life[livesNum].alpha = 0
 		livesNum = livesNum - 1
-		if (livesNum == 0) then
-			game_over()
-		end
+
 		points = -70
 		correct = 0
 	end
@@ -158,6 +154,11 @@ local function onTagsRelease( event )
 	score = score + points
 	showScore.text = score
 	Runtime:removeEventListener("enterFrame", sheepMissed)
+
+	if (livesNum == 0) then
+		game_over()
+		return true
+	end
 
 	nextQuestion()
 	return true	-- indicates successful touch
