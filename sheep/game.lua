@@ -27,6 +27,7 @@ local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet
 local speed = 1
 local wrongSound = media.newEventSound( "sounds/Music/wrong.mp3"  )
 local correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
+local levelup, level, level_logo, showLevel
 
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
@@ -43,6 +44,7 @@ local function onRetryRelease( event )
 	transition.to(retry, {time = 800, alpha = 0})
 	transition.to(showScore, {time = 800, alpha = 0})
 	transition.to(score_logo, {time = 800, alpha = 0})
+	transition.to(level_logo, {time = 800, alpha = 0})
 	transition.to(quit, {time = 800, alpha = 0})
 	Runtime:removeEventListener("enterFrame", sheepMissed)
 	ready_go()
@@ -115,8 +117,8 @@ local function onTagsRelease( event )
 			points = 80
 		end
 		correct = correct + 1
-		if (correct == 10)then
-			speed = speed + 0.15
+		if (correct == 1)then
+			nextLevel()
 		end
 
 		if (correct == 10) and (livesNum < 5)then
@@ -205,6 +207,9 @@ function scene:create( event )
 
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
+	sceneGroup:insert( levelup )
+	sceneGroup:insert( level_logo )
+	sceneGroup:insert( showLevel )
 	sceneGroup:insert( initGroup )
 	sceneGroup:insert( sheepGroup )
 	sceneGroup:insert( showScore )
@@ -302,6 +307,16 @@ function sheep( event )
 end
 
 function declare( event )
+	levelup = display.newImage("game/levelup.png")
+	levelup.xScale = 0.65
+	levelup.yScale = 0.65
+	levelup.x = -100
+	levelup.y = -100
+
+	level_logo = display.newText("LEVEL", 360, 20, native.systemFont, 20, right)
+	level_logo.alpha = 0
+	showLevel = display.newText(" ", 400, 20, native.systemFont, 20, right)
+
 	gameOver = display.newImage("game/game_over.png")
 	gameOver.alpha = 0
 	gameOver.xScale = 0.45
@@ -488,10 +503,14 @@ end
 function init( event )
 	livesNum = 3
 	correct = 0
+	level = 1
 
 	score = 0
 	showScore.text = score
 	showScore:setFillColor( 1, 211/255, 0 )
+
+	showLevel.text = level
+	--showScore:setFillColor( 1, 211/255, 0 )
 
 	tags[0]:setEnabled(true)
 	tags[1]:setEnabled(true)
@@ -504,6 +523,7 @@ function init( event )
 	transition.to(initGroup, {time = 300, alpha = 1})
 	transition.to(showScore, {time = 300, alpha = 1})
 	transition.to(score_logo, {time = 300, alpha = 1})
+	transition.to(level_logo, {time = 300, alpha = 1})
 	transition.to(quit, {time = 300, alpha = 1})
 end
 
@@ -517,6 +537,18 @@ function ready_go( event )
 	go.y = screenH/2
 	transition.to( go, { time = 300, delay = 2400, x = halfW, xScale = 0.2, yScale = 0.2} )
 	transition.to( go, { time = 300, delay = 3700, x = screenW + 150, xScale = 0.05, yScale = 0.05} )
+end
+
+function nextLevel( event )
+	speed = speed + 0.15
+	level = level + 1
+	showLevel.text = level
+
+	levelup.x = -150
+	levelup.y = screenH * 0.4
+	transition.to( levelup, { time = 300, delay = 800, x = halfW, xScale = 0.2, yScale = 0.2} )
+	transition.to( levelup, { time = 300, delay = 2100, x = screenW + 150, xScale = 0.05, yScale = 0.05} )
+
 end
 
 ---------------------------------------------------------------------------------
