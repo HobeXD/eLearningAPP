@@ -19,6 +19,7 @@ local sheepGroup = display.newGroup()
 -- forward declarations and other locals
 local screenW, screenH, halfW , halfH = display.contentWidth, display.contentHeight, display.contentWidth*0.5, display.contentHeight*0.5
 local tags = {}
+local label = {}
 local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
 local life = {}
 --local perfect, great, good, miss, wrong
@@ -44,6 +45,11 @@ local function nextQuestion( event )
 	tags[tmp]:setLabel(answer[class][questionNum])
 	tags[(tmp + 1) % 3]:setLabel(answer[class][(questionNum + math.random(vocNum / 2)) % vocNum])
 	tags[(tmp + 2) % 3]:setLabel(answer[class][(questionNum + vocNum / 2 + math.random(vocNum / 2 - 1)) % vocNum])
+	
+	label[tmp].text = tags[tmp]:getLabel()
+	label[(tmp + 1) % 3].text = tags[(tmp + 1) % 3]:getLabel()
+	label[(tmp + 2) % 3].text = tags[(tmp + 2) % 3]:getLabel()
+
 	sheep()
 end
 
@@ -72,7 +78,7 @@ local function onQuitRelease( event )
 end
 
 local function game_over( event )	
-	gameOver.x = screenW*0.6
+	gameOver.x = screenW*0.65
 	gameOver.y = -120
 	gameOver.rotation = 15
 	gameOver.alpha = 1
@@ -317,7 +323,7 @@ end
 function declare_tags( event )
 	for i = 0, 2 do
 		tags[i] = widget.newButton{
-			labelColor = { default={000}, over={159/255, 80/255, 0} },
+			labelColor = { default={0, 0, 0, 0}, over={159/255, 80/255, 0, 0} },
 			fontSize = "18",
 			defaultFile="game/tag.png",
 			overFile="game/tag-over.png",
@@ -327,6 +333,10 @@ function declare_tags( event )
 		tags[i].x = display.contentWidth*(0.12 + 0.21 * i) 
 		tags[i].y = display.contentHeight*0.86
 		initGroup:insert( tags[i] )
+
+		label[i] = display.newText({text = " ", x = tags[i].x, y = tags[i].y, width = 100, font = native.systemFont, fontSize = 18, align = "center"})
+		label[i]:setFillColor( 0, 0, 0 )
+		initGroup:insert( label[i] )
 	end
 end
 
@@ -375,7 +385,7 @@ function declare_score( event )
 	score_logo.y = screenW * 0.04
 	score_logo.alpha = 0
 
-	showScore = display.newText(" ", 287, 20, 0, 0, native.systemFont, 30, "right")
+	showScore = display.newText({text = " ", x = 287, y = 20, width = 100, font = native.systemFont, fontSize = 30, align = "right"})
 
 	local performanceText = {
 	[1] = "perfect", 
@@ -409,9 +419,9 @@ function declare_level( event )
 	levelup.x = -100
 	levelup.y = -100
 
-	level_logo = display.newText("LEVEL", 375, 20, native.systemFont, 20, right)
+	level_logo = display.newText("LEVEL", 385, 20, native.systemFont, 20, right)
 	level_logo.alpha = 0
-	showLevel = display.newText(" ", 425, 20, native.systemFont, 20, right)
+	showLevel = display.newText({text = " ", x = 422, y = 20, width = 30, font = native.systemFont, fontSize = 20, align = "right"})
 end
 
 function declare_ready_go( event )
@@ -439,7 +449,7 @@ function declare_gameover( event )
 	}
 	retry.alpha = 0
 	retry.xScale, retry.yScale = 0.9, 0.9
-	retry.x = screenW * 0.9
+	retry.x = screenW * 0.93
 	retry.y = screenH * 0.9
 end
 
