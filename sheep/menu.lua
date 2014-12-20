@@ -54,11 +54,11 @@ function scene:create( event )
 		label="點一下開始遊戲",
 		labelColor = { default={255}, over={128} },
 		textOnly = true,
-		width=display.contentWidth, height=display.contentHeight*1.55,
+		width=display.contentWidth, height=display.contentHeight*2,
 		onRelease = onPlayBtnRelease	-- event listener function
 	}
 	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight*0.75
+	playBtn.y = display.contentHeight*0.87
 	--local begin = display.newText("點一下開始遊戲", display.contentWidth*0.5, display.contentHeight*0.75, native.systemFont, 20, right)
 	
 	-- all display objects must be inserted into group

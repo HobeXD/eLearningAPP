@@ -41,8 +41,10 @@ function scene:create( event )
 
 	-- display "select level" logo
 	local titleLogo = display.newImageRect( "select/title.png", 264, 70 )
+	titleLogo.xScale = 0.7
+	titleLogo.yScale = 0.7
 	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = 30
+	titleLogo.y = display.contentWidth * 0.06
 	
 	-- create a widget button (which will loads level1.lua on release)
 	for i = 1, classNum do
@@ -55,7 +57,7 @@ function scene:create( event )
 			onRelease = onBtnRelease	-- event listener function
 		}
 		classBtn.x = display.contentWidth*0.5
-		classBtn.y = display.contentHeight*(0.1 + i * 0.15)
+		classBtn.y = display.contentHeight*(0.12 + i * 0.11)
 		btnGroup:insert( classBtn )
 	end
 

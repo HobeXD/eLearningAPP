@@ -52,6 +52,7 @@ local function onRetryRelease( event )
 	transition.to(retry, {time = 800, alpha = 0})
 	transition.to(showScore, {time = 800, alpha = 0})
 	transition.to(score_logo, {time = 800, alpha = 0})
+	transition.to(showLevel, {time = 800, alpha = 0})
 	transition.to(level_logo, {time = 800, alpha = 0})
 	transition.to(quit, {time = 800, alpha = 0})
 	Runtime:removeEventListener("enterFrame", sheepMissed)
@@ -71,13 +72,13 @@ local function onQuitRelease( event )
 end
 
 local function game_over( event )	
-	gameOver.x = halfW
+	gameOver.x = screenW*0.6
 	gameOver.y = -120
 	gameOver.rotation = 15
 	gameOver.alpha = 1
 
 	physics.addBody( floor, "static", { friction=0.3 })
-	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.7 } )
+	physics.addBody( gameOver, { density = 1.0, friction = 1, bounce = 0.5 } )
 
 	tags[0]:setEnabled(false)
 	tags[1]:setEnabled(false)
@@ -121,7 +122,7 @@ local function onTagsRelease( event )
 			transition.to(life[livesNum], {time = 300, alpha = 1})
 			correct = 0
 
-			get_life.x = 0.05 * (livesNum + 1) * screenW + 10
+			get_life.x = 0.05 * (livesNum + 1) * screenW + 15
 			transition.to(get_life, {time = 200, alpha = 1})
 			transition.to(get_life, {time = 300, delay = 700, alpha = 0})
 		end
@@ -130,7 +131,7 @@ local function onTagsRelease( event )
 		media.playEventSound( wrongSound )
 		tmp = "wrong"
 
-		loss_life.x = 0.05 * livesNum * screenW + 10
+		loss_life.x = 0.05 * livesNum * screenW + 15
 		transition.to(loss_life, {time = 200, alpha = 1})
 		transition.to(loss_life, {time = 300, delay = 700, alpha = 0})
 
@@ -170,7 +171,7 @@ function sheepMissed( event )
 		performance["miss"].alpha = 1
 		transition.to(performance["miss"], {time = 300, delay = 700, alpha = 0})
 
-		loss_life.x = 0.05 * livesNum * screenW + 10
+		loss_life.x = 0.05 * livesNum * screenW + 15
 		transition.to(loss_life, {time = 200, alpha = 1})
 		transition.to(loss_life, {time = 300, delay = 700, alpha = 0})
 
@@ -191,14 +192,14 @@ function scene:create( event )
 	--local backgroundMusic = audio.loadSound( backgroundSound  )
 	local backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
 	audio.setVolume( 0, { channel = backgroundMusicChannel } )
-	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = audio.getVolume() } )
+	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = 0.5 } )
 	-- display a background image
 	local background = display.newImageRect( "game/background.png", screenW, screenH )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
 
-	--initGroup.alpha = 0
+	initGroup.alpha = 0
 	declare_tags()
 	declare_question()
 	declare_sheep()
@@ -323,8 +324,8 @@ function declare_tags( event )
 			width=100, height=80,
 			onRelease = onTagsRelease
 		}
-		tags[i].x = display.contentWidth*(0.04 + 0.2 * i) 
-		tags[i].y = display.contentHeight*0.85
+		tags[i].x = display.contentWidth*(0.12 + 0.21 * i) 
+		tags[i].y = display.contentHeight*0.86
 		initGroup:insert( tags[i] )
 	end
 end
@@ -347,6 +348,7 @@ end
 function declare_lives( event )
 	for i = 1, 5 do
 		life[i] = display.newImage("game/life.png")
+		life[i].xScale, life[i].yScale = 0.6, 0.6
 		life[i].x = 0.05 * i * screenW
 		life[i].y = 0.07 * screenH
 		life[i].alpha = 0
@@ -354,11 +356,13 @@ function declare_lives( event )
 	end
 
 	loss_life = display.newImage("game/loss_life.png")
+	loss_life.xScale, loss_life.yScale = 0.5, 0.5
 	loss_life.y = 0.07 * screenH
 	loss_life.alpha = 0
 	initGroup:insert(loss_life)
 
 	get_life = display.newImage("game/get_life.png")
+	get_life.xScale, get_life.yScale = 0.5, 0.5
 	get_life.y = 0.07 * screenH
 	get_life.alpha = 0
 	initGroup:insert(get_life)
@@ -366,12 +370,12 @@ end
 
 function declare_score( event )
 	score_logo = display.newImage( "game/score.png")
-	score_logo.x = screenH * 0.65
-	score_logo.y = screenW * 0.05
+	score_logo.xScale , score_logo.yScale = 0.6, 0.6
+	score_logo.x = screenH * 0.6
+	score_logo.y = screenW * 0.04
 	score_logo.alpha = 0
 
-	showScore = display.newText(" ", 320, 20, native.systemFont, 30, right)
-	showScore.alpha = 0
+	showScore = display.newText(" ", 287, 20, 0, 0, native.systemFont, 30, "right")
 
 	local performanceText = {
 	[1] = "perfect", 
@@ -383,19 +387,18 @@ function declare_score( event )
 
 	for i = 1, 5 do
 		performance[performanceText[i]] = display.newImage("game/" .. performanceText[i] .. ".png")
-		performance[performanceText[i]].x = 0.8 * screenW
-		performance[performanceText[i]].y = 0.4 * screenH
+		performance[performanceText[i]].x = 0.82 * screenW
+		performance[performanceText[i]].y = 0.37 * screenH
 		performance[performanceText[i]].alpha = 0
 		initGroup:insert(performance[performanceText[i]])
 	end
 
 	for i = 1, 5 do
-		print (i)
 		getPoints[performanceText[i]] = display.newImage("game/" .. points[performanceText[i]] .. ".png")
 		getPoints[performanceText[i]].xScale = 0.6
 		getPoints[performanceText[i]].yScale = 0.6
-		getPoints[performanceText[i]].x = 0.72 * screenW
-		getPoints[performanceText[i]].y = 0.18 * screenH
+		getPoints[performanceText[i]].x = 0.7 * screenW
+		getPoints[performanceText[i]].y = 0.15 * screenH
 		getPoints[performanceText[i]].alpha = 0
 		initGroup:insert(getPoints[performanceText[i]])
 	end
@@ -406,9 +409,9 @@ function declare_level( event )
 	levelup.x = -100
 	levelup.y = -100
 
-	level_logo = display.newText("LEVEL", 360, 20, native.systemFont, 20, right)
+	level_logo = display.newText("LEVEL", 375, 20, native.systemFont, 20, right)
 	level_logo.alpha = 0
-	showLevel = display.newText(" ", 400, 20, native.systemFont, 20, right)
+	showLevel = display.newText(" ", 425, 20, native.systemFont, 20, right)
 end
 
 function declare_ready_go( event )
@@ -425,7 +428,7 @@ function declare_gameover( event )
 	gameOver = display.newImage("game/game_over.png")
 	gameOver.alpha = 0
 
-	floor = display.newRect(halfW, screenH * 1.15, screenW, screenH * 0.1)
+	floor = display.newRect(halfW, screenH * 0.7, screenW, screenH * 0.1)
 	floor.alpha = 0
 
 	retry = widget.newButton{
@@ -435,6 +438,7 @@ function declare_gameover( event )
 		onRelease = onRetryRelease
 	}
 	retry.alpha = 0
+	retry.xScale, retry.yScale = 0.9, 0.9
 	retry.x = screenW * 0.9
 	retry.y = screenH * 0.9
 end
@@ -446,28 +450,29 @@ function declare_quit( event )
 		width=30, height=30,
 		onRelease = onQuitRelease
 	}
-	--quit.alpha = 0
-	quit.x = screenW * 0.93
+	quit.alpha = 0
+	quit.xScale, quit.yScale = 0.9, 0.9
+	quit.x = screenW * 0.95
 	quit.y = screenH * 0.07
 	initGroup:insert( quit )
 end
 
 function declare_question( event )
-	chinese = display.newText(" ", halfW, 50, native.systemFont, 30, right)
+	chinese = display.newText(" ", halfW, 60, native.systemFont, 30, "right")
+	chinese:setFillColor( 108/255, 108/255, 108/255 )
 	initGroup:insert( chinese )
 end
 
 function init( event )
 	livesNum = 3
 	correct = 0
-	level = 1
 
 	score = 0
 	showScore.text = score
-	showScore:setFillColor( 1, 211/255, 0 )
+	showScore:setFillColor( 1, 190/255, 0 )
 
+	level = 1
 	showLevel.text = level
-	--showScore:setFillColor( 1, 211/255, 0 )
 
 	tags[0]:setEnabled(true)
 	tags[1]:setEnabled(true)
@@ -481,6 +486,7 @@ function init( event )
 	transition.to(showScore, {time = 300, alpha = 1})
 	transition.to(score_logo, {time = 300, alpha = 1})
 	transition.to(level_logo, {time = 300, alpha = 1})
+	transition.to(showLevel, {time = 300, alpha = 1})
 	transition.to(quit, {time = 300, alpha = 1})
 end
 
