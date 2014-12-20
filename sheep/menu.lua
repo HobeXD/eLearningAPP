@@ -45,9 +45,9 @@ function scene:create( event )
 	background.x, background.y = 0, 0
 	
 	-- create/position logo/title image on upper-half of the screen
-	local titleLogo = display.newImageRect( "welcome/logo.png", 264, 70 )
-	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = 200
+	--local titleLogo = display.newImageRect( "welcome/logo.png", 264, 70 )
+	--titleLogo.x = display.contentWidth * 0.5
+	--titleLogo.y = 200
 	
 	-- create a widget button (which will loads level1.lua on release)
 	playBtn = widget.newButton{
@@ -63,7 +63,7 @@ function scene:create( event )
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
-	sceneGroup:insert( titleLogo )
+	--sceneGroup:insert( titleLogo )
 	sceneGroup:insert( playBtn )
 	--sceneGroup:insert( begin )
 end
