@@ -112,7 +112,7 @@ local function onTagsRelease( event )
 			tmp = "miss"
 		elseif (questionSheep.x < screenW * 0.55) or (questionSheep.x > screenW * 0.69) then
 			tmp = "good"
-		elseif (questionSheep.x > screenW * 0.6) and (questionSheep.x < screenW * 0.64) then
+		elseif (questionSheep.x > screenW * 0.61) and (questionSheep.x < screenW * 0.63) then
 			tmp = "perfect"
 		else
 			tmp = "great"
