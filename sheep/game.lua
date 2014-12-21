@@ -22,7 +22,6 @@ local tags = {}
 local label = {}
 local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
 local life = {}
---local perfect, great, good, miss, wrong
 local getPoints = {}
 local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet
 local speed = 1
@@ -119,18 +118,18 @@ local function onTagsRelease( event )
 		end
 
 		correct = correct + 1
-		if (correct == 10)then
+		if (correct == 10) then
 			nextLevel()
-		end
-
-		if (correct == 10) and (livesNum < 5)then
-			livesNum = livesNum + 1
-			transition.to(life[livesNum], {time = 300, alpha = 1})
 			correct = 0
 
-			get_life.x = 0.05 * (livesNum + 1) * screenW + 15
-			transition.to(get_life, {time = 200, alpha = 1})
-			transition.to(get_life, {time = 300, delay = 700, alpha = 0})
+			if (livesNum < 5) then
+				livesNum = livesNum + 1
+				transition.to(life[livesNum], {time = 300, alpha = 1})
+
+				get_life.x = 0.05 * (livesNum + 1) * screenW + 15
+				transition.to(get_life, {time = 200, alpha = 1})
+				transition.to(get_life, {time = 300, delay = 700, alpha = 0})
+			end
 		end
 	else
 		--wrong
@@ -310,14 +309,15 @@ function sheep( event )
 	transition.to(tagged, {time = 100 / speed, delay = 4700 / speed, rotation = 0})
 	transition.to(tagged, {time = 2500 / speed, delay = 4800 / speed,x = screenW * 1.2})
 
-	--timer.performWithDelay( 3000, questionSheep:pause())
-	--timer.performWithDelay( 4700, questionSheep:play())
+	--timer.performWithDelay( 3000, function() questionSheep:pause() end)
+	--timer.performWithDelay( 4700, function() questionSheep:play() end)
+	--timer.performWithDelay( 3000, function() tagged:pause() end)
+	--timer.performWithDelay( 4700, function() tagged:play() end)
 	
 	sheepGroup:insert( questionSheep )
 	sheepGroup:insert( tagged )
 	Runtime:addEventListener("enterFrame", sheepMissed)
 	--animation:setFrame( frame ) --用來指定播放第幾格
-	--animation:pause() --用來暫停播放
 end
 
 function declare_tags( event )
@@ -386,6 +386,7 @@ function declare_score( event )
 	score_logo.alpha = 0
 
 	showScore = display.newText({text = " ", x = 287, y = 20, width = 100, font = native.systemFont, fontSize = 30, align = "right"})
+	showScore.alpha = 0
 
 	local performanceText = {
 	[1] = "perfect", 
@@ -422,6 +423,7 @@ function declare_level( event )
 	level_logo = display.newText("LEVEL", 385, 20, native.systemFont, 20, right)
 	level_logo.alpha = 0
 	showLevel = display.newText({text = " ", x = 422, y = 20, width = 30, font = native.systemFont, fontSize = 20, align = "right"})
+	showLevel.alpha = 0
 end
 
 function declare_ready_go( event )
