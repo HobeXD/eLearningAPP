@@ -36,7 +36,7 @@ local points = {
 	miss = 0,
 	wrong = -70
 }
-local backgroundMusicChannel
+local backgroundMusicChannel, stopSound, playSound
 
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
@@ -216,6 +216,8 @@ function scene:create( event )
 	declare_ready_go()
 	declare_gameover()
 	declare_quit()
+	declare_stopSounds()
+	declare_playSounds()
 
 	ready_go()
 	timer.performWithDelay( 3700, init )
@@ -476,6 +478,48 @@ function declare_question( event )
 	chinese = display.newText(" ", halfW, 60, native.systemFont, 30)
 	chinese:setFillColor( 108/255, 108/255, 108/255 )
 	initGroup:insert( chinese )
+end
+
+function declare_stopSounds( event )
+	stopSound = widget.newButton{
+		defaultFile="game/stopSound.png",
+		width=100, height=80,
+		onRelease = onStopRelease
+	}
+	stopSound.xScale, stopSound.yScale = 0.5, 0.5
+	stopSound.x = display.contentWidth - 30
+	stopSound.y = display.contentHeight - 30
+	initGroup:insert( stopSound )
+end
+
+function onStopRelease( event )
+	audio.setVolume( 0, { channel = backgroundMusicChannel } )
+	stopSound:setEnabled(false)
+	stopSound.alpha = 0
+	playSound:setEnabled(true)
+	playSound.alpha = 1
+end
+
+function declare_playSounds( event )
+	playSound = widget.newButton{
+		defaultFile="game/playSound.png",
+		width=100, height=80,
+		onRelease = onPlayRelease
+	}
+	playSound.x = display.contentWidth - 30
+	playSound.y = display.contentHeight - 30
+	playSound.xScale, playSound.yScale = 0.5, 0.5
+	playSound.alpha = 0
+	playSound:setEnabled(false)
+	initGroup:insert( playSound )
+end
+
+function onPlayRelease( event )
+	audio.setVolume( 0.5, { channel = backgroundMusicChannel } )
+	stopSound:setEnabled(true)
+	stopSound.alpha = 1
+	playSound:setEnabled(false)
+	playSound.alpha = 0
 end
 
 function init( event )
