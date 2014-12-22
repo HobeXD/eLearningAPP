@@ -23,7 +23,7 @@ local label = {}
 local questionNum, chinese, questionSheep, livesNum, score, showScore, gameOver, floor, ready, go, retry, score_logo, quit, correct, loss_life, get_life
 local life = {}
 local getPoints = {}
-local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet
+local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet, rankBtn
 local speed = 1
 local wrongSound = audio.loadSound( "sounds/Music/wrong.mp3"  )
 local correctSound = audio.loadSound( "sounds/Music/correct.mp3"  )
@@ -36,7 +36,7 @@ local points = {
 	miss = 0,
 	wrong = -70
 }
-local backgroundMusicChannel, stopSound, playSound
+local backgroundMusicChannel, stopSound, playSound, textBox
 
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
@@ -61,6 +61,8 @@ local function onRetryRelease( event )
 	transition.to(showLevel, {time = 800, alpha = 0})
 	transition.to(level_logo, {time = 800, alpha = 0})
 	transition.to(quit, {time = 800, alpha = 0})
+	transition.to(textBox, {time = 800, alpha = 0})
+	transition.to(rankBtn, {time = 800, alpha = 0})
 	ready_go()
 	timer.performWithDelay( 3700, init )	
 	return true
@@ -72,6 +74,7 @@ local function onQuitRelease( event )
 	media.stopSound()
 	Runtime:removeEventListener("enterFrame", sheepMissed)
 	composer.removeScene("game")
+	textBox:removeSelf()
 	composer.gotoScene( "select", "fade", 500 )
 	return true
 end
@@ -89,9 +92,15 @@ local function game_over( event )
 	tags[1]:setEnabled(false)
 	tags[2]:setEnabled(false)
 
+	textBox.isEditable = true
+
+	rankBtn:setEnabled(true)
+
 	showScore:setFillColor( 1, 0, 0 )
 	transition.to(initGroup, {time = 1500, alpha = 0})
 	transition.to(retry, {time = 1500, alpha = 1})
+	transition.to(textBox, {time = 2000, alpha = 1})
+	transition.to(rankBtn, {time = 1500, alpha = 1})
 end
 
 local function onTagsRelease( event )
@@ -237,6 +246,8 @@ function scene:create( event )
 	sceneGroup:insert( retry )
 	sceneGroup:insert( score_logo )
 	sceneGroup:insert( quit )
+	sceneGroup:insert( textBox )
+	sceneGroup:insert( rankBtn )
 end
 
 
@@ -445,7 +456,7 @@ function declare_gameover( event )
 	gameOver = display.newImage("game/game_over.png")
 	gameOver.alpha = 0
 
-	floor = display.newRect(halfW, screenH * 0.7, screenW, screenH * 0.1)
+	floor = display.newRect(halfW, screenH * 0.8, screenW, screenH * 0.1)
 	floor.alpha = 0
 
 	retry = widget.newButton{
@@ -458,6 +469,31 @@ function declare_gameover( event )
 	retry.xScale, retry.yScale = 0.9, 0.9
 	retry.x = screenW * 0.93
 	retry.y = screenH * 0.9
+
+	--textBox = native.newTextBox( halfW, screenH * 0.2 , 150, 20 )
+	textBox = native.newTextField( halfW, screenH * 0.2 , 150, 23 )
+	textBox.alpha = 0
+	textBox.placeholder = "Enter your name"
+	textBox.font = native.newFont( native.systemFontBold, 18 )
+	textBox:setTextColor( 0.8, 0.8, 0.8 )
+	textBox:addEventListener( "userInput", typing )
+
+	rankBtn = widget.newButton{
+		defaultFile = "game/rank.png",
+		width = 40, height = 40,
+		onRelease = onR	-- event listener function
+	}
+	rankBtn.x = display.contentWidth*0.9 - 40
+	rankBtn.y = display.contentHeight*0.9
+	rankBtn.alpha = 0
+end
+
+function typing( event )
+	if ( event.phase == "submitted" ) then
+       	username = event.target.text
+		userscore = score
+		textBox.text = ""
+    end 
 end
 
 function declare_quit( event )
@@ -536,6 +572,10 @@ function init( event )
 	tags[0]:setEnabled(true)
 	tags[1]:setEnabled(true)
 	tags[2]:setEnabled(true)
+
+	textBox.isEditable = false
+
+	rankBtn:setEnabled(false)
 
 	nextQuestion()
 	transition.to(life[1], {time = 300, alpha = 1})

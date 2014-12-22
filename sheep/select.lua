@@ -15,8 +15,19 @@ local widget = require "widget"
 -- forward declarations and other locals
 local selectMusicChannel
 local btnGroup = display.newGroup()
+local classBtn = {}
+local rankBtn = {}
 
 local function onBtnRelease( event )
+	class = event.target:getLabel()
+	backgroundMusic = gameMusic[class]
+	vocNum = vocNumTable[class]
+	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
+	composer.gotoScene( "game", "fade", 500 )
+	return true	-- indicates successful touch
+end
+
+local function onRankRelease( event )
 	class = event.target:getLabel()
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
@@ -59,6 +70,18 @@ function scene:create( event )
 		classBtn.x = display.contentWidth*0.5
 		classBtn.y = display.contentHeight*(0.12 + i * 0.11)
 		btnGroup:insert( classBtn )
+		
+		rankBtn = widget.newButton{
+			label = class[i],
+			labelColor = { default={0, 0, 0, 0.01}, over={0, 0, 0, 0} },
+			defaultFile = "select/rank.png",
+			width = 35, height = 35,
+			onRelease = onRankRelease	-- event listener function
+		}
+		rankBtn.x = display.contentWidth*0.5 + 70
+		rankBtn.y = display.contentHeight*(0.12 + i * 0.11)
+		btnGroup:insert( rankBtn )
+
 	end
 
 	-- all display objects must be inserted into group
