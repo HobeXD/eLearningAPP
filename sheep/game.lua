@@ -9,8 +9,8 @@ local scene = composer.newScene()
 local widget = require "widget"
 local math = require "math"
 local physics = require "physics"
---local media = require "media"
---local graphics = require "graphics"
+local audio = require "audio"
+local media = require "media"
 local initGroup = display.newGroup()
 local sheepGroup = display.newGroup()
 
@@ -25,8 +25,8 @@ local life = {}
 local getPoints = {}
 local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet
 local speed = 1
-local wrongSound = media.newEventSound( "sounds/Music/wrong.mp3"  )
-local correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
+local wrongSound = audio.loadSound( "sounds/Music/wrong.mp3"  )
+local correctSound = audio.loadSound( "sounds/Music/correct.mp3"  )
 local levelup, level, level_logo, showLevel
 local performance = {}
 local points = {
@@ -36,6 +36,7 @@ local points = {
 	miss = 0,
 	wrong = -70
 }
+local backgroundMusicChannel
 
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
@@ -100,12 +101,12 @@ local function onTagsRelease( event )
 	transition.to(questionSheep, {time = 1, delay = 150, alpha = 0})
 	transition.to(tagged, {time = 1, delay = 150, alpha = 1})
 
-	media.stopSound()
-	media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
-
+	--media.stopSound()
 	local tmp
 	if( event.target:getLabel() == answer[class][questionNum] )then
-		media.playEventSound( correctSound )
+		audio.play( correctSound )
+		--media.playSound( "sounds/Music/correct.mp3" )
+		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 		if (questionSheep.x < screenW * 0.5) then
 			tmp = "miss"
 		elseif (questionSheep.x < screenW * 0.55) or (questionSheep.x > screenW * 0.69) then
@@ -132,7 +133,9 @@ local function onTagsRelease( event )
 		end
 	else
 		--wrong
-		media.playEventSound( wrongSound )
+		audio.play( wrongSound )
+		--media.playSound( "sounds/Music/wrong.mp3" )
+		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 		tmp = "wrong"
 
 		loss_life.x = 0.05 * livesNum * screenW + 15
@@ -169,8 +172,9 @@ end
 function sheepMissed( event )
 	if (questionSheep.x > screenW * 0.75)then
 		Runtime:removeEventListener("enterFrame", sheepMissed)
-		media.stopSound()
-		media.playEventSound( wrongSound )
+		--media.stopSound()
+		media.playSound( "sounds/Music/wrong.mp3" )
+		--audio.play( wrongSound )
 		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
 		performance["miss"].alpha = 1
 		transition.to(performance["miss"], {time = 300, delay = 700, alpha = 0})
@@ -193,8 +197,7 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
-	--local backgroundMusic = audio.loadSound( backgroundSound  )
-	local backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
+	backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
 	audio.setVolume( 0, { channel = backgroundMusicChannel } )
 	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = 0.5 } )
 	-- display a background image

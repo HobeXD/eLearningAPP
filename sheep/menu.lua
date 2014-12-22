@@ -19,7 +19,8 @@ local menuMusicChannel
 local function onPlayBtnRelease()
 	
 	-- go to level1.lua scene
-	audio.fadeOut( { channel=menuMusicChannel, time=700 } )
+	--audio.fadeOut( { channel=menuMusicChannel, time=700 } )
+	media.stopSound()
 	--audio.fade( { channel = menuMusicChannel, time = 700, volume = 0 } )
 	composer.gotoScene( "select", "fade", 500 )
 	--composer.gotoScene( "level1", "fade", 500 )
@@ -35,7 +36,8 @@ function scene:create( event )
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 	--local menuMusic = audio.loadSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
-	menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
+	--menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
+	media.playSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3", true)
 	--audio.setVolume( audio.getVolume(), { channel = menuMusicChannel } )
 
 	-- display a background image
