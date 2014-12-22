@@ -36,7 +36,7 @@ local points = {
 	miss = 0,
 	wrong = -70
 }
-local backgroundMusicChannel, stopSound, playSound, textBox
+local backgroundMusicChannel, stopSound, playSound, textBox, quit
 
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
@@ -177,6 +177,15 @@ local function onTagsRelease( event )
 	return true	-- indicates successful touch
 end
 
+local function onRankRelease( event )
+	physics.stop()	
+	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
+	media.stopSound()
+	composer.removeScene("game")
+	textBox:removeSelf()
+	composer.gotoScene( "rank", "fade", 500 )
+	return true
+end
 
 function sheepMissed( event )
 	if (questionSheep.x > screenW * 0.75)then
@@ -249,7 +258,6 @@ function scene:create( event )
 	sceneGroup:insert( textBox )
 	sceneGroup:insert( rankBtn )
 end
-
 
 function scene:show( event )
 	local sceneGroup = self.view
@@ -481,7 +489,7 @@ function declare_gameover( event )
 	rankBtn = widget.newButton{
 		defaultFile = "game/rank.png",
 		width = 40, height = 40,
-		onRelease = onR	-- event listener function
+		onRelease = onRankRelease	-- event listener function
 	}
 	rankBtn.x = display.contentWidth*0.9 - 40
 	rankBtn.y = display.contentHeight*0.9

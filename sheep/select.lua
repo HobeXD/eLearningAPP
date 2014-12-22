@@ -32,7 +32,7 @@ local function onRankRelease( event )
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
-	composer.gotoScene( "game", "fade", 500 )
+	composer.gotoScene( "rank", "fade", 500 )
 	return true	-- indicates successful touch
 end
 
@@ -55,7 +55,7 @@ function scene:create( event )
 	titleLogo.xScale = 0.7
 	titleLogo.yScale = 0.7
 	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = display.contentWidth * 0.06
+	titleLogo.y = 30
 	
 	-- create a widget button (which will loads level1.lua on release)
 	for i = 1, classNum do
