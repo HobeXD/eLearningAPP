@@ -60,7 +60,6 @@ local function onRetryRelease( event )
 	transition.to(showLevel, {time = 800, alpha = 0})
 	transition.to(level_logo, {time = 800, alpha = 0})
 	transition.to(quit, {time = 800, alpha = 0})
-	Runtime:removeEventListener("enterFrame", sheepMissed)
 	ready_go()
 	timer.performWithDelay( 3700, init )	
 	return true
@@ -323,14 +322,14 @@ end
 function declare_tags( event )
 	for i = 0, 2 do
 		tags[i] = widget.newButton{
-			labelColor = { default={0, 0, 0, 0}, over={159/255, 80/255, 0, 0} },
+			labelColor = { default={159/255, 80/255, 0, 0.01}, over={159/255, 80/255, 0, 0} },
 			fontSize = "18",
 			defaultFile="game/tag.png",
 			overFile="game/tag-over.png",
 			width=100, height=80,
 			onRelease = onTagsRelease
 		}
-		tags[i].x = display.contentWidth*(0.12 + 0.21 * i) 
+		tags[i].x = display.contentWidth*0.12 + 110 * i
 		tags[i].y = display.contentHeight*0.86
 		initGroup:insert( tags[i] )
 
@@ -381,11 +380,11 @@ end
 function declare_score( event )
 	score_logo = display.newImage( "game/score.png")
 	score_logo.xScale , score_logo.yScale = 0.6, 0.6
-	score_logo.x = screenH * 0.6
-	score_logo.y = screenW * 0.04
+	score_logo.x = screenW * 0.4
+	score_logo.y = screenH * 0.06
 	score_logo.alpha = 0
 
-	showScore = display.newText({text = " ", x = 287, y = 20, width = 100, font = native.systemFont, fontSize = 30, align = "right"})
+	showScore = display.newText({text = " ", x = screenW * 0.4 + 90, y = 20, width = 100, font = native.systemFont, fontSize = 30, align = "right"})
 	showScore.alpha = 0
 
 	local performanceText = {
@@ -400,6 +399,7 @@ function declare_score( event )
 		performance[performanceText[i]] = display.newImage("game/" .. performanceText[i] .. ".png")
 		performance[performanceText[i]].x = 0.82 * screenW
 		performance[performanceText[i]].y = 0.37 * screenH
+		performance[performanceText[i]].xScale, performance[performanceText[i]].yScale = 0.7, 0.7 
 		performance[performanceText[i]].alpha = 0
 		initGroup:insert(performance[performanceText[i]])
 	end
@@ -420,9 +420,9 @@ function declare_level( event )
 	levelup.x = -100
 	levelup.y = -100
 
-	level_logo = display.newText("LEVEL", 385, 20, native.systemFont, 20, right)
+	level_logo = display.newText("LEVEL", screenW * 0.8, 20, native.systemFont, 20, right)
 	level_logo.alpha = 0
-	showLevel = display.newText({text = " ", x = 422, y = 20, width = 30, font = native.systemFont, fontSize = 20, align = "right"})
+	showLevel = display.newText({text = " ", x = screenW * 0.8 + 40, y = 20, width = 30, font = native.systemFont, fontSize = 20, align = "right"})
 	showLevel.alpha = 0
 end
 
@@ -464,13 +464,13 @@ function declare_quit( event )
 	}
 	quit.alpha = 0
 	quit.xScale, quit.yScale = 0.9, 0.9
-	quit.x = screenW * 0.95
-	quit.y = screenH * 0.07
+	quit.x = screenW * 0.96
+	quit.y = screenH * 0.06
 	initGroup:insert( quit )
 end
 
 function declare_question( event )
-	chinese = display.newText(" ", halfW, 60, native.systemFont, 30, "right")
+	chinese = display.newText(" ", halfW, 60, native.systemFont, 30)
 	chinese:setFillColor( 108/255, 108/255, 108/255 )
 	initGroup:insert( chinese )
 end
