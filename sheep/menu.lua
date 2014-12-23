@@ -49,7 +49,8 @@ function scene:create( event )
 	playBtn = widget.newButton{
 		label="點一下開始遊戲",
 		labelColor = { default={255}, over={128} },
-		textOnly = true,
+		defaultFile = "game/0.png",
+		--textOnly = true,
 		width=display.contentWidth, height=display.contentHeight*2,
 		onRelease = onPlayBtnRelease	-- event listener function
 	}
