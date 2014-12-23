@@ -27,7 +27,7 @@ settings = {
                 }
             }
             --]]
-            UIAppFonts = 
+           UIAppFonts = 
 		    {
 		        "Herculanum.ttf",  --font
 		    },

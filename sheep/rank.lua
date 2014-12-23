@@ -28,6 +28,7 @@ local function onQuitRelease( event )
 	end
 	soundGroup.alpha = 0
 	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+	audio.fadeOut( { channel = menuMusicChannel, time = 700} )
 	composer.removeScene("rank")
 	composer.gotoScene( "select", "fade", 500 )
 	return true
@@ -76,6 +77,9 @@ function scene:create( event )
 
 	local title = display.newText({text = class, x = halfW, y = 20, font = "Herculanum", fontSize = 40})
 	title:setTextColor( 108/255, 51/255, 101/255 )
+	--local title = display.newImage("rank/" .. class .. ".png")
+	--title.xScale, title.yScale = 0.5, 0.5
+	--title.x, title.y = halfW, 20
 
 	reset = widget.newButton{
 		defaultFile="rank/reset.png",

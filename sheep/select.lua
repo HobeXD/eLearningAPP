@@ -1,3 +1,4 @@
+
 -----------------------------------------------------------------------------------------
 --
 -- select.lua
@@ -49,7 +50,6 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- display a background image
-	print ("create")
 	local background = display.newImageRect( "select/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
