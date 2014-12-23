@@ -100,7 +100,6 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	print ("in select")
 	selectMusicChannel = audio.play( selectMusic, { loops = -1 } )	
 	audio.setVolume( 0, { channel = selectMusicChannel } )
 	currentChannel = selectMusicChannel
