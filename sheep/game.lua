@@ -63,6 +63,7 @@ local function onRetryRelease( event )
 	transition.to(quit, {time = 800, alpha = 0})
 	transition.to(textBox, {time = 800, alpha = 0})
 	transition.to(rankBtn, {time = 800, alpha = 0})
+	transition.to(soundGroup, {time = 800, alpha = 0})
 	ready_go()
 	timer.performWithDelay( 3700, init )	
 	return true
@@ -75,6 +76,8 @@ local function onQuitRelease( event )
 	Runtime:removeEventListener("enterFrame", sheepMissed)
 	composer.removeScene("game")
 	textBox:removeSelf()
+	transition.to(soundGroup, {time = 500, alpha = 0})
+	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
 	composer.gotoScene( "select", "fade", 500 )
 	return true
 end
@@ -98,8 +101,8 @@ local function game_over( event )
 
 	showScore:setFillColor( 1, 0, 0 )
 	transition.to(initGroup, {time = 1500, alpha = 0})
-	transition.to(retry, {time = 1500, alpha = 1})
-	transition.to(textBox, {time = 2000, alpha = 1})
+	transition.to(retry, {time = 3000, alpha = 1})
+	transition.to(textBox, {time = 3000, alpha = 1})
 	transition.to(rankBtn, {time = 1500, alpha = 1})
 end
 
@@ -181,8 +184,10 @@ local function onRankRelease( event )
 	physics.stop()	
 	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
 	media.stopSound()
-	composer.removeScene("game")
 	textBox:removeSelf()
+	transition.to(soundGroup, {time = 500, alpha = 0})
+	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+	composer.removeScene("game")
 	composer.gotoScene( "rank", "fade", 500 )
 	return true
 end
@@ -217,12 +222,17 @@ function scene:create( event )
 
 	backgroundMusicChannel = audio.play( backgroundMusic, { loops = -1 } )
 	audio.setVolume( 0, { channel = backgroundMusicChannel } )
-	audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = 0.5 } )
+	currentChannel = backgroundMusicChannel
+	if (stopFlag == false) then
+		audio.fade( { channel = backgroundMusicChannel, time = 1500, volume = 0.5 } )
+	end
 	-- display a background image
 	local background = display.newImageRect( "game/background.png", screenW, screenH )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
+
+	soundGroup.alpha = 0
 
 	initGroup.alpha = 0
 	declare_tags()
@@ -234,8 +244,6 @@ function scene:create( event )
 	declare_ready_go()
 	declare_gameover()
 	declare_quit()
-	declare_stopSounds()
-	declare_playSounds()
 
 	ready_go()
 	timer.performWithDelay( 3700, init )
@@ -475,10 +483,9 @@ function declare_gameover( event )
 	}
 	retry.alpha = 0
 	retry.xScale, retry.yScale = 0.9, 0.9
-	retry.x = screenW * 0.93
-	retry.y = screenH * 0.9
+	retry.x = screenW * 0.75
+	retry.y = screenH * 0.65
 
-	--textBox = native.newTextBox( halfW, screenH * 0.2 , 150, 20 )
 	textBox = native.newTextField( halfW, screenH * 0.2 , 150, 23 )
 	textBox.alpha = 0
 	textBox.placeholder = "Enter your name"
@@ -524,48 +531,6 @@ function declare_question( event )
 	initGroup:insert( chinese )
 end
 
-function declare_stopSounds( event )
-	stopSound = widget.newButton{
-		defaultFile="game/stopSound.png",
-		width=100, height=80,
-		onRelease = onStopRelease
-	}
-	stopSound.xScale, stopSound.yScale = 0.5, 0.5
-	stopSound.x = display.contentWidth - 30
-	stopSound.y = display.contentHeight - 30
-	initGroup:insert( stopSound )
-end
-
-function onStopRelease( event )
-	audio.setVolume( 0, { channel = backgroundMusicChannel } )
-	stopSound:setEnabled(false)
-	stopSound.alpha = 0
-	playSound:setEnabled(true)
-	playSound.alpha = 1
-end
-
-function declare_playSounds( event )
-	playSound = widget.newButton{
-		defaultFile="game/playSound.png",
-		width=100, height=80,
-		onRelease = onPlayRelease
-	}
-	playSound.x = display.contentWidth - 30
-	playSound.y = display.contentHeight - 30
-	playSound.xScale, playSound.yScale = 0.5, 0.5
-	playSound.alpha = 0
-	playSound:setEnabled(false)
-	initGroup:insert( playSound )
-end
-
-function onPlayRelease( event )
-	audio.setVolume( 0.5, { channel = backgroundMusicChannel } )
-	stopSound:setEnabled(true)
-	stopSound.alpha = 1
-	playSound:setEnabled(false)
-	playSound.alpha = 0
-end
-
 function init( event )
 	livesNum = 3
 	correct = 0
@@ -595,6 +560,7 @@ function init( event )
 	transition.to(level_logo, {time = 300, alpha = 1})
 	transition.to(showLevel, {time = 300, alpha = 1})
 	transition.to(quit, {time = 300, alpha = 1})
+	transition.to(soundGroup, {time = 300, alpha = 1})
 end
 
 function ready_go( event )

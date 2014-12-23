@@ -10,7 +10,7 @@ display.setStatusBar( display.HiddenStatusBar )
 -- include the Corona "composer" module
 local composer = require "composer"
 
---menuMusic = audio.loadStream("welcome/Mary_Had_A_Little_Lamb_(vocal).mp3")
+menuMusic = audio.loadStream("welcome/Mary_Had_A_Little_Lamb_(vocal).mp3")
 
 -- load menu screen
 composer.gotoScene( "menu" )

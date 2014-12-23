@@ -12,35 +12,29 @@ local widget = require "widget"
 
 --------------------------------------------
 
--- forward declarations and other locals
 local playBtn
 local menuMusicChannel
--- 'onRelease' event listener for playBtn
+soundGroup = display.newGroup()
+
 local function onPlayBtnRelease()
-	
-	-- go to level1.lua scene
-	--audio.fadeOut( { channel=menuMusicChannel, time=700 } )
-	media.stopSound()
-	--audio.fade( { channel = menuMusicChannel, time = 700, volume = 0 } )
-	composer.gotoScene( "select", "fade", 500 )
-	--composer.gotoScene( "level1", "fade", 500 )
-	
+	audio.fadeOut( { channel=menuMusicChannel, time=700 } )
+	transition.to(soundGroup, {time = 500, alpha = 0})
+	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+	composer.gotoScene( "select", "fade", 500 )	
 	return true	-- indicates successful touch
 end
 
 function scene:create( event )
 	local sceneGroup = self.view
 
-	-- Called when the scene's view does not exist.
-	-- 
-	-- INSERT code here to initialize the scene
-	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
-	--local menuMusic = audio.loadSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
-	--menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
-	media.playSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3", true)
-	--audio.setVolume( audio.getVolume(), { channel = menuMusicChannel } )
+	local menuMusic = audio.loadSound( "welcome/Mary_Had_A_Little_Lamb_(vocal).mp3"  )
+	menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
+	currentChannel = menuMusicChannel
+	stopFlag = false
+	if (stopFlag) then
+		audio.setVolume( 0 , { channel = currentChannel })
+	end
 
-	-- display a background image
 	local background = display.newImageRect( "welcome/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
@@ -61,13 +55,14 @@ function scene:create( event )
 	}
 	playBtn.x = display.contentWidth*0.5
 	playBtn.y = display.contentHeight*0.87
-	--local begin = display.newText("點一下開始遊戲", display.contentWidth*0.5, display.contentHeight*0.75, native.systemFont, 20, right)
-	
+
+	declare_stopSounds()
+	declare_playSounds()
+
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
 	--sceneGroup:insert( titleLogo )
 	sceneGroup:insert( playBtn )
-	--sceneGroup:insert( begin )
 end
 
 function scene:show( event )
@@ -110,6 +105,50 @@ function scene:destroy( event )
 		playBtn:removeSelf()	-- widgets must be manually removed
 		playBtn = nil
 	end
+end
+
+function declare_stopSounds( event )
+	stopSound = widget.newButton{
+		defaultFile="game/stopSound.png",
+		width=100, height=80,
+		onRelease = onStopRelease
+	}
+	stopSound.xScale, stopSound.yScale = 0.5, 0.5
+	stopSound.x = display.contentWidth - 30
+	stopSound.y = display.contentHeight - 30
+	soundGroup:insert( stopSound )
+end
+
+function onStopRelease( event )
+	stopFlag = true
+	audio.setVolume( 0, { channel = currentChannel } )
+	stopSound:setEnabled(false)
+	stopSound.alpha = 0
+	playSound:setEnabled(true)
+	playSound.alpha = 1
+end
+
+function declare_playSounds( event )
+	playSound = widget.newButton{
+		defaultFile="game/playSound.png",
+		width=100, height=80,
+		onRelease = onPlayRelease
+	}
+	playSound.x = display.contentWidth - 30
+	playSound.y = display.contentHeight - 30
+	playSound.xScale, playSound.yScale = 0.5, 0.5
+	playSound.alpha = 0
+	playSound:setEnabled(false)
+	soundGroup:insert( playSound )
+end
+
+function onPlayRelease( event )
+	stopFlag = false
+	audio.setVolume( 0.5, { channel = currentChannel } )
+	stopSound:setEnabled(true)
+	stopSound.alpha = 1
+	playSound:setEnabled(false)
+	playSound.alpha = 0
 end
 
 ---------------------------------------------------------------------------------

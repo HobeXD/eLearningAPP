@@ -23,6 +23,7 @@ local function onBtnRelease( event )
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
+	transition.to(soundGroup, {time = 500, alpha = 0})
 	composer.gotoScene( "game", "fade", 500 )
 	return true	-- indicates successful touch
 end
@@ -32,6 +33,8 @@ local function onRankRelease( event )
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
+	transition.to(soundGroup, {time = 500, alpha = 0})
+	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
 	composer.gotoScene( "rank", "fade", 500 )
 	return true	-- indicates successful touch
 end
@@ -96,7 +99,10 @@ function scene:show( event )
 	
 	selectMusicChannel = audio.play( selectMusic, { loops = -1 } )	
 	audio.setVolume( 0, { channel = selectMusicChannel } )
-	audio.fade( { channel = selectMusicChannel, time = 800, volume = audio.getVolume() } )
+	currentChannel = selectMusicChannel
+	if (stopFlag == false) then
+		audio.fade( { channel = selectMusicChannel, time = 800, volume = 0.5 } )
+	end
 
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen

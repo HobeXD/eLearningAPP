@@ -14,8 +14,10 @@ local screenW, screenH, halfW , halfH = display.contentWidth, display.contentHei
 local quit
 
 local function onQuitRelease( event )
-	composer.removeScene("rank")
 	quit:removeSelf()
+	transition.to(soundGroup, {time = 500, alpha = 0})
+	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+	composer.removeScene("rank")
 	composer.gotoScene( "select", "fade", 500 )
 	return true
 end
@@ -23,7 +25,13 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
-	-- display a background image
+	menuMusicChannel = audio.play( menuMusic, { loops = -1 } )
+	audio.setVolume( 0, { channel = menuMusicChannel } )
+	currentChannel = menuMusicChannel
+	if (stopFlag== false) then
+		audio.fade( { channel = menuMusicChannel, time = 1500, volume = 0.5 } )
+	end
+
 	local background = display.newImageRect( "select/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
