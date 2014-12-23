@@ -32,9 +32,10 @@ local function onRankRelease( event )
 	class = event.target:getLabel()
 	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
+	fromGame = false
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
 	transition.to(soundGroup, {time = 500, alpha = 0})
-	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+	transition.to(soundGroup, {time = 500, delay = 500, alpha = 1})
 	composer.gotoScene( "rank", "fade", 500 )
 	return true	-- indicates successful touch
 end
@@ -48,6 +49,7 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- display a background image
+	print ("create")
 	local background = display.newImageRect( "select/background.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
@@ -87,6 +89,8 @@ function scene:create( event )
 
 	end
 
+	username = ""
+	userscore = 0
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
 	sceneGroup:insert( titleLogo )
@@ -96,7 +100,7 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	
+	print ("in select")
 	selectMusicChannel = audio.play( selectMusic, { loops = -1 } )	
 	audio.setVolume( 0, { channel = selectMusicChannel } )
 	currentChannel = selectMusicChannel

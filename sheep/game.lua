@@ -185,6 +185,7 @@ local function onRankRelease( event )
 	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
 	media.stopSound()
 	textBox:removeSelf()
+	fromGame = false
 	transition.to(soundGroup, {time = 500, alpha = 0})
 	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
 	composer.removeScene("game")
@@ -507,7 +508,17 @@ function typing( event )
 	if ( event.phase == "submitted" ) then
        	username = event.target.text
 		userscore = score
-		textBox.text = ""
+		--textBox.text = ""
+    	physics.stop()	
+		audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
+		media.stopSound()
+		textBox:removeSelf()
+		fromGame = true
+		transition.to(soundGroup, {time = 500, alpha = 0})
+		transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
+		composer.removeScene("game")
+		composer.gotoScene( "rank", "fade", 500 )
+		return true
     end 
 end
 
@@ -551,9 +562,9 @@ function init( event )
 	rankBtn:setEnabled(false)
 
 	nextQuestion()
-	transition.to(life[1], {time = 300, alpha = 1})
-	transition.to(life[2], {time = 300, alpha = 1})
-	transition.to(life[3], {time = 300, alpha = 1})
+	for i = 1, livesNum do
+		transition.to(life[i], {time = 300, alpha = 1})
+	end
 	transition.to(initGroup, {time = 300, alpha = 1})
 	transition.to(showScore, {time = 300, alpha = 1})
 	transition.to(score_logo, {time = 300, alpha = 1})
