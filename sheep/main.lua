@@ -18,9 +18,9 @@ composer.gotoScene( "menu" )
 selectMusic = audio.loadStream( "select/Claudio_The_Worm.mp3"  )
 gameMusic = {
 	["School"] = audio.loadStream( "sounds/music/Bubble_Bath.mp3"  ),
-	["Location"] = audio.loadStream( "sounds/music/Bike_Rides.mp3"  ),
-	["Transportation"] = audio.loadStream( "sounds/music/Dancing_on_Green_Grass.mp3"  ),
-	["Characteristics"] = audio.loadStream( "sounds/music/Itsy_Bitsy_Spider_(instrumental).mp3"  )
+	--["Location"] = audio.loadStream( "sounds/music/Bike_Rides.mp3"  ),
+	--["Transportation"] = audio.loadStream( "sounds/music/Dancing_on_Green_Grass.mp3"  ),
+	--["Characteristics"] = audio.loadStream( "sounds/music/Itsy_Bitsy_Spider_(instrumental).mp3"  )
 }
 
 class = {
