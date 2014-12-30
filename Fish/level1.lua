@@ -23,7 +23,7 @@ local question, answerBtn1, answerBtn2, correct_ans
 local score, score_word, score_text
 local en = {}
 local ch = {}
-local timeLeft, time_word, time_text
+local timeLeft, time_word, time_text, timerid
 
 local function timerDown()
    timeLeft = timeLeft-1
@@ -252,7 +252,7 @@ function scene:show( event )
 		score_text.text = score
 		timeLeft = 10
 		time_text.text = timeLeft
-		timer.performWithDelay(1000, timerDown, timeLeft)
+		timerid = timer.performWithDelay(1000, timerDown, timeLeft)
 	end
 end
 
@@ -267,6 +267,7 @@ function scene:hide( event )
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		-- physics.stop()
+		timer.pause(timerid)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
