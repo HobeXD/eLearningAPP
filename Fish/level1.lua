@@ -29,7 +29,7 @@ local function timerDown()
    timeLeft = timeLeft-1
    time_text.text = timeLeft
      if(timeLeft == 0)then
-        composer.gotoScene( "level_clear", "fade", 500 )
+        composer.gotoScene( "level_complete", "fade", 500 )
      end
   end
 
@@ -177,7 +177,7 @@ function scene:create( event )
 	sceneGroup:insert( answerBtn1 )
 	sceneGroup:insert( answerBtn2 )
 
-	local path = system.pathForFile( "level1 words.csv" )
+	local path = system.pathForFile( "place_location words.csv" )
 	local file = io.open( path, "r" )
 
 	for line in file:lines() do
