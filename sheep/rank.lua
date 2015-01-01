@@ -19,6 +19,8 @@ local rankName = {}
 local rankScore = {}
 
 local function onQuitRelease( event )
+	--file:close()
+	io.close(file)
 	quit:removeSelf()
 	reset:removeSelf()
 	for i = 1, 10 do
@@ -29,7 +31,6 @@ local function onQuitRelease( event )
 	soundGroup.alpha = 0
 	transition.to(soundGroup, {time = 500, delay = 700, alpha = 1})
 	audio.fadeOut( { channel = menuMusicChannel, time = 700} )
-	--io.close(file)
 	composer.removeScene("rank")
 	composer.gotoScene( "select", "fade", 500 )
 	return true

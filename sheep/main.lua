@@ -18,10 +18,13 @@ composer.gotoScene( "menu" )
 selectMusic = audio.loadStream( "select/Claudio_The_Worm.mp3"  )
 gameMusic = {
 	["School"] = audio.loadStream( "sounds/music/Bubble_Bath.mp3"  ),
-	--["Location"] = audio.loadStream( "sounds/music/Bike_Rides.mp3"  ),
-	--["Transportation"] = audio.loadStream( "sounds/music/Dancing_on_Green_Grass.mp3"  ),
-	--["Characteristics"] = audio.loadStream( "sounds/music/Itsy_Bitsy_Spider_(instrumental).mp3"  )
+	["Location"] = audio.loadStream( "sounds/music/Bike_Rides.mp3"  ),
+	["Transportation"] = audio.loadStream( "sounds/music/Dancing_on_Green_Grass.mp3"  ),
+	["Characteristics"] = audio.loadStream( "sounds/music/Itsy_Bitsy_Spider_(instrumental).mp3"  )
 }
+
+wrongSound = media.newEventSound( "sounds/music/wrong.mp3"  )
+correctSound = media.newEventSound( "sounds/music/correct.mp3" )
 
 class = {
 	[1] = "School",
@@ -176,16 +179,16 @@ question = {
 		[06] = "滑板車",
 		[07] = "船",
 		[08] = "計程車",
-		[09] = "貨車 ",
+		[09] = "貨車 ",
 		[10] = "飛機場",
 		[11] = "車站",
-		[12] = "火車 ",
+		[12] = "火車 ",
 		[13] = "瓦斯",
 		[14] = "街區",
 		[15] = "橋樑",
 		[16] = "鐵路",
 		[17] = "人行道",
-		[18] = "交通 ",
+		[18] = "交通 ",
 		[19] = "到達",
 		[20] = "經過",
 		[21] = "開車",

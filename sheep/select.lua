@@ -21,8 +21,7 @@ local rankBtn = {}
 
 local function onBtnRelease( event )
 	class = event.target:getLabel()
-	--backgroundMusic = gameMusic[class]
-	backgroundMusic = gameMusic["School"]
+	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )
 	transition.to(soundGroup, {time = 500, alpha = 0})
@@ -32,8 +31,7 @@ end
 
 local function onRankRelease( event )
 	class = event.target:getLabel()
-	--backgroundMusic = gameMusic[class]
-	backgroundMusic = gameMusic["School"]
+	backgroundMusic = gameMusic[class]
 	vocNum = vocNumTable[class]
 	fromGame = false
 	audio.fadeOut( { channel = selectMusicChannel, time = 700} )

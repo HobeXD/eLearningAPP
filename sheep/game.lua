@@ -25,7 +25,6 @@ local life = {}
 local getPoints = {}
 local options, sheepSheet, sequenceData, tagged, sheepTaggedSheet, rankBtn
 local speed = 1
-local wrongSound, correctSound 
 local levelup, level, level_logo, showLevel
 local performance = {}
 local points = {
@@ -113,10 +112,9 @@ local function onTagsRelease( event )
 	transition.to(tagged, {time = 1, delay = 150, alpha = 1})
 
 	--media.stopSound()
+	--media.pauseSound()
 	local tmp
 	if( event.target:getLabel() == answer[class][questionNum] )then
-		--audio.play( correctSound )
-		--media.playSound( "sounds/Music/correct.mp3" )
 		media.playEventSound( correctSound )
 		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 		if (questionSheep.x < screenW * 0.5) then
@@ -145,8 +143,6 @@ local function onTagsRelease( event )
 		end
 	else
 		--wrong
-		--audio.play( wrongSound )
-		--media.playSound( "sounds/Music/wrong.mp3" )
 		media.playEventSound( wrongSound )
 		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 		tmp = "wrong"
@@ -198,8 +194,7 @@ function sheepMissed( event )
 	if (questionSheep.x > screenW * 0.75)then
 		Runtime:removeEventListener("enterFrame", sheepMissed)
 		--media.stopSound()
-		--media.playSound( "sounds/Music/wrong.mp3" )
-		--audio.play( wrongSound )
+		--media.pauseSound()
 		media.playEventSound( wrongSound )
 		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
 		performance["miss"].alpha = 1
@@ -387,9 +382,6 @@ function declare_sheep( event )
 	    count=2,
 	    time=300
 	}
-
-	wrongSound = media.newEventSound( "sounds/Music/wrong.mp3"  )
-	correctSound = media.newEventSound( "sounds/Music/correct.mp3"  )
 end
 
 function declare_lives( event )
