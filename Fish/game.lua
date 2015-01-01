@@ -24,6 +24,7 @@ local score, score_word, score_text
 local en = {}
 local ch = {}
 local timeLeft, time_word, time_text, timerid
+local theme
 
 local function timerDown()
    timeLeft = timeLeft-1
@@ -72,6 +73,7 @@ local function setQuestion()
 		local wrong_ans_index = getWrongAnswerIndex(index)
 		answerBtn1:setLabel(ch[wrong_ans_index])
 	end
+	audio.play(audio.loadSound( theme .. " sound/" .. question.text .. ".mp3"))
 end
 
 local function decreaseWaveHeight()
@@ -100,6 +102,7 @@ local function onAnswerBtn1Release()
 	else
 		decreaseWaveHeight()
 	end
+	audio.pause()
 	setQuestion()
 end
 
@@ -111,6 +114,7 @@ local function onAnswerBtn2Release()
 	else
 		decreaseWaveHeight()
 	end
+	audio.pause()
 	setQuestion()
 end
 
@@ -185,8 +189,8 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		print(event.params.word .. " words.csv")
-		local path = system.pathForFile( event.params.word .. " words.csv" )
+		theme = event.params.word
+		local path = system.pathForFile( theme .. " words.csv" )
 		local file = io.open( path, "r" )
 
 		for line in file:lines() do
@@ -269,6 +273,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		-- physics.stop()
 		timer.pause(timerid)
+		audio.pause()
 	elseif phase == "did" then
 		en = {}
 		ch = {}
