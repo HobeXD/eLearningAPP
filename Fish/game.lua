@@ -95,26 +95,30 @@ local function increaseWaveHeight()
 end
 
 local function onAnswerBtn1Release()
+	audio.pause()
 	if correct_ans == 1 then
 		increaseWaveHeight()
 		score = math.floor(score + (wave.height * 1.5  - 2.5 * fish.height - wave.y)/10)
 		score_text.text = score
+		audio.play(audio.loadSound( "correct.wav"))
 	else
 		decreaseWaveHeight()
+		audio.play(audio.loadSound( "wrong.wav"))
 	end
-	audio.pause()
 	setQuestion()
 end
 
 local function onAnswerBtn2Release()
+	audio.pause()
 	if correct_ans == 2 then
 		increaseWaveHeight()
 		score = math.floor(score + (wave.height * 1.5  - 2.5 * fish.height - wave.y)/10)
 		score_text.text = score
+		audio.play(audio.loadSound( "correct.wav"))
 	else
 		decreaseWaveHeight()
+		audio.play(audio.loadSound( "wrong.wav"))
 	end
-	audio.pause()
 	setQuestion()
 end
 
@@ -272,11 +276,11 @@ function scene:hide( event )
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		-- physics.stop()
-		timer.pause(timerid)
-		audio.pause()
 	elseif phase == "did" then
 		en = {}
 		ch = {}
+		timer.pause(timerid)
+		audio.pause()
 		-- Called when the scene is now off screen
 	end	
 	
