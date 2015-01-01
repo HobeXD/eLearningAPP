@@ -177,19 +177,6 @@ function scene:create( event )
 	sceneGroup:insert( answerBtn1 )
 	sceneGroup:insert( answerBtn2 )
 
-	local path = system.pathForFile( "place_location words.csv" )
-	local file = io.open( path, "r" )
-
-	for line in file:lines() do
-		-- if line == nil then break end
-	    local tmp = line:split(",")
-	    table.insert(en, tmp[1])
-	    table.insert(ch, tmp[2])
-	end
-
-	io.close( file )
-	file = nil
-
 end
 
 
@@ -198,6 +185,20 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		print(event.params.word .. " words.csv")
+		local path = system.pathForFile( event.params.word .. " words.csv" )
+		local file = io.open( path, "r" )
+
+		for line in file:lines() do
+			-- if line == nil then break end
+		    local tmp = line:split(",")
+		    table.insert(en, tmp[1])
+		    table.insert(ch, tmp[2])
+		end
+
+		io.close( file )
+		file = nil
+
 		-- Called when the scene is still off screen and is about to move on screen
 		wave.x, wave.y = display.contentWidth/2, display.contentHeight - wave.contentHeight/2
 		fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
@@ -269,6 +270,8 @@ function scene:hide( event )
 		-- physics.stop()
 		timer.pause(timerid)
 	elseif phase == "did" then
+		en = {}
+		ch = {}
 		-- Called when the scene is now off screen
 	end	
 	

@@ -12,14 +12,56 @@ local widget = require "widget"
 
 --------------------------------------------
 
--- forward declarations and other locals
-local playBtn
 
 -- 'onRelease' event listener for playBtn
-local function onPlayBtnRelease()
+local function onSchoolBtnRelease()
 	
 	-- go to level1.lua scene
-	composer.gotoScene( "level1", "fade", 500 )
+	local options = {
+	    effect = "fade",
+	    time = 500,
+	    params = {word = "school"}
+	}
+	composer.gotoScene( "game", options )
+	
+	return true	-- indicates successful touch
+end
+
+local function onPlaceLocationBtnRelease()
+	
+	-- go to level1.lua scene
+	local options = {
+	    effect = "fade",
+	    time = 500,
+	    params = {word = "place_location"}
+	}
+	composer.gotoScene( "game", options )
+	
+	return true	-- indicates successful touch
+end
+
+local function onTransportationBtnRelease()
+	
+	-- go to level1.lua scene
+	local options = {
+	    effect = "fade",
+	    time = 500,
+	    params = {word = "transportation"}
+	}
+	composer.gotoScene( "game", options )
+	
+	return true	-- indicates successful touch
+end
+
+local function onPersonalCharacteristicsBtnRelease()
+	
+	-- go to level1.lua scene
+	local options = {
+	    effect = "fade",
+	    time = 500,
+	    params = {word = "personal_characteristics"}
+	}
+	composer.gotoScene( "game", options )
 	
 	return true	-- indicates successful touch
 end
@@ -39,20 +81,56 @@ function scene:create( event )
 	background.x, background.y = 0, 0
 	
 	-- create a widget button (which will loads level1.lua on release)
-	level1Btn = widget.newButton{
-		label="Level 1",
+	schoolBtn = widget.newButton{
+		label="School",
 		labelColor = { default={255}, over={128} },
 		defaultFile="button.png",
 		overFile="button-over.png",
-		width=154, height=40,
-		onRelease = onPlayBtnRelease	-- event listener function
+		width=220, height=40,
+		onRelease = onSchoolBtnRelease	-- event listener function
 	}
-	level1Btn.x = display.contentWidth*0.5
-	level1Btn.y = display.contentHeight - 350
+	schoolBtn.x = display.contentWidth*0.5
+	schoolBtn.y = display.contentHeight - 400
+
+	place_locationBtn = widget.newButton{
+		label="Place & Location",
+		labelColor = { default={255}, over={128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=220, height=40,
+		onRelease = onPlaceLocationBtnRelease	-- event listener function
+	}
+	place_locationBtn.x = display.contentWidth*0.5
+	place_locationBtn.y = display.contentHeight - 320
+
+	transportationBtn = widget.newButton{
+		label="Transportation",
+		labelColor = { default={255}, over={128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=220, height=40,
+		onRelease = onTransportationBtnRelease	-- event listener function
+	}
+	transportationBtn.x = display.contentWidth*0.5
+	transportationBtn.y = display.contentHeight - 240
+
+	personal_characteristicsBtn = widget.newButton{
+		label="Personal & Characteristics",
+		labelColor = { default={255}, over={128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=220, height=40,
+		onRelease = onPersonalCharacteristicsBtnRelease	-- event listener function
+	}
+	personal_characteristicsBtn.x = display.contentWidth*0.5
+	personal_characteristicsBtn.y = display.contentHeight - 160
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
-	sceneGroup:insert( level1Btn )
+	sceneGroup:insert( schoolBtn )
+	sceneGroup:insert( place_locationBtn )
+	sceneGroup:insert( transportationBtn )
+	sceneGroup:insert( personal_characteristicsBtn )
 end
 
 function scene:show( event )
@@ -90,11 +168,7 @@ function scene:destroy( event )
 	-- 
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
-	
-	if playBtn then
-		playBtn:removeSelf()	-- widgets must be manually removed
-		playBtn = nil
-	end
+
 end
 
 ---------------------------------------------------------------------------------
