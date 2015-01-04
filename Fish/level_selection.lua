@@ -66,6 +66,19 @@ local function onPersonalCharacteristicsBtnRelease()
 	return true	-- indicates successful touch
 end
 
+local function onTimeBtnRelease()
+	
+	-- go to level1.lua scene
+	local options = {
+	    effect = "fade",
+	    time = 500,
+	    params = {word = "time"}
+	}
+	composer.gotoScene( "game", options )
+	
+	return true	-- indicates successful touch
+end
+
 function scene:create( event )
 	local sceneGroup = self.view
 
@@ -124,6 +137,17 @@ function scene:create( event )
 	}
 	personal_characteristicsBtn.x = display.contentWidth*0.5
 	personal_characteristicsBtn.y = display.contentHeight - 160
+
+	timeBtn = widget.newButton{
+		label="Time",
+		labelColor = { default={255}, over={128} },
+		defaultFile="button.png",
+		overFile="button-over.png",
+		width=220, height=40,
+		onRelease = onTimeBtnRelease	-- event listener function
+	}
+	timeBtn.x = display.contentWidth*0.5
+	timeBtn.y = display.contentHeight - 80
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
@@ -131,6 +155,7 @@ function scene:create( event )
 	sceneGroup:insert( place_locationBtn )
 	sceneGroup:insert( transportationBtn )
 	sceneGroup:insert( personal_characteristicsBtn )
+	sceneGroup:insert( timeBtn )
 end
 
 function scene:show( event )
