@@ -1,6 +1,13 @@
 ----------------------------------
 -- functions deal with questions
 
+--血量，橫向，box with words, 選擇箭頭指向(抓夾)，
+-- qwertyuiop 10 width / 10 間隔相同
+-- asdfghjkl 9 width / 10
+-- zxcvbnm 7 width / 10
+-- finish: 歸零，加分]
+-- 答對：osu! like
+
 --need more visual design
 	--inner alert, pause event, button size interval
 	--complete effect 
