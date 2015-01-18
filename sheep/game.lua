@@ -39,7 +39,12 @@ local backgroundMusicChannel, stopSound, playSound, textBox, quit
 local function nextQuestion( event )
 	local tmp = math.random(0, 2)
 	questionNum = math.random(0, vocNum - 1)
-	chinese.text = question[class][questionNum]
+	if TEXT then
+		chinese.text = question[class][questionNum]
+	else
+		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
+	end
+
 	tags[tmp]:setLabel(answer[class][questionNum])
 	tags[(tmp + 1) % 3]:setLabel(answer[class][(questionNum + math.random(vocNum / 2)) % vocNum])
 	tags[(tmp + 2) % 3]:setLabel(answer[class][(questionNum + vocNum / 2 + math.random(vocNum / 2 - 1)) % vocNum])
@@ -98,10 +103,10 @@ local function game_over( event )
 	rankBtn:setEnabled(true)
 
 	showScore:setFillColor( 1, 0, 0 )
-	transition.to(initGroup, {time = 1500, alpha = 0})
-	transition.to(retry, {time = 3000, alpha = 1})
-	transition.to(textBox, {time = 3000, alpha = 1})
-	transition.to(rankBtn, {time = 1500, alpha = 1})
+	transition.to(initGroup, {delay = 1000, time = 500, alpha = 0})
+	transition.to(retry, {delay = 1000,time = 500, alpha = 1})
+	transition.to(textBox, {delay = 1000,time = 500, alpha = 1})
+	transition.to(rankBtn, {delay = 1000,time = 500, alpha = 1})
 end
 
 local function onTagsRelease( event )
@@ -116,7 +121,10 @@ local function onTagsRelease( event )
 	local tmp
 	if( event.target:getLabel() == answer[class][questionNum] )then
 		media.playEventSound( correctSound )
-		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
+		if TEXT then
+			media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
+		end
+
 		if (questionSheep.x < screenW * 0.5) then
 			tmp = "miss"
 		elseif (questionSheep.x < screenW * 0.55) or (questionSheep.x > screenW * 0.69) then
@@ -144,7 +152,7 @@ local function onTagsRelease( event )
 	else
 		--wrong
 		media.playEventSound( wrongSound )
-		media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
+		--media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
 		tmp = "wrong"
 
 		loss_life.x = 0.05 * livesNum * screenW + 15
@@ -196,7 +204,7 @@ function sheepMissed( event )
 		--media.stopSound()
 		--media.pauseSound()
 		media.playEventSound( wrongSound )
-		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
+		--media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
 		performance["miss"].alpha = 1
 		transition.to(performance["miss"], {time = 300, delay = 700, alpha = 0})
 
@@ -492,8 +500,8 @@ function declare_gameover( event )
 	textBox:addEventListener( "userInput", typing )
 
 	rankBtn = widget.newButton{
-		defaultFile = "game/rank.png",
-		width = 40, height = 40,
+		defaultFile = "select/rank.png",
+		width = 50, height = 30,
 		onRelease = onRankRelease	-- event listener function
 	}
 	rankBtn.x = display.contentWidth*0.9 - 40
@@ -505,7 +513,6 @@ function typing( event )
 	if ( event.phase == "submitted" ) then
        	username = event.target.text
 		userscore = score
-		--textBox.text = ""
     	physics.stop()	
 		audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
 		media.stopSound()

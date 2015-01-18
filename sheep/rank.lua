@@ -79,9 +79,6 @@ function scene:create( event )
 
 	local title = display.newText({text = class, x = halfW, y = 20, font = "Herculanum", fontSize = 40})
 	title:setTextColor( 108/255, 51/255, 101/255 )
-	--local title = display.newImage("rank/" .. class .. ".png")
-	--title.xScale, title.yScale = 0.5, 0.5
-	--title.x, title.y = halfW, 20
 
 	reset = widget.newButton{
 		defaultFile="rank/reset.png",
@@ -127,20 +124,6 @@ function scene:create( event )
 		end
 	end
 	file:flush()
-	--io.close(file)
-	--file:close()
-	--[[for i = 1, 10 do
-		tmp[i] = display.newText({text = i , x = screenW * 0.2, y = screenH * 0.11 + i * 25, font = native.systemFont, fontSize = 18})
-		tmp2[i] = display.newText({text = rankName[i], x = screenW * 0.3, y = screenH * 0.11 + i * 25, font = native.systemFont, fontSize = 18})
-		tmp3[i] = display.newText({text = rankScore[i], x = screenW * 0.3 + 100, y = screenH * 0.11 + i * 25, font = native.systemFont, fontSize = 18})
-		tmp[i]:setFillColor( 162/255, 52/255, 0 )
-		tmp2[i]:setFillColor( 108/255, 108/255, 108/255 )
-		tmp3[i]:setFillColor( 1, 230/255, 111/255 )
-		tmp[i].alpha, tmp2[i].alpha, tmp3[i].alpha = 0, 0, 0
-		transition.to(tmp[i], {time = 500, delay = 500, alpha = 1})
-		transition.to(tmp2[i], {time = 500, delay = 500, alpha = 1})
-		transition.to(tmp3[i], {time = 500, delay = 500, alpha = 1})
-	end]]
 
 	for i = 1, 5 do
 		tmp[i] = display.newText({text = i , x = screenW * 0.2, y = screenH * 0.11 + i * 25, font = native.systemFont, fontSize = 18})
