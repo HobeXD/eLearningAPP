@@ -380,15 +380,15 @@ end
 function declare_sheep( event )
 	options = {
 	    width = 250, 
-	    height = 160, 
-	    numFrames = 2
+	    height = 165, 
+	    numFrames = 6
 	}
  	sheepSheet = graphics.newImageSheet( "game/running_sheep.png", options )
  	sheepTaggedSheet = graphics.newImageSheet( "game/running_sheep_tagged.png", options )
  	sequenceData = {
 	    start=1,
-	    count=2,
-	    time=300
+	    count=6,
+	    time=700
 	}
 end
 
