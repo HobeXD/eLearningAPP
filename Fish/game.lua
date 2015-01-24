@@ -26,6 +26,8 @@ local ch = {}
 local timeLeft, time_word, time_text, timerid
 local theme
 
+
+
 local function timerDown()
    timeLeft = timeLeft-1
    time_text.text = timeLeft
@@ -133,17 +135,31 @@ function scene:create( event )
 
 
 	wave = display.newImageRect( sceneGroup, "wave.png", display.contentWidth, display.contentHeight)
-    wave.x, wave.y = display.contentWidth/2, display.contentHeight - wave.contentHeight/2
-    wave.ydir = 1
+	wave.x, wave.y = display.contentWidth/2, display.contentHeight - wave.contentHeight/2
+	wave.ydir = 1
 	wave.yspeed = 1
 
-	fish_left_img = { type="image", filename="fish_left.png" }
-	fish_right_img = { type="image", filename="fish_right.png" }
+	local options = {
+	   width = 257,
+	   height = 125,
+	   numFrames = 2
+	}
+	local fishSheet = graphics.newImageSheet( "fish.png", options )
 
-	-- local fish = display.newImageRect( sceneGroup, "fish_left.png", 90, 45)
-	fish = display.newRect( sceneGroup, display.contentWidth/2, display.contentHeight/2, 90, 45)
-	fish.fill = fish_right_img
-    -- fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
+	local sequenceData = {
+	   name = "fish",
+	   start = 1,
+	   count = 2,
+	}
+
+	fish = display.newSprite( fishSheet, sequenceData )
+	fish:setSequence( "fish" )
+	fish:setFrame( 2 )
+
+
+	-- fish = display.newRect( sceneGroup, display.contentWidth/2, display.contentHeight/2, 90, 45)
+    fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
+    fish.width, fish.height = 90, 45
     fish.xdir = 1
 	fish.xspeed = 1.5
     fish.ydir = 1
@@ -242,9 +258,11 @@ function scene:show( event )
 			if ( xNew > screenRight - fish.contentWidth/2 or xNew < screenLeft + fish.contentWidth/2 ) then
 				fish.xdir = -fish.xdir
 				if (fish.xdir < 0) then
-					fish.fill = fish_left_img
+					fish:setFrame( 1 )
+					fish.width, fish.height = 90, 45
 				else
-					fish.fill = fish_right_img
+					fish:setFrame( 2 )
+					fish.width, fish.height = 90, 45
 				end
 			end		
 			if ( fish.ydir >= 0 and yNew > screenBottom - fish.contentHeight/2 or fish.ydir < 0 and yNew < wave.y - wave.contentHeight / 2 + 2 * fish.contentHeight ) then
@@ -254,9 +272,28 @@ function scene:show( event )
 			fish:translate( dx, dy )
 		end
 
+		local function onKeyEvent( event )
+		    -- Print which key was pressed down/up
+		    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+		    print( message )
+
+		    -- If the "back" key was pressed on Android or Windows Phone, prevent it from backing out of the app
+		    if ( event.keyName == "back" ) then
+	            composer.gotoScene( "level_selection", "fade", 500 )
+	            return true
+		    end
+
+		    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+		    -- This lets the operating system execute its default handling of the key
+		    return false
+		end
+
+		-- Add the key event listener
+		Runtime:addEventListener( "key", onKeyEvent )
 		Runtime:addEventListener( "enterFrame", wave )
 		Runtime:addEventListener( "enterFrame", fish )
 
+		fish.isVisible = true
 		score = 0
 		score_text.text = score
 		timeLeft = 10
@@ -276,6 +313,7 @@ function scene:hide( event )
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		-- physics.stop()
+		fish.isVisible = false
 	elseif phase == "did" then
 		en = {}
 		ch = {}
