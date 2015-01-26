@@ -1,21 +1,7 @@
------------------------------------------------------------------------------------------
---
--- game.lua
---
------------------------------------------------------------------------------------------
-
 local composer = require( "composer" )
 local scene = composer.newScene()
-
--- include Corona's "physics" library
-local physics = require "physics"
-physics.start(); physics.pause()
-
 local widget = require "widget"
 
---------------------------------------------
-
--- forward declarations and other locals
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local wave, fish
 local fish_left_img, fish_right_img
@@ -280,6 +266,7 @@ function scene:show( event )
 		    -- If the "back" key was pressed on Android or Windows Phone, prevent it from backing out of the app
 		    if ( event.keyName == "back" ) then
 	            composer.gotoScene( "level_selection", "fade", 500 )
+				Runtime:removeEventListener( "key", onKeyEvent )
 	            return true
 		    end
 
@@ -304,15 +291,9 @@ end
 
 function scene:hide( event )
 	local sceneGroup = self.view
-	
 	local phase = event.phase
 	
 	if event.phase == "will" then
-		-- Called when the scene is on screen and is about to move off screen
-		--
-		-- INSERT code here to pause the scene
-		-- e.g. stop timers, stop animation, unload sounds, etc.)
-		-- physics.stop()
 		fish.isVisible = false
 	elseif phase == "did" then
 		en = {}
@@ -325,25 +306,14 @@ function scene:hide( event )
 end
 
 function scene:destroy( event )
-
-	-- Called prior to the removal of scene's "view" (sceneGroup)
-	-- 
-	-- INSERT code here to cleanup the scene
-	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
-	
-	-- package.loaded[physics] = nil
-	-- physics = nil
+	for i=1, #sceneGroup do 
+		sceneGroup[i]:removeSelf()
+	end
 end
 
----------------------------------------------------------------------------------
-
--- Listener setup
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
-
------------------------------------------------------------------------------------------
-
 return scene

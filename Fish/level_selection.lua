@@ -34,6 +34,21 @@ function scene:create( event )
 	end
 end
 
+function scene:show( event )
+	local phase = event.phase
+	if phase == "will" then
+		local function onKeyEvent( event )
+		    if ( event.keyName == "back" ) then
+	            composer.gotoScene( "menu", "fade", 500 )
+				Runtime:removeEventListener( "key", onKeyEvent )
+	            return true
+		    end
+		    return false
+		end
+		Runtime:addEventListener( "key", onKeyEvent )
+	end
+end
+
 function scene:destroy( event )
 	local sceneGroup = self.view
 	for i=1, #sceneGroup do 
@@ -42,5 +57,6 @@ function scene:destroy( event )
 end
 
 scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
 scene:addEventListener( "destroy", scene )
 return scene
