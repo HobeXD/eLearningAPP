@@ -4,11 +4,10 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "pic/level_select.png", display.contentWidth, display.contentHeight )
 	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
 	sceneGroup:insert( background )
 
-	theme = {"School", "Place & Location", "Transportation", "Personal & Characteristics", "Time"}
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
 
 	local function onBtnRelease(level)
@@ -21,17 +20,16 @@ function scene:create( event )
 		return true	-- indicates successful touch
 	end
 
-	for i=1, #theme do 
+	for i=1, #level_name do 
 		local btn = widget.newButton{
-			label = theme[i],
-			labelColor = { default={255}, over={128} },
-			defaultFile = "button.png",
-			overFile = "button-over.png",
-			width = 220, height = 40,
+			-- basedir = "pic",
+			defaultFile = "pic/level_" .. level_name[i] .. ".png",
+			-- overFile = "button-over.png",
 			x = display.contentWidth/2,
 			y = display.contentHeight - 480 + 80*i,
 			onRelease = function() return onBtnRelease(level_name[i]) end
 		}
+		btn.width, btn.height = 220, 40
 		sceneGroup:insert( btn )
 	end
 end

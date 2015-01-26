@@ -75,7 +75,7 @@ local function setQuestion()
 		local wrong_ans_index = getWrongAnswerIndex(index)
 		answerBtn1:setLabel(ch[wrong_ans_index])
 	end
-	audio.play(audio.loadSound( theme .. " sound/" .. question.text .. ".mp3"))
+	audio.play(audio.loadSound( "pronounciation/" .. theme .. " sound/" .. question.text .. ".mp3"))
 end
 
 local function decreaseWaveHeight()
@@ -102,10 +102,10 @@ local function onAnswerBtn1Release()
 		increaseWaveHeight()
 		score = math.floor(score + (wave.height * 1.5  - 2.5 * fish.height - wave.y)/10)
 		score_text.text = score
-		audio.play(audio.loadSound( "correct.wav"))
+		audio.play(audio.loadSound( "sound/correct.wav"))
 	else
 		decreaseWaveHeight()
-		audio.play(audio.loadSound( "wrong.wav"))
+		audio.play(audio.loadSound( "sound/wrong.wav"))
 	end
 	setQuestion()
 end
@@ -116,10 +116,10 @@ local function onAnswerBtn2Release()
 		increaseWaveHeight()
 		score = math.floor(score + (wave.height * 1.5  - 2.5 * fish.height - wave.y)/10)
 		score_text.text = score
-		audio.play(audio.loadSound( "correct.wav"))
+		audio.play(audio.loadSound( "sound/correct.wav"))
 	else
 		decreaseWaveHeight()
-		audio.play(audio.loadSound( "wrong.wav"))
+		audio.play(audio.loadSound( "sound/wrong.wav"))
 	end
 	setQuestion()
 end
@@ -134,7 +134,7 @@ function scene:create( event )
 	local sceneGroup = self.view
 
 
-	wave = display.newImageRect( sceneGroup, "wave.png", display.contentWidth, display.contentHeight)
+	wave = display.newImageRect( sceneGroup, "pic/wave.png", display.contentWidth, display.contentHeight)
 	wave.x, wave.y = display.contentWidth/2, display.contentHeight - wave.contentHeight/2
 	wave.ydir = 1
 	wave.yspeed = 1
@@ -144,7 +144,7 @@ function scene:create( event )
 	   height = 125,
 	   numFrames = 2
 	}
-	local fishSheet = graphics.newImageSheet( "fish.png", options )
+	local fishSheet = graphics.newImageSheet( "pic/fish.png", options )
 
 	local sequenceData = {
 	   name = "fish",
@@ -179,8 +179,8 @@ function scene:create( event )
 
 	answerBtn1 = widget.newButton{
 		labelColor = { default={255}, over={128} },
-		default="button.png",
-		over="button-over.png",
+		default="pic/button.png",
+		over="pic/button-over.png",
 		width=154, height=40,
 		onRelease = onAnswerBtn1Release	-- event listener function
 	}
@@ -189,8 +189,8 @@ function scene:create( event )
 
 	answerBtn2 = widget.newButton{
 		labelColor = { default={255}, over={128} },
-		default="button.png",
-		over="button-over.png",
+		default="pic/button.png",
+		over="pic/button-over.png",
 		width=154, height=40,
 		onRelease = onAnswerBtn2Release	-- event listener function
 	}
@@ -210,7 +210,7 @@ function scene:show( event )
 	
 	if phase == "will" then
 		theme = event.params.word
-		local path = system.pathForFile( theme .. " words.csv" )
+		local path = system.pathForFile( "word/" .. theme .. " words.csv" )
 		local file = io.open( path, "r" )
 
 		for line in file:lines() do
