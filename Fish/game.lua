@@ -123,7 +123,6 @@ function scene:create( event )
 		numFrames = 2
 	}
 	local fishSheet = graphics.newImageSheet( "pic/fish.png", options )
-
 	local sequenceData = {
 		name = "fish",
 		start = 1,
@@ -135,11 +134,8 @@ function scene:create( event )
 	fish:setFrame( 2 )
 	fish.width, fish.height = 90, 45
 
-	question = display.newText( {parent=sceneGroup, text="Color", x=display.contentWidth/2, y=70, font=native.systemFont, fontSize=30} )
-	score_word = display.newText( {parent=sceneGroup, text="Score: ", font=native.systemFont, fontSize=20} )
-	score_word.x, score_word.y = score_word.width/2 + 10, score_word.height/2 + 10
-	score_text = display.newText( {parent=sceneGroup, text="0", font=native.systemFont, fontSize=20} )
-	score_text.x, score_text.y = score_word.x + score_word.width/2 + score_text.width/2 + 10, score_word.y
+	question = display.newText( sceneGroup, "Color", centerX, 130, native.systemFont, 80 )
+	score_label = display.newText( sceneGroup, "Score: ", 120, 50, native.systemFont, 60 )
 
 
 	time_word = display.newText( {parent=sceneGroup, text="Timeleft: ", font=native.systemFont, fontSize=20} )
@@ -248,7 +244,7 @@ function scene:show( event )
 
 		fish.isVisible = true
 		score = 0
-		score_text.text = score
+		score_label.text = "Score: " .. score
 		timeLeft = 10
 		time_text.text = timeLeft
 		timerid = timer.performWithDelay(1000, timerDown, timeLeft)

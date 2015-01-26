@@ -5,7 +5,7 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 	local background = display.newImageRect(sceneGroup, "pic/level_complete.png", display.contentWidth, display.contentHeight )
-	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
+	background.x, background.y = display.contentWidth/2, display.contentHeight/2
 
 	local function onReturnBtnRelease()		
 		composer.gotoScene( "level_selection", "fade", 500 )		
@@ -16,7 +16,7 @@ function scene:create( event )
 		defaultFile = "pic/return_to_menu.png",
 		-- overFile = "pic/button-over.png",
 		x = display.contentWidth/2,
-		y = display.contentHeight - 180,
+		y = display.contentHeight-180,
 		onRelease = onReturnBtnRelease
 	}
 	returnBtn.width, returnBtn.height = 450, 120

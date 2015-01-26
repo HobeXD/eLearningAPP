@@ -5,7 +5,7 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 	local background = display.newImageRect( sceneGroup, "pic/level_select.png", display.contentWidth, display.contentHeight )
-	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
+	background.x, background.y = display.contentWidth/2, display.contentHeight/2
 
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
 
