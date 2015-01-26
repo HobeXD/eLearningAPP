@@ -16,10 +16,10 @@ function scene:create( event )
 		defaultFile = "pic/return_to_menu.png",
 		-- overFile = "pic/button-over.png",
 		x = display.contentWidth/2,
-		y = display.contentHeight - 80,
+		y = display.contentHeight - 180,
 		onRelease = onReturnBtnRelease
 	}
-	returnBtn.width, returnBtn.height = 150, 40
+	returnBtn.width, returnBtn.height = 450, 120
 
 	sceneGroup:insert( background )
 	sceneGroup:insert( returnBtn )

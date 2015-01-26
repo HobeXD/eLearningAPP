@@ -12,32 +12,30 @@ local ch = {}
 local timeLeft, time_word, time_text, timerid
 local theme
 
-
-
 local function timerDown()
-   timeLeft = timeLeft-1
-   time_text.text = timeLeft
-     if(timeLeft == 0)then
-        composer.gotoScene( "level_complete", "fade", 500 )
-     end
-  end
+	timeLeft = timeLeft-1
+	time_text.text = timeLeft
+	if(timeLeft == 0) then
+		composer.gotoScene( "level_complete", "fade", 500 )
+	end
+end
 
 math.randomseed(os.time())
 
 function string:split( inSplitPattern, outResults )
 
-   if not outResults then
-      outResults = { }
-   end
-   local theStart = 1
-   local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
-   while theSplitStart do
-      table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
-      theStart = theSplitEnd + 1
-      theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
-   end
-   table.insert( outResults, string.sub( self, theStart ) )
-   return outResults
+	if not outResults then
+	  outResults = { }
+	end
+	local theStart = 1
+	local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+	while theSplitStart do
+		table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
+		theStart = theSplitEnd + 1
+		theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+	end
+	table.insert( outResults, string.sub( self, theStart ) )
+	return outResults
 end
 
 local function getWrongAnswerIndex( index)
@@ -112,11 +110,6 @@ end
 
 function scene:create( event )
 
-	-- Called when the scene's view does not exist.
-	-- 
-	-- INSERT code here to initialize the scene
-	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
-
 	local sceneGroup = self.view
 
 
@@ -126,16 +119,16 @@ function scene:create( event )
 	wave.yspeed = 1
 
 	local options = {
-	   width = 257,
-	   height = 125,
-	   numFrames = 2
+		width = 257,
+		height = 125,
+		numFrames = 2
 	}
 	local fishSheet = graphics.newImageSheet( "pic/fish.png", options )
 
 	local sequenceData = {
-	   name = "fish",
-	   start = 1,
-	   count = 2,
+		name = "fish",
+		start = 1,
+		count = 2,
 	}
 
 	fish = display.newSprite( fishSheet, sequenceData )
@@ -144,13 +137,13 @@ function scene:create( event )
 
 
 	-- fish = display.newRect( sceneGroup, display.contentWidth/2, display.contentHeight/2, 90, 45)
-    fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
-    fish.width, fish.height = 90, 45
-    fish.xdir = 1
+	fish.x, fish.y = display.contentWidth/2, display.contentHeight/2
+	fish.width, fish.height = 90, 45
+	fish.xdir = 1
 	fish.xspeed = 1.5
-    fish.ydir = 1
+	fish.ydir = 1
 	fish.yspeed = 2
- 
+
 	question = display.newText( {parent=sceneGroup, text="Color", x=display.contentWidth/2, y=70, font=native.systemFont, fontSize=30} )
 	score_word = display.newText( {parent=sceneGroup, text="Score: ", font=native.systemFont, fontSize=20} )
 	score_word.x, score_word.y = score_word.width/2 + 10, score_word.height/2 + 10
@@ -201,9 +194,9 @@ function scene:show( event )
 
 		for line in file:lines() do
 			-- if line == nil then break end
-		    local tmp = line:split(",")
-		    table.insert(en, tmp[1])
-		    table.insert(ch, tmp[2])
+			local tmp = line:split(",")
+			table.insert(en, tmp[1])
+			table.insert(ch, tmp[2])
 		end
 
 		io.close( file )
@@ -259,20 +252,20 @@ function scene:show( event )
 		end
 
 		local function onKeyEvent( event )
-		    -- Print which key was pressed down/up
-		    local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
-		    print( message )
+			-- Print which key was pressed down/up
+			local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
+			print( message )
 
-		    -- If the "back" key was pressed on Android or Windows Phone, prevent it from backing out of the app
-		    if ( event.keyName == "back" ) then
-	            composer.gotoScene( "level_selection", "fade", 500 )
+			-- If the "back" key was pressed on Android or Windows Phone, prevent it from backing out of the app
+			if ( event.keyName == "back" ) then
+				composer.gotoScene( "level_selection", "fade", 500 )
 				Runtime:removeEventListener( "key", onKeyEvent )
-	            return true
-		    end
+				return true
+			end
 
-		    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
-		    -- This lets the operating system execute its default handling of the key
-		    return false
+			-- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+			-- This lets the operating system execute its default handling of the key
+			return false
 		end
 
 		-- Add the key event listener

@@ -7,7 +7,7 @@ function scene:create( event )
 	local background = display.newImageRect(sceneGroup, "pic/cover.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
 
-	local title = display.newText(sceneGroup, "Spelling Fish", display.contentWidth / 2, display.contentHeight / 4, native.systemFontBold, 40)
+	local title = display.newText(sceneGroup, "Spelling Fish", display.contentWidth / 2, display.contentHeight / 4, native.systemFontBold, 90)
 	title:setFillColor( 0.2, 0.2, 0.5 )
 
 	local function onStartBtnRelease()		
@@ -19,10 +19,10 @@ function scene:create( event )
 		defaultFile = "pic/start.png",
 		-- overFile = "pic/button-over.png",
 		x = display.contentWidth/2,
-		y = display.contentHeight - 125,
+		y = display.contentHeight - 300,
 		onRelease = onStartBtnRelease
 	}
-	startBtn.width, startBtn.height = 150, 40
+	startBtn.width, startBtn.height = 450, 120
 
 	sceneGroup:insert( background )
 	sceneGroup:insert( title )

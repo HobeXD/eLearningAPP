@@ -12,9 +12,9 @@ function scene:create( event )
 
 	local function onBtnRelease(level)
 		local options = {
-		    effect = "fade",
-		    time = 500,
-		    params = {word = level}
+			effect = "fade",
+			time = 500,
+			params = {word = level}
 		}
 		composer.gotoScene( "game", options )
 		return true	-- indicates successful touch
@@ -22,14 +22,13 @@ function scene:create( event )
 
 	for i=1, #level_name do 
 		local btn = widget.newButton{
-			-- basedir = "pic",
 			defaultFile = "pic/level_" .. level_name[i] .. ".png",
 			-- overFile = "button-over.png",
 			x = display.contentWidth/2,
-			y = display.contentHeight - 480 + 80*i,
+			y = display.contentHeight*i/6,
 			onRelease = function() return onBtnRelease(level_name[i]) end
 		}
-		btn.width, btn.height = 220, 40
+		btn.width, btn.height = 500, 130
 		sceneGroup:insert( btn )
 	end
 end
@@ -38,12 +37,12 @@ function scene:show( event )
 	local phase = event.phase
 	if phase == "will" then
 		local function onKeyEvent( event )
-		    if ( event.keyName == "back" ) then
-	            composer.gotoScene( "menu", "fade", 500 )
+			if ( event.keyName == "back" ) then
+				composer.gotoScene( "menu", "fade", 500 )
 				Runtime:removeEventListener( "key", onKeyEvent )
-	            return true
-		    end
-		    return false
+				return true
+			end
+			return false
 		end
 		Runtime:addEventListener( "key", onKeyEvent )
 	end
