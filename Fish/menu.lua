@@ -23,9 +23,6 @@ function scene:create( event )
 		onRelease = onStartBtnRelease
 	}
 	startBtn.width, startBtn.height = 450, 120
-
-	sceneGroup:insert( background )
-	sceneGroup:insert( title )
 	sceneGroup:insert( startBtn )
 end
 

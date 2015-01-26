@@ -4,9 +4,8 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-	local background = display.newImageRect( "pic/level_select.png", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( sceneGroup, "pic/level_select.png", display.contentWidth, display.contentHeight )
 	background.x, background.y = display.contentWidth / 2, display.contentHeight / 2
-	sceneGroup:insert( background )
 
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
 
@@ -38,8 +37,8 @@ function scene:show( event )
 	if phase == "will" then
 		local function onKeyEvent( event )
 			if ( event.keyName == "back" ) then
-				composer.gotoScene( "menu", "fade", 500 )
 				Runtime:removeEventListener( "key", onKeyEvent )
+				composer.gotoScene( "menu", "fade", 500 )
 				return true
 			end
 			return false

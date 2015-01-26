@@ -20,9 +20,22 @@ function scene:create( event )
 		onRelease = onReturnBtnRelease
 	}
 	returnBtn.width, returnBtn.height = 450, 120
-
-	sceneGroup:insert( background )
 	sceneGroup:insert( returnBtn )
+end
+
+function scene:show( event )
+	local phase = event.phase
+	if phase == "will" then
+		local function onKeyEvent( event )
+			if ( event.keyName == "back" ) then
+				Runtime:removeEventListener( "key", onKeyEvent )
+				composer.gotoScene( "level_selection", "fade", 500 )
+				return true
+			end
+			return false
+		end
+		Runtime:addEventListener( "key", onKeyEvent )
+	end
 end
 
 function scene:destroy( event )
@@ -33,5 +46,6 @@ function scene:destroy( event )
 end
 
 scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
 scene:addEventListener( "destroy", scene )
 return scene
