@@ -27,7 +27,6 @@ function scene:show( event )
 	if event.phase == "will" then
 		local function onKeyEvent( event )
 			if ( event.keyName == "back" ) then
-				Runtime:removeEventListener( "key", onKeyEvent )
 				composer.gotoScene( "level_selection", "fade", 500 )
 				return true
 			end
@@ -35,6 +34,12 @@ function scene:show( event )
 		end
 		Runtime:addEventListener( "key", onKeyEvent )
 	end
+end
+
+function scene:hide( event )
+	if  event.phase == "will" then
+		Runtime:removeEventListener( "key", onKeyEvent )
+	end	
 end
 
 function scene:destroy( event )
@@ -46,5 +51,6 @@ end
 
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 return scene
