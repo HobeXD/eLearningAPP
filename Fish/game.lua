@@ -5,11 +5,11 @@ local widget = require "widget"
 local centerX, centerY = display.contentWidth/2, display.contentHeight/2
 local sea, fish
 local question, correct_ans
-local score, score_word, score_text
+local score, score_text
 local answerBtn = {}
 local en = {}
 local ch = {}
-local timeLeft, time_word, time_text, timerid
+local timeLeft, time_text, timerid
 local theme
 
 math.randomseed(os.time())
@@ -65,14 +65,14 @@ function scene:create( event )
 	time_text = display.newText( {parent=sceneGroup, text="", x=660, y=50, width=100, font=native.systemFont, fontSize=55, align="left"} )
 	
 	function onAnswerBtnRelease(index)
-		audio.pause()
+		audio.stop()
 		if correct_ans == index then
 			audio.play(audio.loadSound( "sound/correct.wav"))
 			sea.y = sea.y-100
 			if ( sea.y < centerY ) then
 				sea.y = centerY
 			end
-			score = math.floor(score+1)
+			score = math.floor(score+(150+display.contentHeight-sea.y)/10)
 			score_text.text = score
 		else
 			audio.play(audio.loadSound( "sound/wrong.wav"))
@@ -122,7 +122,7 @@ function scene:show( event )
 			fish = nil
 		end 
 
-		local fishSheet = graphics.newImageSheet( "pic/fish1.png", {width=407, height=181, numFrames=2} )
+		local fishSheet = graphics.newImageSheet( "pic/fish" .. math.random(4) .. ".png", {width=407, height=181, numFrames=2} )
 		fish = display.newSprite( sceneGroup, fishSheet, {name="fish", start=1, count=2} )
 		fish:setSequence( "fish" )
 		fish:setFrame( 2 )
@@ -151,11 +151,6 @@ function scene:show( event )
 				composer.gotoScene( "level_complete", "fade", 500 )
 			end
 		end
-
-		local screenTop = display.screenOriginY
-		local screenBottom = display.viewableContentHeight + display.screenOriginY
-		local screenLeft = display.screenOriginX
-		local screenRight = display.viewableContentWidth + display.screenOriginX
 
 		function sea:enterFrame( event )
 			local yNew = sea.y+sea.yspeed 
@@ -198,20 +193,14 @@ function scene:show( event )
 end
 
 function scene:hide( event )
-	local sceneGroup = self.view
-	local phase = event.phase
-
-	if phase == "will" then
-		timer.pause(timerid)
-		audio.pause()
-	elseif  phase == "did" then
+	if  event.phase == "did" then
 		en = {}
 		ch = {}
+		timer.pause(timerid)
+		audio.stop()
 		Runtime:removeEventListener( "enterFrame", sea )
 		Runtime:removeEventListener( "enterFrame", fish )
 	end	
-
-	
 end
 
 function scene:destroy( event )
