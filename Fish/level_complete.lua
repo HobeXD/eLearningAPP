@@ -2,6 +2,14 @@ local composer = require( "composer" )
 local widget = require "widget"
 local scene = composer.newScene()
 
+function onKeyEvent( event )
+	if ( event.keyName == "back" ) then
+		composer.gotoScene( "level_selection", "fade", 500 )
+		return true
+	end
+	return false
+end
+
 function scene:create( event )
 	local sceneGroup = self.view
 	local background = display.newImageRect(sceneGroup, "pic/level_complete.png", display.contentWidth, display.contentHeight )
@@ -25,13 +33,6 @@ end
 
 function scene:show( event )
 	if event.phase == "will" then
-		local function onKeyEvent( event )
-			if ( event.keyName == "back" ) then
-				composer.gotoScene( "level_selection", "fade", 500 )
-				return true
-			end
-			return false
-		end
 		Runtime:addEventListener( "key", onKeyEvent )
 	end
 end

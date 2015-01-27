@@ -14,6 +14,14 @@ local theme
 
 math.randomseed(os.time())
 
+function onKeyEvent( event )
+	if ( event.keyName == "back" ) then
+		composer.gotoScene( "level_selection", "fade", 500 )
+		return true
+	end
+	return false
+end
+
 function string:split( inSplitPattern, outResults )
 	if not outResults then
 	  outResults = { }
@@ -29,7 +37,7 @@ function string:split( inSplitPattern, outResults )
 	return outResults
 end
 
-local function setQuestion()
+function setQuestion()
 	-- print (table.getn(en))
 	local index = math.random(table.getn(en))
 	while question.text == en[index] do
@@ -131,20 +139,10 @@ function scene:show( event )
 		sea.y = centerY
 		fish.x, fish.y, fish.xdir, fish.xspeed, fish.ydir, fish.yspeed = centerX, centerY, 1, 6, 1, 4
 		setQuestion()
-
-		local function onKeyEvent( event )
-			if ( event.keyName == "back" ) then
-				Runtime:removeEventListener( "key", onKeyEvent )
-				composer.gotoScene( "level_selection", "fade", 500 )
-				return true
-			end
-			return false
-		end
-
 		Runtime:addEventListener( "key", onKeyEvent )
 
 	elseif phase == "did" then
-		local function timerDown()
+		function timerDown()
 			timeLeft = timeLeft-1
 			time_text.text = timeLeft
 			if(timeLeft == 0) then
@@ -186,7 +184,7 @@ function scene:show( event )
 
 		score = 0
 		score_text.text = score
-		timeLeft = 10
+		timeLeft = 60
 		time_text.text = timeLeft
 		timerid = timer.performWithDelay(1000, timerDown, timeLeft)
 	end
@@ -200,6 +198,8 @@ function scene:hide( event )
 		audio.stop()
 		Runtime:removeEventListener( "enterFrame", sea )
 		Runtime:removeEventListener( "enterFrame", fish )
+		Runtime:removeEventListener( "key", onKeyEvent )
+		composer.removeScene( "game" )
 	end	
 end
 
