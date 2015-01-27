@@ -4,15 +4,13 @@ local widget = require "widget"
 
 local centerX, centerY = display.contentWidth/2, display.contentHeight/2
 local sea, fish
-local fish_left_img, fish_right_img
-local question, answerBtn1, answerBtn2, correct_ans
+local question, correct_ans
 local score, score_word, score_text
+local answerBtn = {}
 local en = {}
 local ch = {}
 local timeLeft, time_word, time_text, timerid
 local theme
-
-
 
 math.randomseed(os.time())
 
@@ -24,81 +22,32 @@ function string:split( inSplitPattern, outResults )
 	local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
 	while theSplitStart do
 		table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
-		theStart = theSplitEnd + 1
+		theStart = theSplitEnd+1
 		theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
 	end
 	table.insert( outResults, string.sub( self, theStart ) )
 	return outResults
 end
 
-local function getWrongAnswerIndex( index)
+local function setQuestion()
+	-- print (table.getn(en))
+	local index = math.random(table.getn(en))
+	while question.text == en[index] do
+		index = math.random(table.getn(en))
+	end
 	local wrong_ans_index = math.random(table.getn(en))
 	while wrong_ans_index == index do
 		wrong_ans_index = math.random(table.getn(en))
 	end
-	return wrong_ans_index
-end
-
-local function setQuestion()
-	local index = math.random(table.getn(en))
 	question.text = en[index]
 	correct_ans = math.random(2)
+	answerBtn[correct_ans]:setLabel(ch[index])
 	if correct_ans == 1 then
-		answerBtn1:setLabel(ch[index])
-		local wrong_ans_index = getWrongAnswerIndex(index)
-		answerBtn2:setLabel(ch[wrong_ans_index])
+		answerBtn[2]:setLabel(ch[wrong_ans_index])
 	else
-		answerBtn2:setLabel(ch[index])
-		local wrong_ans_index = getWrongAnswerIndex(index)
-		answerBtn1:setLabel(ch[wrong_ans_index])
+		answerBtn[1]:setLabel(ch[wrong_ans_index])
 	end
 	audio.play(audio.loadSound( "pronounciation/" .. theme .. " sound/" .. question.text .. ".mp3"))
-end
-
-local function decreaseSeaHeight()
-	local yNew = sea.y + 10
-	if ( yNew > sea.height * 1.5  - 2.5 * fish.height) then
-		composer.gotoScene( "game_over", "fade", 500 )
-	else
-		sea.y = yNew + 10
-	end
-end
-
-local function increaseSeaHeight()
-	local yNew = sea.y - 100
-	if ( yNew < sea.height / 2 ) then
-		sea.y = sea.height / 2
-	else
-		sea.y = yNew
-	end
-end
-
-local function onAnswerBtn1Release()
-	audio.pause()
-	if correct_ans == 1 then
-		increaseSeaHeight()
-		score = math.floor(score + (sea.height * 1.5  - 2.5 * fish.height - sea.y)/10)
-		score_text.text = score
-		audio.play(audio.loadSound( "sound/correct.wav"))
-	else
-		decreaseSeaHeight()
-		audio.play(audio.loadSound( "sound/wrong.wav"))
-	end
-	setQuestion()
-end
-
-local function onAnswerBtn2Release()
-	audio.pause()
-	if correct_ans == 2 then
-		increaseSeaHeight()
-		score = math.floor(score + (sea.height * 1.5  - 2.5 * fish.height - sea.y)/10)
-		score_text.text = score
-		audio.play(audio.loadSound( "sound/correct.wav"))
-	else
-		decreaseSeaHeight()
-		audio.play(audio.loadSound( "sound/wrong.wav"))
-	end
-	setQuestion()
 end
 
 function scene:create( event )
@@ -107,38 +56,46 @@ function scene:create( event )
 	local sky = display.newImageRect(sceneGroup, "pic/sky.png", display.contentWidth, display.contentHeight )
 	sky.x, sky.y = centerX, centerY
 	sea = display.newImageRect(sceneGroup, "pic/sea.png", display.contentWidth, display.contentHeight )
-	sea.x, sea.yspeed = centerX, 3
+	sea.x, sea.yspeed = centerX, 2
 
-	question = display.newText( sceneGroup, "Color", centerX, 130, native.systemFont, 80 )
+	question = display.newText( sceneGroup, "", centerX, 130, native.systemFont, 80 )
 	local score_word = display.newText( sceneGroup, "Score: ", 120, 50, native.systemFont, 55 )
 	score_text = display.newText( {parent=sceneGroup, text="", x=350, y=50, width=300, font=native.systemFont, fontSize=55, align="left"} )
 	local time_word = display.newText( sceneGroup, "Timeleft: ", 500, 50, native.systemFont, 60 )
 	time_text = display.newText( {parent=sceneGroup, text="", x=660, y=50, width=100, font=native.systemFont, fontSize=55, align="left"} )
 	
-	answerBtn1 = widget.newButton{
-		defaultFile="pic/answer.png",
-		-- overFile="pic/button-over.png",
-		font = native.systemFontBold,
-		fontSize=55,
-		x = display.contentWidth/4, 
-		y = 250,
-		onRelease = onAnswerBtn1Release	-- event listener function
-	}
-	answerBtn1.width, answerBtn1.height = 200, 150
+	function onAnswerBtnRelease(index)
+		audio.pause()
+		if correct_ans == index then
+			audio.play(audio.loadSound( "sound/correct.wav"))
+			sea.y = sea.y-100
+			if ( sea.y < centerY ) then
+				sea.y = centerY
+			end
+			score = math.floor(score+1)
+			score_text.text = score
+		else
+			audio.play(audio.loadSound( "sound/wrong.wav"))
+			sea.y = sea.y+30 
+		end
+		setQuestion()
+	end
 
-	answerBtn2 = widget.newButton{
-		defaultFile="pic/answer.png",
-		-- overFile="pic/button-over.png",
-		font = native.systemFontBold,
-		fontSize = 55,
-		x = display.contentWidth*3/4,
-		y = 250,
-		onRelease = onAnswerBtn2Release	-- event listener function
-	}
-	answerBtn2.width, answerBtn2.height = 200, 150
-	sceneGroup:insert( answerBtn1 )
-	sceneGroup:insert( answerBtn2 )
-
+	x = {display.contentWidth/4, display.contentWidth*3/4}
+	for i=1, #x do
+		btn = widget.newButton{
+			defaultFile="pic/answer.png",
+			-- overFile="pic/button-over.png",
+			font = native.systemFontBold,
+			fontSize = 55,
+			x = x[i], 
+			y = 250,
+			onRelease = function() return onAnswerBtnRelease(i) end
+		}
+		btn.width, btn.height = 200, 150
+		sceneGroup:insert( btn )
+		answerBtn[i] = btn
+	end
 end
 
 
@@ -160,66 +117,20 @@ function scene:show( event )
 		io.close( file )
 		file = nil
 
-		local options = {
-			width = 407,
-			height = 181,
-			numFrames = 2
-		}
-		local fishSheet = graphics.newImageSheet( "pic/fish1.png", options )
-		local sequenceData = {
-			name = "fish",
-			start = 1,
-			count = 2,
-		}
+		if fish ~= nil then
+			fish:removeSelf()
+			fish = nil
+		end 
 
-		fish = display.newSprite( sceneGroup, fishSheet, sequenceData )
+		local fishSheet = graphics.newImageSheet( "pic/fish1.png", {width=407, height=181, numFrames=2} )
+		fish = display.newSprite( sceneGroup, fishSheet, {name="fish", start=1, count=2} )
 		fish:setSequence( "fish" )
 		fish:setFrame( 2 )
 		fish.width, fish.height = 250, 120
 
-
 		sea.y = centerY
-		fish.x, fish.y, fish.xdir, fish.xspeed, fish.ydir, fish.yspeed = centerX, centerY, 1, 1.5, 1, 2
+		fish.x, fish.y, fish.xdir, fish.xspeed, fish.ydir, fish.yspeed = centerX, centerY, 1, 6, 1, 4
 		setQuestion()
-
-	elseif phase == "did" then
-		local screenTop = display.screenOriginY
-		local screenBottom = display.viewableContentHeight + display.screenOriginY
-		local screenLeft = display.screenOriginX
-		local screenRight = display.viewableContentWidth + display.screenOriginX
-
-		function sea:enterFrame( event )
-			local yNew = sea.y + sea.yspeed 
-
-			if ( yNew > display.contentHeight*1.1 - fish.height) then
-				composer.gotoScene( "game_over", "fade", 500 )
-			end
-
-			sea:translate( 0, sea.yspeed )
-		end
-
-		function fish:enterFrame( event )
-			local dy = fish.yspeed * fish.ydir
-			local dx = fish.xspeed * fish.xdir 
-			local yNew = fish.y + dy
-			local xNew = fish.x + dx
-
-			if ( xNew > screenRight - fish.contentWidth/2 or xNew < screenLeft + fish.contentWidth/2 ) then
-				fish.xdir = -fish.xdir
-				if (fish.xdir < 0) then
-					fish:setFrame( 1 )
-					fish.width, fish.height = 90, 45
-				else
-					fish:setFrame( 2 )
-					fish.width, fish.height = 90, 45
-				end
-			end		
-			if ( fish.ydir >= 0 and yNew > screenBottom - fish.contentHeight/2 or fish.ydir < 0 and yNew < sea.y - sea.contentHeight / 2 + 2 * fish.contentHeight ) then
-				fish.ydir = -fish.ydir
-			end
-
-			fish:translate( dx, dy )
-		end
 
 		local function onKeyEvent( event )
 			if ( event.keyName == "back" ) then
@@ -231,9 +142,8 @@ function scene:show( event )
 		end
 
 		Runtime:addEventListener( "key", onKeyEvent )
-		Runtime:addEventListener( "enterFrame", sea )
-		Runtime:addEventListener( "enterFrame", fish )
 
+	elseif phase == "did" then
 		local function timerDown()
 			timeLeft = timeLeft-1
 			time_text.text = timeLeft
@@ -242,7 +152,43 @@ function scene:show( event )
 			end
 		end
 
-		-- fish.isVisible = true
+		local screenTop = display.screenOriginY
+		local screenBottom = display.viewableContentHeight + display.screenOriginY
+		local screenLeft = display.screenOriginX
+		local screenRight = display.viewableContentWidth + display.screenOriginX
+
+		function sea:enterFrame( event )
+			local yNew = sea.y+sea.yspeed 
+			if ( yNew > display.contentHeight*1.1-fish.height/2) then
+				composer.gotoScene( "game_over", "fade", 500 )
+			end
+			sea:translate( 0, sea.yspeed )
+		end
+
+		function fish:enterFrame( event )
+			local dy = fish.yspeed * fish.ydir
+			local dx = fish.xspeed * fish.xdir 
+			local yNew = fish.y + dy
+			local xNew = fish.x + dx
+
+			if ( xNew > display.contentWidth - fish.width/2 or xNew < fish.width/2 ) then
+				fish.xdir = -fish.xdir
+				if (fish.xdir < 0) then
+					fish:setFrame( 1 )
+				else
+					fish:setFrame( 2 )
+				end
+				fish.width, fish.height = 250, 120
+			end
+			if ( fish.ydir >= 0 and yNew > display.contentHeight-fish.height/2 or fish.ydir < 0 and yNew < sea.y-150+fish.height/2 ) then
+				fish.ydir = -fish.ydir
+			end
+
+			fish:translate( dx, dy )
+		end
+		Runtime:addEventListener( "enterFrame", sea )
+		Runtime:addEventListener( "enterFrame", fish )
+
 		score = 0
 		score_text.text = score
 		timeLeft = 10
@@ -256,11 +202,15 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		en = {}
-		ch = {}
 		timer.pause(timerid)
 		audio.pause()
+	elseif  phase == "did" then
+		en = {}
+		ch = {}
+		Runtime:removeEventListener( "enterFrame", sea )
+		Runtime:removeEventListener( "enterFrame", fish )
 	end	
+
 	
 end
 
