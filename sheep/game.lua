@@ -73,10 +73,10 @@ local function onRetryRelease( event )
 end
 
 local function onQuitRelease( event )
+	Runtime:removeEventListener("enterFrame", sheepMissed)
 	physics.stop()	
 	audio.fadeOut( { channel = backgroundMusicChannel, time = 700} )
 	media.stopSound()
-	Runtime:removeEventListener("enterFrame", sheepMissed)
 	composer.removeScene("game")
 	textBox:removeSelf()
 	transition.to(soundGroup, {time = 500, alpha = 0})
