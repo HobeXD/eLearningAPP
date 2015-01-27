@@ -24,8 +24,7 @@ function scene:create( event )
 end
 
 function scene:show( event )
-	local phase = event.phase
-	if phase == "will" then
+	if event.phase == "will" then
 		local function onKeyEvent( event )
 			if ( event.keyName == "back" ) then
 				Runtime:removeEventListener( "key", onKeyEvent )

@@ -12,13 +12,7 @@ local ch = {}
 local timeLeft, time_word, time_text, timerid
 local theme
 
-local function timerDown()
-	timeLeft = timeLeft-1
-	time_text.text = timeLeft
-	if(timeLeft == 0) then
-		composer.gotoScene( "level_complete", "fade", 500 )
-	end
-end
+
 
 math.randomseed(os.time())
 
@@ -71,7 +65,7 @@ local function decreaseSeaHeight()
 end
 
 local function increaseSeaHeight()
-	local yNew = sea.y - 30
+	local yNew = sea.y - 100
 	if ( yNew < sea.height / 2 ) then
 		sea.y = sea.height / 2
 	else
@@ -112,56 +106,36 @@ function scene:create( event )
 	local sceneGroup = self.view
 	local sky = display.newImageRect(sceneGroup, "pic/sky.png", display.contentWidth, display.contentHeight )
 	sky.x, sky.y = centerX, centerY
-	sceneGroup:insert( sky )
-
 	sea = display.newImageRect(sceneGroup, "pic/sea.png", display.contentWidth, display.contentHeight )
-	sceneGroup:insert( sea )
-
-	local options = {
-		width = 257,
-		height = 125,
-		numFrames = 2
-	}
-	local fishSheet = graphics.newImageSheet( "pic/fish.png", options )
-	local sequenceData = {
-		name = "fish",
-		start = 1,
-		count = 2,
-	}
-
-	fish = display.newSprite( sceneGroup, fishSheet, sequenceData )
-	fish:setSequence( "fish" )
-	fish:setFrame( 2 )
-	fish.width, fish.height = 90, 45
+	sea.x, sea.yspeed = centerX, 3
 
 	question = display.newText( sceneGroup, "Color", centerX, 130, native.systemFont, 80 )
-	score_label = display.newText( sceneGroup, "Score: ", 120, 50, native.systemFont, 60 )
-
-
-	time_word = display.newText( {parent=sceneGroup, text="Timeleft: ", font=native.systemFont, fontSize=20} )
-	time_word.x, time_word.y = display.contentWidth*3/4 - time_word.width/2 + 10, time_word.height/2 + 10
-	time_text = display.newText( {parent=sceneGroup, text="60", font=native.systemFont, fontSize=20} )
-	time_text.x, time_text.y = time_word.x + time_word.width/2 + time_text.width/2 + 10, time_word.y
-
+	local score_word = display.newText( sceneGroup, "Score: ", 120, 50, native.systemFont, 55 )
+	score_text = display.newText( {parent=sceneGroup, text="", x=350, y=50, width=300, font=native.systemFont, fontSize=55, align="left"} )
+	local time_word = display.newText( sceneGroup, "Timeleft: ", 500, 50, native.systemFont, 60 )
+	time_text = display.newText( {parent=sceneGroup, text="", x=660, y=50, width=100, font=native.systemFont, fontSize=55, align="left"} )
+	
 	answerBtn1 = widget.newButton{
-		default="pic/answer.png",
-		-- over="pic/button-over.png",
-		x, y = display.contentWidth*3/4, 100,
-		-- x = display.contentWidth/4,
-		-- y = 100,
+		defaultFile="pic/answer.png",
+		-- overFile="pic/button-over.png",
+		font = native.systemFontBold,
+		fontSize=55,
+		x = display.contentWidth/4, 
+		y = 250,
 		onRelease = onAnswerBtn1Release	-- event listener function
 	}
-	answerBtn1.width, answerBtn1.height = 300, 200
+	answerBtn1.width, answerBtn1.height = 200, 150
 
 	answerBtn2 = widget.newButton{
-		default="pic/answer.png",
-		-- over="pic/button-over.png",
-		x, y = display.contentWidth*3/4, 100,
+		defaultFile="pic/answer.png",
+		-- overFile="pic/button-over.png",
+		font = native.systemFontBold,
+		fontSize = 55,
+		x = display.contentWidth*3/4,
+		y = 250,
 		onRelease = onAnswerBtn2Release	-- event listener function
 	}
-	answerBtn2.width, answerBtn2.height = 300, 200
-
-
+	answerBtn2.width, answerBtn2.height = 200, 150
 	sceneGroup:insert( answerBtn1 )
 	sceneGroup:insert( answerBtn2 )
 
@@ -186,7 +160,25 @@ function scene:show( event )
 		io.close( file )
 		file = nil
 
-		sea.x, sea.y, sea.ydir, sea.yspeed = centerX, centerY, 1, 1
+		local options = {
+			width = 407,
+			height = 181,
+			numFrames = 2
+		}
+		local fishSheet = graphics.newImageSheet( "pic/fish1.png", options )
+		local sequenceData = {
+			name = "fish",
+			start = 1,
+			count = 2,
+		}
+
+		fish = display.newSprite( sceneGroup, fishSheet, sequenceData )
+		fish:setSequence( "fish" )
+		fish:setFrame( 2 )
+		fish.width, fish.height = 250, 120
+
+
+		sea.y = centerY
 		fish.x, fish.y, fish.xdir, fish.xspeed, fish.ydir, fish.yspeed = centerX, centerY, 1, 1.5, 1, 2
 		setQuestion()
 
@@ -197,9 +189,9 @@ function scene:show( event )
 		local screenRight = display.viewableContentWidth + display.screenOriginX
 
 		function sea:enterFrame( event )
-			local yNew = sea.y + sea.yspeed
+			local yNew = sea.y + sea.yspeed 
 
-			if ( yNew > sea.height * 1.5 - 2.5 * fish.height) then
+			if ( yNew > display.contentHeight*1.1 - fish.height) then
 				composer.gotoScene( "game_over", "fade", 500 )
 			end
 
@@ -242,9 +234,17 @@ function scene:show( event )
 		Runtime:addEventListener( "enterFrame", sea )
 		Runtime:addEventListener( "enterFrame", fish )
 
-		fish.isVisible = true
+		local function timerDown()
+			timeLeft = timeLeft-1
+			time_text.text = timeLeft
+			if(timeLeft == 0) then
+				composer.gotoScene( "level_complete", "fade", 500 )
+			end
+		end
+
+		-- fish.isVisible = true
 		score = 0
-		score_label.text = "Score: " .. score
+		score_text.text = score
 		timeLeft = 10
 		time_text.text = timeLeft
 		timerid = timer.performWithDelay(1000, timerDown, timeLeft)
@@ -254,15 +254,12 @@ end
 function scene:hide( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	
-	if event.phase == "will" then
-		fish.isVisible = false
-	elseif phase == "did" then
+
+	if phase == "will" then
 		en = {}
 		ch = {}
 		timer.pause(timerid)
 		audio.pause()
-		-- Called when the scene is now off screen
 	end	
 	
 end
