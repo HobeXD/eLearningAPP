@@ -6,6 +6,8 @@ function scene:create( event )
 	local sceneGroup = self.view
 	local background = display.newImageRect( sceneGroup, "pic/level_select.png", display.contentWidth, display.contentHeight )
 	background.x, background.y = display.contentWidth/2, display.contentHeight/2
+	local title = display.newText(sceneGroup, "Score Board", display.contentWidth/2, display.contentHeight/9, native.systemFontBold, 90)
+	title:setFillColor( 0.2, 0.2, 0.5 )
 
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
 
@@ -15,7 +17,7 @@ function scene:create( event )
 			time = 500,
 			params = {word = level}
 		}
-		composer.gotoScene( "game", options )
+		composer.gotoScene( "score", options )
 		return true	-- indicates successful touch
 	end
 
@@ -24,32 +26,17 @@ function scene:create( event )
 			defaultFile = "pic/level_" .. level_name[i] .. ".png",
 			-- overFile = "button-over.png",
 			x = display.contentWidth/2,
-			y = display.contentHeight*i/6,
+			y = display.contentHeight*(8*i/6+1)/9,
 			onRelease = function() return onBtnRelease(level_name[i]) end
 		}
 		btn.width, btn.height = 500, 130
 		sceneGroup:insert( btn )
 	end
-
-	local function onScoreBoardBtnRelease()
-		composer.gotoScene( "score_board", "fade", 500)
-		return true	-- indicates successful touch
-	end
-
-	local scoreBoradBtn = widget.newButton{
-			defaultFile = "pic/medal.png",
-			-- overFile = "button-over.png",
-			x = display.contentWidth-80,
-			y = display.contentHeight-80,
-			onRelease = onScoreBoardBtnRelease
-		}
-	scoreBoradBtn.width, scoreBoradBtn.height = 80, 120
-	sceneGroup:insert( scoreBoradBtn )
 end
 
 function scene:show( event )
 	if event.phase == "will" then
-		backscene = "menu"
+		backscene = "level_selection"
 	end
 end
 
