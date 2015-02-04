@@ -10,17 +10,9 @@ local answerBtn = {}
 local en = {}
 local ch = {}
 local timeLeft, time_text, timerid
-local theme
+local theme = "school"
 
 math.randomseed(os.time())
-
-function onKeyEvent( event )
-	if ( event.keyName == "back" ) then
-		composer.gotoScene( "level_selection", "fade", 500 )
-		return true
-	end
-	return false
-end
 
 function string:split( inSplitPattern, outResults )
 	if not outResults then
@@ -38,7 +30,6 @@ function string:split( inSplitPattern, outResults )
 end
 
 function setQuestion()
-	-- print (table.getn(en))
 	local index = math.random(table.getn(en))
 	while question.text == en[index] do
 		index = math.random(table.getn(en))
@@ -69,8 +60,8 @@ function scene:create( event )
 	question = display.newText( sceneGroup, "", centerX, 130, native.systemFont, 80 )
 	local score_word = display.newText( sceneGroup, "Score: ", 120, 50, native.systemFont, 55 )
 	score_text = display.newText( {parent=sceneGroup, text="", x=350, y=50, width=300, font=native.systemFont, fontSize=55, align="left"} )
-	local time_word = display.newText( sceneGroup, "Timeleft: ", 500, 50, native.systemFont, 60 )
-	time_text = display.newText( {parent=sceneGroup, text="", x=660, y=50, width=100, font=native.systemFont, fontSize=55, align="left"} )
+	local time_word = display.newText( sceneGroup, "Time Left: ", 500, 50, native.systemFont, 60 )
+	time_text = display.newText( {parent=sceneGroup, text="", x=670, y=50, width=100, font=native.systemFont, fontSize=55, align="left"} )
 	
 	function onAnswerBtnRelease(index)
 		audio.stop()
@@ -112,7 +103,9 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		theme = event.params.word
+		if event.params ~= nil then
+			theme = event.params.word
+		end
 		local path = system.pathForFile( "word/" .. theme .. " words.csv" )
 		local file = io.open( path, "r" )
 
@@ -139,7 +132,7 @@ function scene:show( event )
 		sea.y = centerY
 		fish.x, fish.y, fish.xdir, fish.xspeed, fish.ydir, fish.yspeed = centerX, centerY, 1, 6, 1, 4
 		setQuestion()
-		Runtime:addEventListener( "key", onKeyEvent )
+		backscene = "level_selection"
 
 	elseif phase == "did" then
 		function timerDown()
@@ -194,11 +187,12 @@ function scene:hide( event )
 	if  event.phase == "did" then
 		en = {}
 		ch = {}
-		timer.pause(timerid)
+		if timerid ~= nil then
+			timer.pause(timerid)
+		end
 		audio.stop()
 		Runtime:removeEventListener( "enterFrame", sea )
 		Runtime:removeEventListener( "enterFrame", fish )
-		Runtime:removeEventListener( "key", onKeyEvent )
 		composer.removeScene( "game" )
 	end	
 end

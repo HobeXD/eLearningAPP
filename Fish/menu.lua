@@ -26,6 +26,12 @@ function scene:create( event )
 	sceneGroup:insert( startBtn )
 end
 
+function scene:show( event )
+	if event.phase == "will" then
+		backscene = nil
+	end
+end
+
 function scene:destroy( event )
 	local sceneGroup = self.view
 	for i=1, #sceneGroup do 
@@ -34,5 +40,6 @@ function scene:destroy( event )
 end
 
 scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
 scene:addEventListener( "destroy", scene )
 return scene

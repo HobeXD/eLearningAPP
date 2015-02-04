@@ -2,14 +2,6 @@ local composer = require( "composer" )
 local widget = require "widget"
 local scene = composer.newScene()
 
-function onKeyEvent( event )
-	if ( event.keyName == "back" ) then
-		composer.gotoScene( "level_selection", "fade", 500 )
-		return true
-	end
-	return false
-end
-
 function scene:create( event )
 	local sceneGroup = self.view
 	local background = display.newImageRect(sceneGroup, "pic/game_over.png", display.contentWidth, display.contentHeight )
@@ -33,14 +25,8 @@ end
 
 function scene:show( event )
 	if event.phase == "will" then
-		Runtime:addEventListener( "key", onKeyEvent )
+		backscene = "level_selection"
 	end
-end
-
-function scene:hide( event )
-	if  event.phase == "will" then
-		Runtime:removeEventListener( "key", onKeyEvent )
-	end	
 end
 
 function scene:destroy( event )
@@ -52,6 +38,5 @@ end
 
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
-scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 return scene
