@@ -10,12 +10,13 @@ function scene:create( event )
 	title:setFillColor( 0.2, 0.2, 0.5 )
 
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
+	level_title = {"School", "Place&Location", "Transportation", "Personal&Characteristics", "Time"}
 
-	local function onBtnRelease(level)
+	local function onBtnRelease(title)
 		local options = {
 			effect = "fade",
 			time = 500,
-			params = {word = level}
+			params = {title = title}
 		}
 		composer.gotoScene( "score", options )
 		return true	-- indicates successful touch
@@ -27,7 +28,7 @@ function scene:create( event )
 			-- overFile = "button-over.png",
 			x = display.contentWidth/2,
 			y = display.contentHeight*(8*i/6+1)/9,
-			onRelease = function() return onBtnRelease(level_name[i]) end
+			onRelease = function() return onBtnRelease(level_title[i]) end
 		}
 		btn.width, btn.height = 500, 130
 		sceneGroup:insert( btn )
