@@ -8,12 +8,13 @@ function scene:create( event )
 	background.x, background.y = display.contentWidth/2, display.contentHeight/2
 
 	level_name = {"school", "place_location", "transportation", "personal_characteristics", "time"}
+	rank_file = {"School", "Place&Location", "Transportation", "Personal&Characteristics", "Time"}
 
-	local function onBtnRelease(level)
+	local function onBtnRelease(level, rank_file)
 		local options = {
 			effect = "fade",
 			time = 500,
-			params = {word = level}
+			params = {word = level, rankFile = rank_file}
 		}
 		composer.gotoScene( "game", options )
 		return true	-- indicates successful touch
@@ -25,7 +26,7 @@ function scene:create( event )
 			-- overFile = "button-over.png",
 			x = display.contentWidth/2,
 			y = display.contentHeight*i/6,
-			onRelease = function() return onBtnRelease(level_name[i]) end
+			onRelease = function() return onBtnRelease(level_name[i], rank_file[i]) end
 		}
 		btn.width, btn.height = 500, 130
 		sceneGroup:insert( btn )

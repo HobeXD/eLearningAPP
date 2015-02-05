@@ -26,6 +26,29 @@ end
 function scene:show( event )
 	if event.phase == "will" then
 		backscene = "level_selection"
+		if event.params ~= nil then
+
+			local path = system.pathForFile( "rank/" .. event.params.rankFile, system.ResourceDirectory )
+			local file = io.open( path, "r+" )
+			local score = {}
+
+			for i = 1, 10 do 
+				local tmp = tonumber(file:read())
+				if tmp == nil then
+					break
+				end
+				score[i] = tmp
+			end
+			print(#score+1,event.params.score)
+			score[#score+1] = event.params.score
+			table.sort(score)
+			file:seek( "set", 0 )
+			for i=1, #score do
+				file:write(score[#score+1-i] .. "\n")
+				print (score[i])
+			end
+			file:flush()
+		end
 	end
 end
 

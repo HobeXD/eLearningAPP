@@ -10,7 +10,7 @@ local answerBtn = {}
 local en = {}
 local ch = {}
 local timeLeft, time_text, timerid
-local theme = "school"
+local theme, rankFile = "school", "School"
 
 math.randomseed(os.time())
 
@@ -105,6 +105,7 @@ function scene:show( event )
 	if phase == "will" then
 		if event.params ~= nil then
 			theme = event.params.word
+			rankFile = event.params.rankFile
 		end
 		local path = system.pathForFile( "word/" .. theme .. " words.csv" )
 		local file = io.open( path, "r" )
@@ -139,7 +140,12 @@ function scene:show( event )
 			timeLeft = timeLeft-1
 			time_text.text = timeLeft
 			if(timeLeft == 0) then
-				composer.gotoScene( "level_complete", "fade", 500 )
+				local options = {
+					effect = "fade",
+					time = 500,
+					params = {rankFile = rankFile, score=score}
+				}
+				composer.gotoScene( "level_complete", options )
 			end
 		end
 
