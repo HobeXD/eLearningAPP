@@ -37,7 +37,7 @@ local speed = 0.3
 local finish_question_num = 15
 local max_wrong_question_num = 3
 local empty_char_num = 5
-local alphabet = 'abcdefghijklmnopqrstuvwxyz' -- used in isalpha
+local alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ' -- used in isalpha
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
 local failed_sound = audio.loadSound( "sound/failed.wav" )
@@ -257,7 +257,7 @@ function check_select_ans( event )
 			ans_len = string.len(q["now_anschar"])
 		end
 		-- if wrong
-		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
+		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
 			doShake(event.target, nil)
 			
 			char_score = 1
@@ -277,8 +277,8 @@ function check_select_ans( event )
 		char_score = char_score + 1
 		score_text.text = score
 
-		if q["withspace"] then
-			q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], clickchar)
+		if q["withspace"] then -- ADD correct case(big or small)
+			q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))
 		else
 			q["now_anschar"] = q["now_anschar"] .. event.target:getLabel()
 		end

@@ -23,7 +23,8 @@ function read_file(filedst)
 		for w,c in string.gmatch(lin, "(.+) (.+)") do
 			--print(w, c)
 			local word = {n=2}
-			word[1] = string.lower(w)
+			--word[1] = string.lower(w)
+			word[1] = w
 			word[2] = c
 			table.insert(wordtable, word)
 		end
