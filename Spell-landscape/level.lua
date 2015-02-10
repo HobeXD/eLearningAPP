@@ -6,16 +6,16 @@ local common = require "common"
 local question = require "question"
 --------------------------------------------
 
-local function create_ans_field(sceneGroup , current_question)
-	local ans_sheet = display.newText(sceneGroup, "", screency, barH, native.systemFont, 30)
-	ans_sheet:setFillColor(0, 1, 0)
-	local ans_sheet_background = display.newRoundedRect(sceneGroup, screency, barH, 350, 40, 5)
+local function create_ans_field(current_question)
+	local ans_sheet = display.newText(sceneGroup, "", screency + 10, barH-5, native.systemFont, 30)
+	ans_sheet:setFillColor(0, 0, 0)
+	local ans_sheet_background = display.newRoundedRect(sceneGroup, screency, barH, 300, 40, 5)
 	ans_sheet:toFront()
 	
 	current_question["background"] = ans_sheet_background
 	current_question["ans_sheet"] = ans_sheet
 end
-local function create_score_field(sceneGroup)
+local function create_score_field()
 	score_star = display.newImage(sceneGroup, "img/star.png")
 	score_star.anchorX = 0.5; score_star.anchorY = 0.5
 	score_star.x = screenLeft + barh/2
@@ -43,7 +43,7 @@ local function create_pause_buttons(setting_group) --cannot be paused
 	resume_btn.y = screenBottom - ctrl_btn_size
 	resume_btn:addEventListener("tap", resume)
 end
-local function generate_qwerty_button(sceneGroup)
+local function generate_qwerty_button()
 	local baseh, wordh,intevalh, intevalw
 	baseh = 110; wordh = 50; intevalh = 10;  intevalw = 7;--first row interval is only 7...
 	-- Apple says that the avg finger tap is 44x44 (from WWDC). All table rows are recommended to be at least that height. It is common for icons to appear 32x32, but have padding to make the touchable area 44x44.
@@ -89,7 +89,7 @@ local function generate_qwerty_button(sceneGroup)
 	end
 	return qwerty_btns
 end
-local function initial_level(sceneGroup)
+local function initial_level()
 	questions = {} -- questions that is on screen
 	prev_qid = -1
 	now_qid = -1
@@ -105,10 +105,10 @@ local function initial_level(sceneGroup)
 	current_question = display.newGroup()
 	setting_group = display.newGroup()
 	
-	create_ans_field(sceneGroup, current_question)
-	create_score_field(sceneGroup)
+	create_ans_field(current_question)
+	create_score_field()
 	create_pause_buttons(setting_group)
-	qwerty_btns = generate_qwerty_button(sceneGroup)
+	qwerty_btns = generate_qwerty_button()
 end
 
 local function generate_questions()
@@ -117,34 +117,14 @@ local function generate_questions()
 	move_timer = Runtime:addEventListener("enterFrame", move_question)
 end
 
-local function destroy_all()
-	print("destroy all")
-	display.remove(current_question["ans_sheet"])
-	current_question["ans_sheet"] = nil
-	display.remove(current_question["background"])
-	
-	score_text:removeSelf(); score_text = nil
-	score_star:removeSelf(); score_star = nil
-	if correct_star ~= nil then
-		correct_star:removeSelf(); correct_star = nil
-	end
-	-- display group -> only removeself
+local function destroy_setting_group()
 	setting_group:removeSelf()
 	setting_group = nil
-	
-	for i in pairs(questions) do
-		if questions[i]["solved"] ~= true then		
-			if questions[i]["q_button"] ~= nil then
-				questions[i]["q_button"]:removeSelf()
-				questions[i]["q_button"] = nil
-			end
-		end
-	end
-	questions = {}
 end
+--without destroy all
 
 function scene:create( event ) -- Called when the scene's view does not exist, initialize
-	local sceneGroup = self.view
+	sceneGroup = self.view
 	display.setDefault( "anchorX", 0 )
 	display.setDefault( "anchorY", 0 )
 	--e.g. add display objects to 'sceneGroup', add touch listeners, etc.
@@ -154,19 +134,34 @@ function scene:create( event ) -- Called when the scene's view does not exist, i
 	
 	initial_level(sceneGroup)
 end
+local function do_nothing()
+	return true
+end
 function scene:show( event )
 	local phase = event.phase
+	print("into show:" .. event.phase)
 	if phase == "will" then -- Called when the scene is still off screen and is about to move on screen
 		------------new added ---------------------
-		sceneGroup = self.view
-		level = event.params.level
-		words = read_file("voca/".. level .. ".txt") 
+		--sceneGroup = self.view
+		words = read_file("voca/".. levelname .. ".txt") 
 		dup_question = {}
 		dup_question[#words+1] = false
 		generate_questions()
+		--[[backgroundOverlay = display.newRect(screenLeft, screenTop, screenW, screenH)
+		backgroundOverlay:setFillColor(0, 0, 0, 0.6)
+		backgroundOverlay.isHitTestable = true 
+		backgroundOverlay:addEventListener("tap", do_nothing)
+		backgroundOverlay:toFront()]]
 		------------new added ---------------------
 	elseif phase == "did" then -- Called when the scene is now on screen
+		
 		-- INSERT code here to make the scene come alive. e.g. start timers, begin animation, play audio, etc.
+		--display.remove(backgroundOverlay)
+		--[[if backgroundOverlay == nil then
+			print("nil background")
+		end
+		backgroundOverlay:removeSelf()
+		backgroundOverlay = nil]]
 	end
 end
 function scene:hide( event )
@@ -187,14 +182,15 @@ function scene:destroy( event )
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
-	local sceneGroup = self.view
+	--local sceneGroup = self.view
 
 	--timer.cancel(question_timer)
 	Runtime:removeEventListener("enterFrame", move_question) -- no need to remember move_timer
-	destroy_all()
+	--destroy_all() --needed?
+	destroy_setting_group()
 end
 
--- Listener setup
+-- Listener 
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )

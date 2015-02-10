@@ -8,13 +8,10 @@ local params
 function catchBackgroundOverlay(event)
 	return true 
 end
-function go_home(event)
-	finish_level("")
-end
 
 function scene:create( event )
 	local group = self.view
-	backgroundOverlay = display.newRect (screenLeft, screenTop, screenW, screenH)
+	local backgroundOverlay = display.newRect (screenLeft, screenTop, screenW, screenH)
 	backgroundOverlay:setFillColor( black )
 	backgroundOverlay.alpha = 0.6
 	group:insert(backgroundOverlay)
@@ -33,12 +30,16 @@ function scene:create( event )
 	{
 		left = screencx, 
 		top = screency,
-		width = 60,
-		height = 60,
-		defaultFile = "img/home.png",
-		--overFile = "buttonOver.png",
-		--label = "button",
-		onEvent = go_home
+		width = 150,
+		height = 70,
+		shape = "roundedRect",
+		cornerRadius = 5,
+		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
+		fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+		--strokeWidth = 4, 
+		fontSize = 30, 
+		label = "Menu",
+		onRelease = go_home
 	}
 	home_btn.anchorX = 0.5
 	home_btn.anchorY = 0.5

@@ -74,19 +74,40 @@ function doShake(target, onCompleteDo)
 	firstTran()
 end 
 
-function show_alert(msg) --customized alert window
-	
-end 
+function go_select_level(event)
+	composer.removeScene("show_score", false)
+	composer.gotoScene( "selectLevel", "slideUp", 500)
+end
+function go_home(event) --remove scene
+	composer.removeScene("show_score", false)
+	finish_level("")
+end
 function finish_level(msg)
 	local pattern
 	if msg == "" then
 		pattern = "slideUp"
+		composer.removeScene("level", false)
+		composer.gotoScene( "menu", pattern, 500)
 	else
 		pattern = "fromBottom"
-		native.showAlert( msg, "Your Score: ".. score)
-		show_alert(msg) -- do nothing
+		--native.showAlert( msg, "Your Score: ".. score)
+		if score > 0 then
+			scoremsg = "You collect ".. score .. " stars!"
+		else
+			scoremsg = "You do not get any star..."
+		end
+		local option =
+		{
+			effect = pattern,
+			time = 500,
+			params = {
+				msg = msg,
+				scoremsg = scoremsg,
+				score = score, 
+				star_scale = star_scale_rate
+			}
+		}
+		composer.removeScene("level", false)
+		composer.gotoScene( "show_score", option)
 	end
-
-	composer.removeScene("level", false)
-	composer.gotoScene( "menu", pattern, 500)
 end

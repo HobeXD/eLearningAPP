@@ -34,14 +34,14 @@ now_wrong_num = 0
 local radius = 50
 local speed_scale = 1
 local speed = 0.3
-local finish_question_num = 2
+local finish_question_num = 15
 local max_wrong_question_num = 3
 local empty_char_num = 5
 local alphabet = 'abcdefghijklmnopqrstuvwxyz' -- used in isalpha
 
-local finish_sound = audio.loadSound( "sound/pass.mp3" )
-local failed_sound = audio.loadSound( "sound/failed.mp3" )
-local suc_sound = audio.loadSound( "sound/sound_laser.mp3" )
+local finish_sound = audio.loadSound( "sound/pass.wav" )
+local failed_sound = audio.loadSound( "sound/failed.wav" )
+local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 
 now_question = {}
 local is_generate_question = false
@@ -57,11 +57,11 @@ function isalpha(ch)
 	return is_alpha
 end
 function generate_new_question() -- random choose a word, which is not solved yet
+	is_generate_question = true
 	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
 		return
 	end
-	is_generate_question = true
 	question_count = question_count + 1
 	qindex = math.random(#words) --todo: use list 
 	while dup_question[qindex] == true do
@@ -167,7 +167,7 @@ function move_question(event) --now fps is 60 (in config.lua)
 			end
 		end
 	end
-	if minx > 170 and not is_generate_question then
+	if minx > screencx / 2 * 3 and not is_generate_question then
 		generate_new_question()
 	end
 end
@@ -178,7 +178,7 @@ function question_failed(q)
 	score_text.text = score
 	now_wrong_num = now_wrong_num + 1
 	if now_wrong_num >= max_wrong_question_num then
-		finish_level("failed")
+		finish_level("Fail")
 		return
 	end
 	finish_question(q)
@@ -191,7 +191,7 @@ function question_success(q)
 	q["solved"] = true
 	solved_count = solved_count + 1
 	if solved_count == finish_question_num or question_count == #words then 
-		finish_level("cleared")
+		finish_level("Clear!")
 		return
 	end
 	finish_question(q)
@@ -242,6 +242,10 @@ function check_select_ans( event )
 		clickchar = event.target:getLabel()
 		local q = questions[now_qid]
 		
+		if q == nil then
+			return
+		end
+		
 		if q["withspace"] then
 			ans_len = 1
 			while q["now_anschar"]:sub(ans_len, ans_len) ~= "*" do
@@ -283,7 +287,7 @@ function check_select_ans( event )
 		if (correct_star ~= nil) then
 			display.remove(correct_star)
 		end
-		correct_star = display.newImage("img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
+		correct_star = display.newImage(sceneGroup, "img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
 		correct_star.xScale = 0.00001
 		correct_star.yScale = 0.00001
 		correct_star.anchorX = 0.5
@@ -315,9 +319,9 @@ function select_lowest_question()
 		--if question_timer ~= nil then
 			--timer.cancel(question_timer)
 		--end
-		--if not is_generate_question then
+		if not is_generate_question then	
 			generate_new_question()
-		--end
+		end
 		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question, 0)
 	end
 end

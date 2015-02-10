@@ -4,16 +4,32 @@ local widget = require "widget"
 --------------------------------------------
 -- forward declarations and other locals
 local playBtn
+local teachBtn
 
 -- 'onRelease' event listener for playBtn
-local function onPlayBtnRelease()
-	composer.gotoScene( "selectLevel", "fromBottom", 500 )
+local function gotoScene(event)
+	composer.gotoScene( event.target.id, "fromBottom", 400 )
 	return true	-- indicates successful touch
+end
+
+local nowbgmnum = 1
+local function changebgm()
+	nowbgmnum = (nowbgmnum)%4 + 1
+	audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 end
 
 function scene:create( event )
 	local sceneGroup = self.view
-
+	
+	bgms = {
+		audio.loadStream( "sound/bgm/deep-emerald-short.mp3" ),
+		audio.loadStream( "sound/bgm/happy-inn-short.mp3" ),
+		audio.loadStream( "sound/bgm/icy-town-short.mp3" ),
+		audio.loadStream( "sound/bgm/pinball-three-short.mp3" )
+	}
+	audio.setVolume( 0.4 , {channel=1} )
+	audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
+	
 	-- Called when the scene's view does not exist.
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
@@ -31,24 +47,42 @@ function scene:create( event )
 	
 	-- create a widget button (which will loads level.lua on release)
 	playBtn = widget.newButton{
-		label="Click to Play",
+		label="Play",
 		labelColor = { default={255}, over={128} },
+		id = "selectLevel",
+		default="button.png",
+		over="button-over.png",
+		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
+		shape = "roundedRect",
+		fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+		fontSize = 50,
+		width=180, height=70,
+		onRelease = gotoScene	-- event listener function
+	}
+	playBtn.x = display.contentWidth*0.5
+	playBtn.y = display.contentHeight - 100
+	
+	teachBtn = widget.newButton{
+		label="How to Play?",
+		labelColor = { default={255}, over={128} },
+		id = "tutorial",
 		default="button.png",
 		over="button-over.png",
 		width=154, height=40,
-		onRelease = onPlayBtnRelease	-- event listener function
+		onRelease = gotoScene	-- event listener function
 	}
-	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 125
+	
+	teachBtn.x = display.contentWidth - 77
+	teachBtn.y = display.contentHeight - 20
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
 	sceneGroup:insert( titleLogo )
 	sceneGroup:insert( playBtn )
+	sceneGroup:insert( teachBtn )
 end
 
 function scene:show( event )
-	local sceneGroup = self.view
 	local phase = event.phase
 	
 	if phase == "will" then
@@ -62,7 +96,6 @@ function scene:show( event )
 end
 
 function scene:hide( event )
-	local sceneGroup = self.view
 	local phase = event.phase
 	
 	if event.phase == "will" then
@@ -76,7 +109,6 @@ function scene:hide( event )
 end
 
 function scene:destroy( event )
-	local sceneGroup = self.view
 	
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- INSERT code here to cleanup the scene
