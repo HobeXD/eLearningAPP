@@ -42,7 +42,7 @@ local function nextQuestion( event )
 	if TEXT then
 		chinese.text = question[class][questionNum]
 	else
-		media.playSound( "sounds/".. string.lower(answer[class][questionNum]) ..".mp3" )
+		media.playSound( "sounds/".. class .. "/" .. answer[class][questionNum] ..".mp3" )
 	end
 
 	tags[tmp]:setLabel(answer[class][questionNum])
@@ -122,7 +122,7 @@ local function onTagsRelease( event )
 	if( event.target:getLabel() == answer[class][questionNum] )then
 		media.playEventSound( correctSound )
 		if TEXT then
-			media.playSound( "sounds/".. string.lower(event.target:getLabel()) ..".mp3" )
+			media.playSound( "sounds/".. class .. "/" .. event.target:getLabel() ..".mp3" )
 		end
 
 		if (questionSheep.x < screenW * 0.5) then
@@ -495,7 +495,7 @@ function declare_gameover( event )
 	textBox = native.newTextField( halfW, screenH * 0.2 , 150, 23 )
 	textBox.alpha = 0
 	textBox.placeholder = "Enter your name"
-	textBox.font = native.newFont( native.systemFontBold, 18 )
+	textBox.font = native.newFont( native.systemFontBold, 12 )
 	textBox:setTextColor( 0.8, 0.8, 0.8 )
 	textBox:addEventListener( "userInput", typing )
 
