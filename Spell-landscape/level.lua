@@ -90,6 +90,8 @@ local function generate_qwerty_button()
 	return qwerty_btns
 end
 local function initial_level()
+	ispause = false
+
 	questions = {} -- questions that is on screen
 	prev_qid = -1
 	now_qid = -1
@@ -187,6 +189,7 @@ function scene:destroy( event )
 	--timer.cancel(question_timer)
 	Runtime:removeEventListener("enterFrame", move_question) -- no need to remember move_timer
 	--destroy_all() --needed?
+	ispause = false
 	destroy_setting_group()
 end
 

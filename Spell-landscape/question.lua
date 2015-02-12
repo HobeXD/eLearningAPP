@@ -172,16 +172,34 @@ function move_question(event) --now fps is 60 (in config.lua)
 	end
 end
 
+
+function show_correct_ans(c, e) -- put at the end to prevent below code do not run
+	pause_with_ans(c, e)
+end
+function check_pause_and_finish()
+	if not check_pause() then
+		print("user comfirmed ok")
+		timer.cancel(comfirm_timer)
+		finish_level("Fail")
+	else
+		print("no ok, wait")
+	end
+end
 function question_failed(q)
 	audio.play(failed_sound)
 	score = score - question_score
 	score_text.text = score
 	now_wrong_num = now_wrong_num + 1
+	local c = q["chi"]
+	local e = q["eng"]
 	if now_wrong_num >= max_wrong_question_num then
-		finish_level("Fail")
+		show_correct_ans(c, e)
+		check_pause_and_finish()
+		comfirm_timer = timer.performWithDelay(100, check_pause_and_finish, 0)
 		return
 	end
 	finish_question(q)
+	show_correct_ans(c, e)
 end
 function question_success(q)
 	audio.play(finish_sound)
@@ -206,6 +224,7 @@ function finish_question(q)
 	
 	prev_qid = now_qid
 	now_qid = -1 -- reset
+	print("finish question -- select lowest")
 	select_lowest_question()	
 end
 

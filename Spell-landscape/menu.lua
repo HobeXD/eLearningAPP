@@ -1,6 +1,7 @@
 local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
+local common = require "common"
 --------------------------------------------
 -- forward declarations and other locals
 local playBtn
@@ -17,10 +18,7 @@ local function changebgm()
 	nowbgmnum = (nowbgmnum)%4 + 1
 	audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 end
-
-function scene:create( event )
-	local sceneGroup = self.view
-	
+local function set_bgm()
 	bgms = {
 		audio.loadStream( "sound/bgm/deep-emerald-short.mp3" ),
 		audio.loadStream( "sound/bgm/happy-inn-short.mp3" ),
@@ -29,15 +27,22 @@ function scene:create( event )
 	}
 	audio.setVolume( 0.4 , {channel=1} )
 	audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
+end
+
+function scene:create( event )
+	local sceneGroup = self.view
 	
 	-- Called when the scene's view does not exist.
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
+	set_bgm()
+	
+	Runtime:addEventListener("key", handle_system_key)
+	
 	-- display a background image
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
-	background.anchorX = 0
-	background.anchorY = 0
+	background.anchorX = 0; background.anchorY = 0
 	background.x, background.y = 0, 0
 	
 	-- create/position logo/title image on upper-half of the screen
