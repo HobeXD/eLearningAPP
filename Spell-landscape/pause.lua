@@ -4,14 +4,38 @@ local common = require "common"
 local widget = require "widget"
 local scene = composer.newScene()
 local params
+local group
  
 function catchBackgroundOverlay(event)
+	--print("catchBackgroundOverlay") --debug message
 	return true 
 end
 
+local function onSlide(event)
+	local self = event.target
+	local offset = 0
+	if event.phase == "began" then
+        self.markY = self.y    -- store y location of object
+    elseif event.phase == "moved" then
+		if(event.y - event.yStart < 0) then -- no backward sliding
+			--self.x, self.y = x, y    -- move object based on calculations above
+			offset = (event.y - event.yStart)
+			self.y = offset + self.markY-- move object based on calculations above
+		end
+	elseif event.phase == "ended" then
+		--print("swipe ended")
+		if self.y < -screency+50 or offset < -54 then --slide up and resume
+			transition.to(group, {y = -320, time = 300, onComplete = resume_quiet})
+		else --slide not enough! go back
+			transition.to(group, {y = 0, time = 150})
+		end
+		
+	end
+    return true
+end
+
 function scene:create( event )
-	local group = self.view
-	
+	group = self.view
 	--background overlay
 	local backgroundOverlay = display.newRect (screenLeft, screenTop, screenW, screenH)
 	backgroundOverlay:setFillColor( black )
@@ -20,8 +44,8 @@ function scene:create( event )
 	-- Allows an object to continue to receive hit events even if it is not visible. If true, objects will receive hit events regardless of visibility; if false, events are only sent to visible objects. Defaults to false.
 	backgroundOverlay.isHitTestable = true 
 	--prevent the button event be triggered
-	backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
-	backgroundOverlay:addEventListener ("touch", catchBackgroundOverlay)
+	--backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
+	--backgroundOverlay:addEventListener ("touch", catchBackgroundOverlay)
 	
 	local on_release_fun = go_home
 	local home_btn_name = "Menu"
@@ -29,7 +53,9 @@ function scene:create( event )
 	--check mode to get proper button
 	local mode = event.params.mode
 	-- if show, show ans without pause image
-	if mode == "show" then 
+	if mode == "show" then 	
+		backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
+		group:addEventListener("touch", onSlide)
 		local c = event.params.chinese
 		local e = event.params.english
 
@@ -44,7 +70,7 @@ function scene:create( event )
 		
 		local options = 
 		{
-			parent = sceneGroup,
+			parent = group, --not in pause display group
 			text = c,
 			x = screenLeft,
 			y = screenTop+20,
@@ -64,6 +90,8 @@ function scene:create( event )
 		group:insert (eng_text)
 	else -- mode == "back" or "pause"
 		--background
+		backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
+	    backgroundOverlay:addEventListener ("touch", catchBackgroundOverlay)
 		overlay = display.newImage ("img/pausemenu.png", screencx, screency+yoffset)
 		overlay.anchorX = 0.5
 		overlay.anchorY = 0.5
@@ -132,16 +160,14 @@ function scene:create( event )
 	end
 end
 function scene:show( event )
-	local group = self.view
+
 	ispause = true;
 end
 function scene:hide( event )
-	local group = self.view
 	ispause = false;
 end
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroy( event )
-	local group = self.view
 end
  
 scene:addEventListener( "create", scene )

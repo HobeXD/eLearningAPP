@@ -70,6 +70,16 @@ function resume()
 	resume_btn.alpha = 0;
 	composer.hideOverlay("slideUp", 300)
 end
+function resume_quiet()
+	print("resume")
+	--timer.resume(question_timer)
+	transition.resume() 
+	pause_btn.alpha = 1;
+	resume_btn.alpha = 0;
+	composer.hideOverlay()
+end
+
+
 
 -- ref: http://forums.coronalabs.com/topic/17277-create-a-shake-effect-on-a-object/
 function doShake(target, onCompleteDo)
