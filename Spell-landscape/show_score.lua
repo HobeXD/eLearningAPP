@@ -34,7 +34,7 @@ function scene:create( event )
 		fontSize = 25,
 		width = 180,
 		height = 50,
-		label = "select level",
+		label = "select category",
 		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
 		shape = "roundedRect",
 		fillColor = { default={ 1, 1, 1, 0.5}, over={ 1,1,1, 1 }}, --transparent
