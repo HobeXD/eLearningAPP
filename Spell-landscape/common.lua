@@ -78,8 +78,9 @@ function resume_quiet()
 	resume_btn.alpha = 0;
 	composer.hideOverlay()
 end
-
-
+function resume_trans()
+	transition.resume() 
+end
 
 -- ref: http://forums.coronalabs.com/topic/17277-create-a-shake-effect-on-a-object/
 function doShake(target, onCompleteDo)
@@ -107,6 +108,7 @@ function go_select_level(event)
 end
 function go_home(event) --remove scene
 	composer.removeScene("show_score", false)
+	resume()
 	finish_level("")
 end
 function finish_level(msg)
