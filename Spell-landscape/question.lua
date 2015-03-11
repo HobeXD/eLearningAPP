@@ -47,6 +47,7 @@ local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 now_question = {}
 local is_generate_question = false
 
+
 function isalpha(ch)	
 	local is_alpha = false
 	for i = 1, #alphabet do
@@ -57,11 +58,7 @@ function isalpha(ch)
 	end
 	return is_alpha
 end
-function generate_new_question(sceneGroup) -- random choose a word, which is not solved yet
-	if sceneGroup ~= nil then
-		nowSceneGroup = sceneGroup
-	end
-	is_generate_question = true
+function getNewQuestion()
 	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
 		return
@@ -73,9 +70,18 @@ function generate_new_question(sceneGroup) -- random choose a word, which is not
 	end
 
 	dup_question[qindex] = true
-	local q_engligh = words[qindex][1]
-	local q_chinese = words[qindex][2]
-	
+	return words[qindex][1], words[qindex][2]
+end
+function generate_new_question(sceneGroup) -- random choose a word, which is not solved yet
+	is_generate_question = true
+	if sceneGroup ~= nil then
+		nowSceneGroup = sceneGroup
+	end
+
+	local q_engligh, q_chinese = getNewQuestion()
+	if(q_engligh == nil) then -- no available question 
+		return
+	end
 	--create qustion button
 	local q_button = widget.newButton
 	{
@@ -175,7 +181,6 @@ function move_question(event) --now fps is 60 (in config.lua)
 		generate_new_question()
 	end
 end
-
 
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
 	pause_with_ans(c, e)
@@ -375,4 +380,31 @@ function hide_question(question)
 		return
 	end
 	question["q_button"]:setFillColor(1, 0.2, 0.5, 0.7)
+end
+
+function generate_new_question_listen(sceneGroup) 
+	is_generate_question = true
+	if sceneGroup ~= nil then
+		nowSceneGroup = sceneGroup
+	end
+
+	local q_engligh, q_chinese = getNewQuestion()
+	if(q_engligh == nil) then -- no available question 
+		return
+	end
+	
+	local question = {} -- include data about a question
+	question["eng"] = q_engligh
+	question["chi"] = q_chinese
+	--question["q_button"] = q_button
+	question["question_count"] = question_count --id
+	question["solved"] = false
+	question["wrong_trial"] = 0
+	
+	audio.
+	
+	print("listen!")
+end
+function count_down()
+	
 end

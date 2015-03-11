@@ -68,12 +68,13 @@ choose_Level = function (event)
 	if intolevel == false then
 		local options = {
 			effect = "fromBottom",
-			time = 500
+			time = 500,
+			params = {}
 		}
 		intolevel = true
-		options.gametype = event.target.id[1]
-		options.category = event.target.id[2]
-		print("gametype = " .. options.gametype .. " category = " .. options.category)
+		options.params.gametype = event.target.id[1]
+		options.params.category = event.target.id[2]
+		print("gametype = " .. options.params.gametype .. " category = " .. options.params.category)
 		composer.gotoScene( "level", options)
 		return true	-- indicates successful touch
 	end

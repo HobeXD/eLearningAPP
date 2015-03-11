@@ -7,6 +7,7 @@ local question = require "question"
 local sceneGroup = display.newGroup()
 --------------------------------------------
 local create_ans_field, create_score_field, create_pause_buttons, generate_qwerty_button
+local gameType, levelName
 
 local function initial_level()
 	ispause = false
@@ -114,16 +115,14 @@ generate_qwerty_button = function ()
 end
 
 local function generate_questions()
-	generate_new_question(sceneGroup)
-	move_timer = Runtime:addEventListener("enterFrame", move_question)
+	if gameType == "Read" then
+		generate_new_question(sceneGroup)
+		move_timer = Runtime:addEventListener("enterFrame", move_question)
+	else
+		generate_new_question_listen(sceneGroup)
+		move_timer = Runtime:addEventListener("enterFrame", count_down)
+	end
 end
-
-local function destroy_setting_group()
-	setting_group:removeSelf()
-	setting_group = nil
-end
---without destroy all
-
 function scene:create( event ) -- Called when the scene's view does not exist, initialize
 	sceneGroup = self.view
 	display.setDefault( "anchorX", 0 );	display.setDefault( "anchorY", 0 )
@@ -131,6 +130,9 @@ function scene:create( event ) -- Called when the scene's view does not exist, i
 	local background = display.newImageRect( "img/star_bg.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = 0, 0; background.anchorX = 0; background.anchorY = 0
 	sceneGroup:insert( background )
+	
+	gameType = event.params.gametype
+	levelName = event.params.category
 	
 	initial_level()
 end
@@ -140,7 +142,7 @@ function scene:show( event )
 	if phase == "will" then -- Called when the scene is still off screen and is about to move on screen
 		print("level: before show" .. event.phase)
 		------------new added ---------------------
-		words = read_file("voca/".. levelname .. ".txt") 
+		words = read_file("voca/".. levelName .. ".txt")
 		dup_question = {}
 		dup_question[#words+1] = false
 		generate_questions()
@@ -161,6 +163,11 @@ function scene:hide( event )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
+end
+
+local function destroy_setting_group()
+	setting_group:removeSelf()
+	setting_group = nil
 end
 function scene:destroy( event )
 	-- Called prior to the removal of scene's "view" (sceneGroup)
