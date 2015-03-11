@@ -21,6 +21,7 @@ local function choose_Category(event)
 		recover_gametype_btn(500)
 	end
 	currentShowedLevel = levelname
+	event.target:setFillColor(1, 1, 0)
 	-- if there already has gametype_btn, use new to replace
 	print("make read and listen btn")
 	local gametypeStr = {"Read", "Listen"}
