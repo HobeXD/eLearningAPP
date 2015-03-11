@@ -39,7 +39,7 @@ local function set_bgm()
 		--audio.loadStream( "sound/bgm/icy-town-short.mp3" ),
 		--audio.loadStream( "sound/bgm/pinball-three-short.mp3" )
 	}
-	audio.setVolume( 0.4 , {channel=1} )
+	audio.setVolume( 0.4 , {channel= mainBGMChannel} )
 	--audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 	audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
 end

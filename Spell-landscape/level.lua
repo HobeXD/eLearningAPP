@@ -4,6 +4,7 @@ local widget = require "widget"
 
 local common = require "common"
 local question = require "question"
+local listen = require "listen"
 local sceneGroup = display.newGroup()
 --------------------------------------------
 local create_ans_field, create_score_field, create_pause_buttons, generate_qwerty_button
@@ -118,9 +119,12 @@ local function generate_questions()
 	if gameType == "Read" then
 		generate_new_question(sceneGroup)
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
-	else
-		generate_new_question_listen(sceneGroup)
-		move_timer = Runtime:addEventListener("enterFrame", count_down)
+	else -- listening
+		audio.pause(mainBGMChannel) -- cancel music
+		countDownText = display.newText(sceneGroup, "" .. countDownTime, screenLeft, screenTop, native.systemFont, 30)-- show countdown time
+		sceneGroup:insert(countDownText)
+		generate_new_question_listen(sceneGroup, levelName)
+		move_timer = timer.performWithDelay(1000,countDown,countDownTime)
 	end
 end
 function scene:create( event ) -- Called when the scene's view does not exist, initialize
@@ -141,14 +145,13 @@ function scene:show( event )
 	
 	if phase == "will" then -- Called when the scene is still off screen and is about to move on screen
 		print("level: before show" .. event.phase)
-		------------new added ---------------------
 		words = read_file("voca/".. levelName .. ".txt")
 		dup_question = {}
 		dup_question[#words+1] = false
+		
 		generate_questions()
-		------------new added ---------------------
-	elseif phase == "did" then -- Called when the scene is now on screen		
-		-- INSERT code here to make the scene come alive. e.g. start timers, begin animation, play audio, etc.
+	elseif phase == "did" then -- Called when the scene is now on scr-- INSERT code here to make the scene come alive. e.g. start timers, begin animation, play audio, etc.
+		
 	end
 end
 function scene:hide( event )

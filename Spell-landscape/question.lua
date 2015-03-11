@@ -31,6 +31,7 @@ question_score = 10
 char_score = 1
 penalty_score = 1
 now_wrong_num = 0
+countDownTime = 20
 
 local radius = 50
 local speed_scale = 1
@@ -47,7 +48,39 @@ local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 now_question = {}
 local is_generate_question = false
 
-
+function fillHint(question)
+	local is_have_nonalpha = 0
+	for char in string.gmatch(question["eng"], '.') do
+		if not isalpha(char) then
+			is_have_nonalpha = is_have_nonalpha + 1
+		end
+	end
+	if string.len(question["eng"]) > empty_char_num or is_have_nonalpha then
+		question["withspace"] = true
+		question["now_anschar"] = ""
+		local isfill = {}
+		local isfill_num = is_have_nonalpha
+		
+		while isfill_num < string.len(question["eng"]) - empty_char_num do
+			local tofill = math.random(string.len(question["eng"]))
+			while (isfill[tofill] == 1) do
+				tofill = math.random(string.len(question["eng"]))
+			end
+			isfill[tofill] = 1
+			isfill_num = isfill_num + 1
+		end
+		for i = 1, string.len(question["eng"]) do 
+			if isfill[i] == nil and isalpha(question["eng"]:sub(i, i)) then
+				question["now_anschar"] = question["now_anschar"] .. "*";
+			else
+				question["now_anschar"] = question["now_anschar"] .. question["eng"]:sub(i, i);
+			end
+		end
+	else 
+		question["withspace"] = false
+		question["now_anschar"] = ""
+	end
+end
 function isalpha(ch)	
 	local is_alpha = false
 	for i = 1, #alphabet do
@@ -114,37 +147,7 @@ function generate_new_question(sceneGroup) -- random choose a word, which is not
 	question["wrong_trial"] = 0
 	--question["consume_time"] = 0
 	
-	local is_have_nonalpha = 0
-	for char in string.gmatch(q_engligh, '.') do
-		if not isalpha(char) then
-			is_have_nonalpha = is_have_nonalpha + 1
-		end
-	end
-	if string.len(q_engligh) > empty_char_num or is_have_nonalpha then
-		question["withspace"] = true
-		question["now_anschar"] = ""
-		local isfill = {}
-		local isfill_num = is_have_nonalpha
-		
-		while isfill_num < string.len(q_engligh) - empty_char_num do
-			local tofill = math.random(string.len(q_engligh))
-			while (isfill[tofill] == 1) do
-				tofill = math.random(string.len(q_engligh))
-			end
-			isfill[tofill] = 1
-			isfill_num = isfill_num + 1
-		end
-		for i = 1, string.len(q_engligh) do 
-			if isfill[i] == nil and isalpha(q_engligh:sub(i, i)) then
-				question["now_anschar"] = question["now_anschar"] .. "*";
-			else
-				question["now_anschar"] = question["now_anschar"] .. q_engligh:sub(i, i);
-			end
-		end
-	else 
-		question["withspace"] = false
-		question["now_anschar"] = ""
-	end
+	fillHint(question)
 	
 	questions[question_count] = question
 	q_button.alpha = 1
@@ -380,31 +383,4 @@ function hide_question(question)
 		return
 	end
 	question["q_button"]:setFillColor(1, 0.2, 0.5, 0.7)
-end
-
-function generate_new_question_listen(sceneGroup) 
-	is_generate_question = true
-	if sceneGroup ~= nil then
-		nowSceneGroup = sceneGroup
-	end
-
-	local q_engligh, q_chinese = getNewQuestion()
-	if(q_engligh == nil) then -- no available question 
-		return
-	end
-	
-	local question = {} -- include data about a question
-	question["eng"] = q_engligh
-	question["chi"] = q_chinese
-	--question["q_button"] = q_button
-	question["question_count"] = question_count --id
-	question["solved"] = false
-	question["wrong_trial"] = 0
-	
-	audio.
-	
-	print("listen!")
-end
-function count_down()
-	
 end

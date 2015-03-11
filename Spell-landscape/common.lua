@@ -14,6 +14,9 @@ screency = display.contentCenterY
 barH = 105
 barh = 40
 
+mainBGMChannel = 1
+vocaSoundChannel = 2
+
 function read_file(filedst)
 	local path = system.pathForFile(filedst)
 	local file = io.open( path, "r" )
