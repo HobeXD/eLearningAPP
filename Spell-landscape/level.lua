@@ -4,6 +4,7 @@ local widget = require "widget"
 
 local common = require "common"
 local question = require "question"
+local sceneGroup = display.newGroup()
 --------------------------------------------
 
 local function create_ans_field(current_question)
@@ -114,7 +115,7 @@ local function initial_level()
 end
 
 local function generate_questions()
-	generate_new_question()
+	generate_new_question(sceneGroup)
 	--question_timer = timer.performWithDelay(generate_question_time, generate_new_question, 0) --5sec/
 	move_timer = Runtime:addEventListener("enterFrame", move_question)
 end
@@ -134,7 +135,7 @@ function scene:create( event ) -- Called when the scene's view does not exist, i
 	background.x, background.y = 0, 0; background.anchorX = 0; background.anchorY = 0
 	sceneGroup:insert( background )
 	
-	initial_level(sceneGroup)
+	initial_level()
 end
 local function do_nothing()
 	return true
@@ -144,7 +145,6 @@ function scene:show( event )
 	print("into show:" .. event.phase)
 	if phase == "will" then -- Called when the scene is still off screen and is about to move on screen
 		------------new added ---------------------
-		--sceneGroup = self.view
 		words = read_file("voca/".. levelname .. ".txt") 
 		dup_question = {}
 		dup_question[#words+1] = false
@@ -167,7 +167,6 @@ function scene:show( event )
 	end
 end
 function scene:hide( event )
-	local sceneGroup = self.view
 	local phase = event.phase
 	if event.phase == "will" then
 		-- Called when the scene is on screen and is about to move off screen
@@ -183,14 +182,13 @@ end
 function scene:destroy( event )
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- INSERT code here to cleanup the scene
-	-- e.g. remove display objects, remove touch listeners, save state, etc.
-	--local sceneGroup = self.view
-
+	-- e.g. remove display objects, remove touch listeners, save state, etc
 	--timer.cancel(question_timer)
 	Runtime:removeEventListener("enterFrame", move_question) -- no need to remember move_timer
 	--destroy_all() --needed?
-	ispause = false
-	destroy_setting_group()
+	--ispause = false
+	resume()
+	destroy_setting_group() -- this is out of level scene! belongs to pause scene
 end
 
 -- Listener 

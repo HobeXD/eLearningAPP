@@ -25,6 +25,7 @@
 local widget = require "widget"
 local composer = require "composer"
 local common = require "common"
+local nowSceneGroup
 
 question_score = 10
 char_score = 1
@@ -56,7 +57,10 @@ function isalpha(ch)
 	end
 	return is_alpha
 end
-function generate_new_question() -- random choose a word, which is not solved yet
+function generate_new_question(sceneGroup) -- random choose a word, which is not solved yet
+	if sceneGroup ~= nil then
+		nowSceneGroup = sceneGroup
+	end
 	is_generate_question = true
 	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
@@ -93,7 +97,7 @@ function generate_new_question() -- random choose a word, which is not solved ye
 		fontSize = 40, 
 		alpha = 0
 	}
-	sceneGroup:insert(q_button)
+	nowSceneGroup:insert(q_button)
 
 	local question = {} -- include data about a question
 	question["eng"] = q_engligh
@@ -306,7 +310,7 @@ function check_select_ans( event )
 		if (correct_star ~= nil) then
 			display.remove(correct_star)
 		end
-		correct_star = display.newImage(sceneGroup, "img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
+		correct_star = display.newImage(nowSceneGroup, "img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
 		correct_star.xScale = 0.00001
 		correct_star.yScale = 0.00001
 		correct_star.anchorX = 0.5
