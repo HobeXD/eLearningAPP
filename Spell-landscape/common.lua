@@ -97,6 +97,16 @@ function resume_trans()
 	transition.resume() 
 end
 
+function isalpha(ch)	
+	local is_alpha = false
+	for i = 1, #alphabet do
+		if alphabet:sub(i, i) == ch then
+			is_alpha = true
+			break
+		end
+	end
+	return is_alpha
+end
 -- ref: http://forums.coronalabs.com/topic/17277-create-a-shake-effect-on-a-object/
 function doShake(target, onCompleteDo)
 	local thirdTran = function()

@@ -39,7 +39,7 @@ function generate_new_question_listen(sceneGroup, levelName)
 		nowSceneGroup = sceneGroup
 	end
 
-	local q_engligh, q_chinese = getNewQuestion()
+	local q_engligh, q_chinese = getNewQuestionInfo()
 	if(q_engligh == nil) then -- no available question 
 		return
 	end

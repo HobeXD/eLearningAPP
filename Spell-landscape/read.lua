@@ -7,6 +7,58 @@ questionMoveSpeed = 0.3
 speed_scale = 1
 radius = 50
 
+function generate_new_question_read(sceneGroup) -- random choose a word, which is not solved yet
+	is_generate_question = true
+	if sceneGroup ~= nil then
+		nowSceneGroup = sceneGroup
+	end
+
+	local q_engligh, q_chinese = getNewQuestionInfo()
+	if(q_engligh == nil) then -- no available question 
+		return
+	end
+	--create qustion button
+	local q_button = widget.newButton
+	{
+		left = screenLeft,
+		top = screenTop,
+		id = question_count,
+		label = q_chinese,
+		--onPress = selectQuestion,
+		--onRelease = show_select_question,
+		onEvent = selectQuestion,
+		-- about shape
+		shape = "roundedRect",
+		width = 100 + (string.len(q_chinese)-5)*10,
+		height = 100,
+		cornerRadius = 2,
+		fillColor = { default={ 1, 0.2, 0.5, 0.7 }, over={ 1, 0.2, 0.5, 1 } },
+		labelColor = { default={ 1, 1,1,1 }, over={ 1, 0.2, 0.5, 1 } },
+		strokeWidth = 4, 
+		fontSize = 40, 
+		alpha = 0
+	}
+	nowSceneGroup:insert(q_button)
+
+	local question = {} -- include data about a question
+	question["eng"] = q_engligh
+	question["chi"] = q_chinese
+	question["q_button"] = q_button
+	question["question_count"] = question_count --id
+	question["solved"] = false
+	question["wrong_trial"] = 0
+	--question["consume_time"] = 0
+	
+	fillHint(question)
+	
+	questions[question_count] = question
+	q_button.alpha = 1
+	if now_qid == -1 then -- if there is no question selected, select lowest
+		select_lowest_question()
+	end
+	is_generate_question = false
+end
+
 function move_question(event) --now fps is 60 (in config.lua)
 	if check_pause() then --busy running
 		return
@@ -32,12 +84,11 @@ function move_question(event) --now fps is 60 (in config.lua)
 		end
 	end
 	if minx > screencx / 2 * 3 and not is_generate_question then
-		generate_new_question()
+		generate_new_question_read()
 	end
 end
 
--- find the question that is most likely to make fail
-function select_lowest_question() 
+function select_lowest_question() -- find the question that is most likely to make fail
 	local lowid, lowv
 	lowid = -1; lowv = screenLeft
 	for i in pairs(questions) do
@@ -55,9 +106,9 @@ function select_lowest_question()
 			--timer.cancel(question_timer)
 		--end
 		if not is_generate_question then	
-			generate_new_question()
+			generate_new_question_read()
 		end
-		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question, 0)
+		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question_read, 0)
 	end
 end
 function select_question(id)

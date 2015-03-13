@@ -45,17 +45,6 @@ local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 now_question = {}
 local is_generate_question = false
 
-function isalpha(ch)	
-	local is_alpha = false
-	for i = 1, #alphabet do
-		if alphabet:sub(i, i) == ch then
-			is_alpha = true
-			break
-		end
-	end
-	return is_alpha
-end
-
 -- There are shared functions of reading and listening
 local function checkIsHaveNonalpha(question)
 	local isfill_num = 0
@@ -88,7 +77,7 @@ function fillHint(question)
 		end
 	end
 end
-function getNewQuestion()
+function getNewQuestionInfo()
 	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
 		return
@@ -103,62 +92,10 @@ function getNewQuestion()
 	return words[qindex][1], words[qindex][2]
 end
 
-function generate_new_question(sceneGroup) -- random choose a word, which is not solved yet
-	is_generate_question = true
-	if sceneGroup ~= nil then
-		nowSceneGroup = sceneGroup
-	end
-
-	local q_engligh, q_chinese = getNewQuestion()
-	if(q_engligh == nil) then -- no available question 
-		return
-	end
-	--create qustion button
-	local q_button = widget.newButton
-	{
-		left = screenLeft,
-		top = screenTop,
-		id = question_count,
-		label = q_chinese,
-		--onPress = select_char,
-		--onRelease = show_select_question,
-		onEvent = select_char,
-		-- about shape
-		shape = "roundedRect",
-		width = 100 + (string.len(q_chinese)-5)*10,
-		height = 100,
-		cornerRadius = 2,
-		fillColor = { default={ 1, 0.2, 0.5, 0.7 }, over={ 1, 0.2, 0.5, 1 } },
-		labelColor = { default={ 1, 1,1,1 }, over={ 1, 0.2, 0.5, 1 } },
-		strokeWidth = 4, 
-		fontSize = 40, 
-		alpha = 0
-	}
-	nowSceneGroup:insert(q_button)
-
-	local question = {} -- include data about a question
-	question["eng"] = q_engligh
-	question["chi"] = q_chinese
-	question["q_button"] = q_button
-	question["question_count"] = question_count --id
-	question["solved"] = false
-	question["wrong_trial"] = 0
-	--question["consume_time"] = 0
-	
-	fillHint(question)
-	
-	questions[question_count] = question
-	q_button.alpha = 1
-	if now_qid == -1 then -- if there is no question selected, select lowest
-		select_lowest_question()
-	end
-	is_generate_question = false
-end
-
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
 	pause_with_ans(c, e)
 end
-function check_pause_and_finish()
+function check_pause_and_finish() -- for last wrong answer, it should pause instead of goto show score imeediately
 	if not check_pause() then
 		print("user comfirmed ok")
 		timer.cancel(comfirm_timer)
@@ -210,15 +147,12 @@ function finish_question(q)
 	select_lowest_question()	
 end
 
-
-function select_char( event ) --rename select_c
+function selectQuestion( event ) --rename select_c
     if event.phase == "began" then
 		select_question(event.target.id)
-    elseif event.phase == "ended" then
 	end
     return true
 end
---on click event 
 
 function replace_char(pos, str, r)
     return str:sub(0, pos - 1) .. r .. str:sub(pos + 1, str:len())
@@ -231,7 +165,7 @@ function showCorrectStar()
 	
 	transition.to( correct_star , { time=600, x = screenLeft + barh/2, y = barH + barh/2, xScale=star_scale_rate, yScale=star_scale_rate, alpha = 0.5, transition = outExpo, onComplete = function(obj) display.remove(obj) end} )
 end
-function check_select_ans( event )
+function check_select_ans( event ) -- qwerty onpress event 
 	if check_pause() then
 		return
 	end

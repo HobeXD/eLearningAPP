@@ -118,7 +118,7 @@ end
 
 local function generate_questions()
 	if gameType == "Read" then
-		generate_new_question(sceneGroup)
+		generate_new_question_read(sceneGroup)
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
 	else -- listening
 		audio.pause(mainBGMChannel) -- cancel music
