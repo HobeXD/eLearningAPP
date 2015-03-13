@@ -2,12 +2,13 @@ local widget = require "widget"
 -------------
 -- Listen.lua, for listening stage
 ------------
--- deal with pause
--- destory timer.delay...
-
+-- deal with pause(ok)
+-- destory timer (ok)
+-- refactor: question, reading, listening
+-- add sound player at wrong-answer scene
 
 local nowVocaSound
-local listenQuestion
+local listenQuestion = {}
 local playing_q_button
 function recoverListenButton()
 	print("recover listen")
@@ -28,7 +29,7 @@ function playVocaSound(event)
 		top = screenTop,
 		defaultFile = "img/sound.png",
 		overFile = "img/sound.png",
-		width = 100,
+		width = 95,
 		height = 100
 	}
 	nowSceneGroup:insert(playing_q_button)
@@ -53,40 +54,44 @@ function generate_new_question_listen(sceneGroup, levelName)
 		top = screenTop,
 		defaultFile = "img/no_sound.png",
 		overFile = "img/no_sound.png",
-		width = 80,
+		width = 54,
 		height = 100,
 		alpha = 0
 	}
 	nowSceneGroup:insert(q_button)
 	
-	local question = {} -- include data about a question
-	question["eng"] = q_engligh
-	question["chi"] = q_chinese
-	question["q_button"] = q_button
-	question["question_count"] = question_count --id
-	question["solved"] = false
-	question["wrong_trial"] = 0
-	question["count_down"] = countDownTime
+	listenQuestion["eng"] = q_engligh
+	listenQuestion["chi"] = q_chinese
+	listenQuestion["q_button"] = q_button
+	listenQuestion["question_count"] = question_count --id
+	listenQuestion["solved"] = false
+	listenQuestion["wrong_trial"] = 0
+	listenQuestion["count_down"] = countDownTime
 	
-	fillHint(question)
+	fillHint(listenQuestion)
 	
-	questions[question_count] = question
+	questions[question_count] = listenQuestion
 	q_button.alpha = 1
-	listenQuestion = question
 	
-	print("pronounce/"  ..levelName  .. "/" .. question["eng"] ..".mp3")
-	nowVocaSound = audio.loadStream("pronounce/"  ..levelName  .. "/" .. question["eng"] ..".mp3")
+	print("pronounce/"  ..levelName  .. "/" .. listenQuestion["eng"] ..".mp3")
+	nowVocaSound = audio.loadStream("pronounce/"  ..levelName  .. "/" .. listenQuestion["eng"] ..".mp3")
 	playVocaSound()
 	
+	select_question(question_count)
+	
+	countDownText.text = listenQuestion["count_down"]
+	countDownTimer = timer.performWithDelay(1000,countDown,countDownTime)
 	
 	is_generate_question = false
 end
 function countDown()
+	if listenQuestion["count_down"] == nil then
+		return
+	end
 	listenQuestion["count_down"] = listenQuestion["count_down"] - 1
+	countDownText.text = listenQuestion["count_down"]
 	if(listenQuestion["count_down"] == 0) then
 		print("time up")
-	else 
-		print("countdown")
-		countDownText.text = listenQuestion["count_down"]
+		question_failed(listenQuestion)
 	end
 end

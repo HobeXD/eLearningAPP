@@ -25,7 +25,7 @@
 local widget = require "widget"
 local composer = require "composer"
 local common = require "common"
-local nowSceneGroup
+nowSceneGroup = display.newGroup()
 
 question_score = 10
 char_score = 1
@@ -48,6 +48,18 @@ local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 now_question = {}
 local is_generate_question = false
 
+function isalpha(ch)	
+	local is_alpha = false
+	for i = 1, #alphabet do
+		if alphabet:sub(i, i) == ch then
+			is_alpha = true
+			break
+		end
+	end
+	return is_alpha
+end
+
+-- There are shared functions of reading and listening
 function fillHint(question)
 	local is_have_nonalpha = 0
 	for char in string.gmatch(question["eng"], '.') do
@@ -81,16 +93,6 @@ function fillHint(question)
 		question["now_anschar"] = ""
 	end
 end
-function isalpha(ch)	
-	local is_alpha = false
-	for i = 1, #alphabet do
-		if alphabet:sub(i, i) == ch then
-			is_alpha = true
-			break
-		end
-	end
-	return is_alpha
-end
 function getNewQuestion()
 	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
@@ -105,6 +107,7 @@ function getNewQuestion()
 	dup_question[qindex] = true
 	return words[qindex][1], words[qindex][2]
 end
+
 function generate_new_question(sceneGroup) -- random choose a word, which is not solved yet
 	is_generate_question = true
 	if sceneGroup ~= nil then

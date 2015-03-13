@@ -41,7 +41,9 @@ local function set_bgm()
 	}
 	audio.setVolume( 0.4 , {channel= mainBGMChannel} )
 	--audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
-	audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
+	if debugMode == 1 then
+		audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
+	end
 end
 
 function scene:create( event )

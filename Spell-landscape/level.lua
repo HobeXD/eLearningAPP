@@ -121,10 +121,9 @@ local function generate_questions()
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
 	else -- listening
 		audio.pause(mainBGMChannel) -- cancel music
-		countDownText = display.newText(sceneGroup, "" .. countDownTime, screenLeft, screenTop, native.systemFont, 30)-- show countdown time
+		countDownText = display.newText(sceneGroup, "", screenLeft, screenTop, native.systemFont, 30)-- show countdown time
 		sceneGroup:insert(countDownText)
 		generate_new_question_listen(sceneGroup, levelName)
-		move_timer = timer.performWithDelay(1000,countDown,countDownTime)
 	end
 end
 function scene:create( event ) -- Called when the scene's view does not exist, initialize
@@ -178,6 +177,9 @@ function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc
 	--timer.cancel(question_timer)
 	Runtime:removeEventListener("enterFrame", move_question) -- no need to remember move_timer
+	if countDownTimer ~= nil then
+		timer.cancel(countDownTimer)
+	end
 	--destroy_all() --needed?
 	--ispause = false
 	resume()

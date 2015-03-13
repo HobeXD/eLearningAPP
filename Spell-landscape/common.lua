@@ -58,7 +58,9 @@ function pause_with_ans(c, e)
 end
 function pause() --disable all buttons(composer helps)
 	print("pause")
-	--timer.pause(question_timer)
+	if countDownTimer ~= nil then
+		timer.pause(countDownTimer)
+	end
 	transition.pause()  -- pause all moving object
 	pause_btn.alpha = 0;
 	resume_btn.alpha = 1;
@@ -67,7 +69,9 @@ function pause() --disable all buttons(composer helps)
 end
 function resume()
 	print("resume")
-	--timer.resume(question_timer)
+	if countDownTimer ~= nil then
+		timer.resume(countDownTimer)
+	end
 	transition.resume() 
 	pause_btn.alpha = 1;
 	resume_btn.alpha = 0;
