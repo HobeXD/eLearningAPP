@@ -3,6 +3,7 @@
 ----------------------------------
 local composer = require "composer"
 
+debugMode = 1
 screenTop = display.screenOriginY
 screenBottom = display.viewableContentHeight + display.screenOriginY
 screenLeft = display.screenOriginX
@@ -40,6 +41,13 @@ function read_file(filedst)
 	return wordtable
 end
 
+function check_pause() 
+	if ispause then
+		return true
+	else
+		return false
+	end
+end
 function pause_with_exit()
 	print("pause exit")
 	--timer.pause(question_timer)

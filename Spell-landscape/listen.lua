@@ -2,8 +2,6 @@ local widget = require "widget"
 -------------
 -- Listen.lua, for listening stage
 ------------
--- deal with pause(ok)
--- destory timer (ok)
 -- refactor: question, reading, listening
 -- add sound player at wrong-answer scene
 

@@ -5,6 +5,7 @@ local widget = require "widget"
 local common = require "common"
 local question = require "question"
 local listen = require "listen"
+local reading = require "read"
 local sceneGroup = display.newGroup()
 --------------------------------------------
 local create_ans_field, create_score_field, create_pause_buttons, generate_qwerty_button

@@ -33,9 +33,6 @@ penalty_score = 1
 now_wrong_num = 0
 countDownTime = 20
 
-local radius = 50
-local speed_scale = 1
-local speed = 0.3
 local finish_question_num = 15
 local max_wrong_question_num = 3
 local empty_char_num = 5
@@ -60,37 +57,35 @@ function isalpha(ch)
 end
 
 -- There are shared functions of reading and listening
-function fillHint(question)
-	local is_have_nonalpha = 0
+local function checkIsHaveNonalpha(question)
+	local isfill_num = 0
 	for char in string.gmatch(question["eng"], '.') do
 		if not isalpha(char) then
-			is_have_nonalpha = is_have_nonalpha + 1
-		end
-	end
-	if string.len(question["eng"]) > empty_char_num or is_have_nonalpha then
-		question["withspace"] = true
-		question["now_anschar"] = ""
-		local isfill = {}
-		local isfill_num = is_have_nonalpha
-		
-		while isfill_num < string.len(question["eng"]) - empty_char_num do
-			local tofill = math.random(string.len(question["eng"]))
-			while (isfill[tofill] == 1) do
-				tofill = math.random(string.len(question["eng"]))
-			end
-			isfill[tofill] = 1
 			isfill_num = isfill_num + 1
 		end
-		for i = 1, string.len(question["eng"]) do 
-			if isfill[i] == nil and isalpha(question["eng"]:sub(i, i)) then
-				question["now_anschar"] = question["now_anschar"] .. "*";
-			else
-				question["now_anschar"] = question["now_anschar"] .. question["eng"]:sub(i, i);
-			end
+	end
+	return isfill_num > 0, isfill_num
+end
+function fillHint(question)
+	local is_have_nonalpha, isfill_num = checkIsHaveNonalpha(question)
+	
+	question["now_anschar"] = ""
+	local isfill = {}
+	
+	while isfill_num < string.len(question["eng"]) - empty_char_num do
+		local tofill = math.random(string.len(question["eng"]))
+		while (isfill[tofill] == 1) do
+			tofill = math.random(string.len(question["eng"]))
 		end
-	else 
-		question["withspace"] = false
-		question["now_anschar"] = ""
+		isfill[tofill] = 1
+		isfill_num = isfill_num + 1
+	end
+	for i = 1, string.len(question["eng"]) do 
+		if isfill[i] == nil and isalpha(question["eng"]:sub(i, i)) then
+			question["now_anschar"] = question["now_anschar"] .. "*";
+		else
+			question["now_anschar"] = question["now_anschar"] .. question["eng"]:sub(i, i);
+		end
 	end
 end
 function getNewQuestion()
@@ -159,34 +154,6 @@ function generate_new_question(sceneGroup) -- random choose a word, which is not
 	end
 	is_generate_question = false
 end
-function move_question(event) --now fps is 60 (in config.lua)
-	if check_pause() then --busy running
-		return
-	end
-	if(questions[now_qid]) then
-		questions[now_qid]["q_button"]:setFillColor(0.2, 0.7, 1)
-	end
-	minx = 1000
-	for i in pairs(questions) do
-		if questions[i] ~= nil and questions[i]["solved"] == false then
-			local xpos = questions[i]["q_button"].x
-			if xpos ~= nil then
-				xpos = xpos + speed * speed_scale;
-				if ( xpos < minx) then
-					minx = xpos
-				end
-				if ( xpos > screenW - radius) then
-					question_failed(questions[i])
-				else 
-					questions[i]["q_button"]:translate(xpos - questions[i]["q_button"].x, 0)
-				end
-			end
-		end
-	end
-	if minx > screencx / 2 * 3 and not is_generate_question then
-		generate_new_question()
-	end
-end
 
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
 	pause_with_ans(c, e)
@@ -243,13 +210,7 @@ function finish_question(q)
 	select_lowest_question()	
 end
 
-function check_pause() 
-	if ispause then
-		return true
-	else
-		return false
-	end
-end
+
 function select_char( event ) --rename select_c
     if event.phase == "began" then
 		select_question(event.target.id)
@@ -259,15 +220,17 @@ function select_char( event ) --rename select_c
 end
 --on click event 
 
-function remove_self()
-	
---	target = nil
-	--event.target = nil
-end
 function replace_char(pos, str, r)
     return str:sub(0, pos - 1) .. r .. str:sub(pos + 1, str:len())
 end
-
+function showCorrectStar()
+	local correct_star = display.newImage(nowSceneGroup, "img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
+	correct_star.xScale = 0.00001; correct_star.yScale = 0.00001; correct_star.anchorX = 0.5; correct_star.anchorY = 0.5
+	
+	nowSceneGroup:insert(correct_star)
+	
+	transition.to( correct_star , { time=600, x = screenLeft + barh/2, y = barH + barh/2, xScale=star_scale_rate, yScale=star_scale_rate, alpha = 0.5, transition = outExpo, onComplete = function(obj) display.remove(obj) end} )
+end
 function check_select_ans( event )
 	if check_pause() then
 		return
@@ -279,17 +242,14 @@ function check_select_ans( event )
 		if q == nil then
 			return
 		end
-		
-		if q["withspace"] then
-			ans_len = 1
-			while q["now_anschar"]:sub(ans_len, ans_len) ~= "*" do
-				ans_len = ans_len+1
-			end
-			ans_len = ans_len - 1
-			print ("withspace len = " .. ans_len)
-		else
-			ans_len = string.len(q["now_anschar"])
+	
+		ans_len = 1
+		while q["now_anschar"]:sub(ans_len, ans_len) ~= "*" do
+			ans_len = ans_len+1
 		end
+		ans_len = ans_len - 1
+		print ("withspace len = " .. ans_len)
+	
 		-- if wrong
 		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
 			doShake(event.target, nil)
@@ -310,80 +270,16 @@ function check_select_ans( event )
 		score = score + char_score
 		char_score = char_score + 1
 		score_text.text = score
+		
+		-- ADD correct case(big or small)
+		q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))
 
-		if q["withspace"] then -- ADD correct case(big or small)
-			q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))
-		else
-			q["now_anschar"] = q["now_anschar"] .. event.target:getLabel()
-		end
 		current_question["ans_sheet"].text = q["now_anschar"]
 		
-		if (correct_star ~= nil) then
-			display.remove(correct_star)
-		end
-		correct_star = display.newImage(nowSceneGroup, "img/star.png", qwerty_btns[clickchar].x, qwerty_btns[clickchar].y)
-		correct_star.xScale = 0.00001
-		correct_star.yScale = 0.00001
-		correct_star.anchorX = 0.5
-		correct_star.anchorY = 0.5
-		-- trans to screenLeft, barH
-		transition.to( correct_star , { time=600, x = screenLeft + barh/2, y = barH + barh/2, xScale=star_scale_rate, yScale=star_scale_rate, alpha = 0.5, transition = outExpo, onComplete = remove_self} )
+		showCorrectStar()
 		
 		if q["now_anschar"] == q["eng"] then --complete question
 			question_success(q)
 		end
     end
-end
-
--- find the question that is most likely to make fail
-function select_lowest_question() 
-	local lowid, lowv
-	lowid = -1; lowv = screenLeft
-	for i in pairs(questions) do
-		if questions[i]["solved"] == false and lowv <= questions[i]["q_button"].x then
-			lowv = questions[i]["q_button"].x
-			lowid = i
-		end
-	end
-	
-	if lowid ~= -1 then
-		print("select lowest " .. lowid)
-		select_question(lowid)
-	else  -- generate new question, reset timer
-		--if question_timer ~= nil then
-			--timer.cancel(question_timer)
-		--end
-		if not is_generate_question then	
-			generate_new_question()
-		end
-		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question, 0)
-	end
-end
-function select_question(id)
-	if check_pause() then
-		return
-	end
-	if now_qid == id then --no need to update
-		return
-	end
-	prev_qid = now_qid
-	now_qid = id
-	local q = questions[now_qid]
-	--print("select id = ".. now_qid .. " prev = ".. prev_qid .. "eng = " .. q["eng"] .. " chi = " .. q["chi"])
-	--current_question["text"].text = q["chi"];
-	current_question["ans_sheet"].text = q["now_anschar"];
-	
-	if prev_qid ~= -1 then -- question need to be hided
-		hide_question(questions[prev_qid])
-	end
-	show_question(q)
-end
-
-function show_question(question)
-end	
-function hide_question(question)
-	if question == nil then
-		return
-	end
-	question["q_button"]:setFillColor(1, 0.2, 0.5, 0.7)
 end
