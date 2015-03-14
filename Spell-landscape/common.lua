@@ -4,6 +4,9 @@
 local composer = require "composer"
 
 debugMode = 1
+success = true
+failed = false
+
 screenTop = display.screenOriginY
 screenBottom = display.viewableContentHeight + display.screenOriginY
 screenLeft = display.screenOriginX
@@ -69,6 +72,7 @@ function pause() --disable all buttons(composer helps)
 	if countDownTimer ~= nil then
 		timer.pause(countDownTimer)
 	end
+	audio.pause(vocaSoundChannel)
 	transition.pause()  -- pause all moving object
 	pause_btn.alpha = 0;
 	resume_btn.alpha = 1;
@@ -80,6 +84,7 @@ function resume()
 	if countDownTimer ~= nil then
 		timer.resume(countDownTimer)
 	end
+	audio.resume(vocaSoundChannel)
 	transition.resume() 
 	pause_btn.alpha = 1;
 	resume_btn.alpha = 0;
@@ -97,6 +102,7 @@ function resume_trans()
 	transition.resume() 
 end
 
+local alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ'
 function isalpha(ch)	
 	local is_alpha = false
 	for i = 1, #alphabet do

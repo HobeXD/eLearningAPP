@@ -1,5 +1,6 @@
 ----------------------------------
 -- functions deal with vocabulary questions
+-- I want to change it into OOP code for reading and listening, but it is too time-wasting
 ----------------------------------
 --need more visual design
 	--inner alert, pause event, button size interval
@@ -17,7 +18,6 @@
 	--item(tap to collect)(how to use?)
 	--remember wrong words
 	--add wrong choices
--- code refactor
 
 --	--table.remove(questions,now_qid) -- remove entry will make exist entry -1
 	--q = nil -- nil is the way to assure to remove entry, but it is not need
@@ -26,6 +26,7 @@ local widget = require "widget"
 local composer = require "composer"
 local common = require "common"
 nowSceneGroup = display.newGroup()
+nowLevelName = ""
 
 question_score = 10
 char_score = 1
@@ -33,14 +34,14 @@ penalty_score = 1
 now_wrong_num = 0
 countDownTime = 20
 
+
+
 local finish_question_num = 15
 local max_wrong_question_num = 3
 local empty_char_num = 5
-local alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ' -- used in isalpha
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
 local failed_sound = audio.loadSound( "sound/failed.wav" )
-local suc_sound = audio.loadSound( "sound/sound_laser.wav" )
 
 now_question = {}
 local is_generate_question = false
@@ -92,10 +93,34 @@ function getNewQuestionInfo()
 	return words[qindex][1], words[qindex][2]
 end
 
+local function updateProblemScore(isCorrect)
+	if isCorrect then
+		score = score + question_score
+		score_text.text = score
+	else 
+		score = score - question_score
+		score_text.text = score
+		now_wrong_num = now_wrong_num + 1
+	end
+end
+local function updateScore(isCorrect)
+	if isCorrect then
+		penalty_score = 1 -- reset penalty score
+		score = score + char_score
+		char_score = char_score + 1
+		score_text.text = score
+	else 
+		char_score = 1
+		score = score - penalty_score
+		penalty_score = penalty_score + 1
+		score_text.text = score
+	end
+end
+
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
 	pause_with_ans(c, e)
 end
-function check_pause_and_finish() -- for last wrong answer, it should pause instead of goto show score imeediately
+local function check_pause_and_finish() -- for last wrong answer, it should pause instead of goto show score imeediately
 	if not check_pause() then
 		print("user comfirmed ok")
 		timer.cancel(comfirm_timer)
@@ -104,11 +129,10 @@ function check_pause_and_finish() -- for last wrong answer, it should pause inst
 		print("no ok, wait")
 	end
 end
+
 function question_failed(q)
 	audio.play(failed_sound)
-	score = score - question_score
-	score_text.text = score
-	now_wrong_num = now_wrong_num + 1
+	updateProblemScore(failed)
 	local c = q["chi"]
 	local e = q["eng"]
 	if now_wrong_num >= max_wrong_question_num then
@@ -117,13 +141,11 @@ function question_failed(q)
 		comfirm_timer = timer.performWithDelay(100, check_pause_and_finish, 0)
 		return
 	end
-	finish_question(q)
-	show_correct_ans(c, e)
+	finish_question(q, failed)
 end
 function question_success(q)
 	audio.play(finish_sound)
-	score = score + question_score
-	score_text.text = score
+	updateProblemScore(success)
 
 	q["solved"] = true
 	solved_count = solved_count + 1
@@ -131,28 +153,10 @@ function question_success(q)
 		finish_level("Clear!")
 		return
 	end
-	finish_question(q)
-end
-function finish_question(q)
-	display.remove(q["q_button"])
-	for j in pairs(q) do
-		while q[j] ~= nil do
-			q[j] = nil
-		end
-	end
-	
-	prev_qid = now_qid
-	now_qid = -1 -- reset
-	print("finish question -- select lowest")
-	select_lowest_question()	
+	finish_question(q ,success)
 end
 
-function selectQuestion( event ) --rename select_c
-    if event.phase == "began" then
-		select_question(event.target.id)
-	end
-    return true
-end
+local finish_question -- can be overwritten by listen.lua or read.lua
 
 function replace_char(pos, str, r)
     return str:sub(0, pos - 1) .. r .. str:sub(pos + 1, str:len())
@@ -188,10 +192,7 @@ function check_select_ans( event ) -- qwerty onpress event
 		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
 			doShake(event.target, nil)
 			
-			char_score = 1
-			score = score - penalty_score
-			penalty_score = penalty_score + 1
-			score_text.text = score
+			updateScore(failed)
 			q["wrong_trial"] = q["wrong_trial"] + 1
 			if q["wrong_trial"] >= 3 then
 				question_failed(q)
@@ -199,11 +200,7 @@ function check_select_ans( event ) -- qwerty onpress event
 			return
 		end
 		--after assure to be success
-		--update_score(true, )
-		penalty_score = 1
-		score = score + char_score
-		char_score = char_score + 1
-		score_text.text = score
+		updateScore(success)
 		
 		-- ADD correct case(big or small)
 		q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))

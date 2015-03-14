@@ -88,6 +88,12 @@ function move_question(event) --now fps is 60 (in config.lua)
 	end
 end
 
+function selectQuestion( event ) --rename select_c
+    if event.phase == "began" then
+		select_question_read(event.target.id)
+	end
+    return true
+end
 function select_lowest_question() -- find the question that is most likely to make fail
 	local lowid, lowv
 	lowid = -1; lowv = screenLeft
@@ -100,7 +106,7 @@ function select_lowest_question() -- find the question that is most likely to ma
 	
 	if lowid ~= -1 then
 		print("select lowest " .. lowid)
-		select_question(lowid)
+		select_question_read(lowid)
 	else  -- generate new question, reset timer
 		--if question_timer ~= nil then
 			--timer.cancel(question_timer)
@@ -111,7 +117,7 @@ function select_lowest_question() -- find the question that is most likely to ma
 		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question_read, 0)
 	end
 end
-function select_question(id)
+function select_question_read(id)
 	if check_pause() then
 		return
 	end
@@ -138,4 +144,25 @@ function hide_question(question)
 		return
 	end
 	question["q_button"]:setFillColor(1, 0.2, 0.5, 0.7)
+end
+
+function finish_question_read(q, isSuccess)
+	-- remove all data relate to this question
+	print("finish_question_read")
+	local c = q["chi"]
+	local e = q["eng"]
+	display.remove(q["q_button"])
+	for j in pairs(q) do
+		while q[j] ~= nil do
+			q[j] = nil
+		end
+	end
+	
+	prev_qid = now_qid
+	now_qid = -1 -- reset
+	print("finish read question -- select lowest")
+	select_lowest_question()	
+	if not isSuccess then
+		show_correct_ans(c, e)
+	end
 end

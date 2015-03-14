@@ -120,11 +120,13 @@ local function generate_questions()
 	if gameType == "Read" then
 		generate_new_question_read(sceneGroup)
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
+		finish_question = finish_question_read
 	else -- listening
 		audio.pause(mainBGMChannel) -- cancel music
 		countDownText = display.newText(sceneGroup, "", screenLeft, screenTop, native.systemFont, 30)-- show countdown time
 		sceneGroup:insert(countDownText)
 		generate_new_question_listen(sceneGroup, levelName)
+		finish_question = finish_question_listen
 	end
 end
 function scene:create( event ) -- Called when the scene's view does not exist, initialize
