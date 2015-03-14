@@ -3,9 +3,9 @@ local widget = require "widget"
 -- reading.lua, for reading stage
 ------------
 
-questionMoveSpeed = 0.3
-speed_scale = 1
-radius = 50
+local questionMoveSpeed = 0.3
+local speed_scale = 1
+local radius = 50
 
 function generate_new_question_read(sceneGroup) -- random choose a word, which is not solved yet
 	is_generate_question = true

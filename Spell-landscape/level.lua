@@ -21,10 +21,7 @@ local function initial_level()
 	solved_count = 0
 	score = 0
 	
-	question_score = 10
-	char_score = 1
-	penalty_score = 1
-	now_wrong_num = 0
+	gameData:reset()
 	
 	current_question = display.newGroup()
 	setting_group = display.newGroup()

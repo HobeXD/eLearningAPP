@@ -19,6 +19,9 @@
 	--remember wrong words
 	--add wrong choices
 
+-- http://forums.coronalabs.com/topic/50899-facebook-share-dialog-in-corona-is-it-possible/
+-- http://docs.coronalabs.com/daily/plugin/facebook/showDialog.html
+	
 --	--table.remove(questions,now_qid) -- remove entry will make exist entry -1
 	--q = nil -- nil is the way to assure to remove entry, but it is not need
 ----------------------------------
@@ -28,17 +31,10 @@ local common = require "common"
 nowSceneGroup = display.newGroup()
 nowLevelName = ""
 
-question_score = 10
-char_score = 1
-penalty_score = 1
-now_wrong_num = 0
-countDownTime = 20
-
-
-
 local finish_question_num = 15
 local max_wrong_question_num = 3
-local empty_char_num = 5
+local empty_char_num = 5 -- at most input 5 characters
+
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
 local failed_sound = audio.loadSound( "sound/failed.wav" )
@@ -93,30 +89,6 @@ function getNewQuestionInfo()
 	return words[qindex][1], words[qindex][2]
 end
 
-local function updateProblemScore(isCorrect)
-	if isCorrect then
-		score = score + question_score
-		score_text.text = score
-	else 
-		score = score - question_score
-		score_text.text = score
-		now_wrong_num = now_wrong_num + 1
-	end
-end
-local function updateScore(isCorrect)
-	if isCorrect then
-		penalty_score = 1 -- reset penalty score
-		score = score + char_score
-		char_score = char_score + 1
-		score_text.text = score
-	else 
-		char_score = 1
-		score = score - penalty_score
-		penalty_score = penalty_score + 1
-		score_text.text = score
-	end
-end
-
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
 	pause_with_ans(c, e)
 end
@@ -132,10 +104,10 @@ end
 
 function question_failed(q)
 	audio.play(failed_sound)
-	updateProblemScore(failed)
+	gameData:updateProblemScore(failed)
 	local c = q["chi"]
 	local e = q["eng"]
-	if now_wrong_num >= max_wrong_question_num then
+	if gameData:isGameOver() then
 		show_correct_ans(c, e)
 		check_pause_and_finish()
 		comfirm_timer = timer.performWithDelay(100, check_pause_and_finish, 0)
@@ -145,7 +117,7 @@ function question_failed(q)
 end
 function question_success(q)
 	audio.play(finish_sound)
-	updateProblemScore(success)
+	gameData:updateProblemScore(success)
 
 	q["solved"] = true
 	solved_count = solved_count + 1
@@ -192,7 +164,7 @@ function check_select_ans( event ) -- qwerty onpress event
 		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
 			doShake(event.target, nil)
 			
-			updateScore(failed)
+			gameData:updateScore(failed)
 			q["wrong_trial"] = q["wrong_trial"] + 1
 			if q["wrong_trial"] >= 3 then
 				question_failed(q)
@@ -200,7 +172,7 @@ function check_select_ans( event ) -- qwerty onpress event
 			return
 		end
 		--after assure to be success
-		updateScore(success)
+		gameData:updateScore(success)
 		
 		-- ADD correct case(big or small)
 		q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))

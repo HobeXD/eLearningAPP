@@ -8,6 +8,9 @@ local widget = require "widget"
 -- refactor : main status in question.lua
 -- bug:audio play oncomplete 可能是取消？(not effected)
 -- bug:錯了以後倒數繼續(ok)
+-- bug:玩第二次後的
+
+local countDownTime = 20
 
 local nowVocaSound
 local listenQuestion = {}
