@@ -111,14 +111,15 @@ function select_lowest_question() -- find the question that is most likely to ma
 		--end
 		if not is_generate_question then	
 			generate_new_question_read()
+			select_lowest_question()
 		end
 		--question_timer = timer.performWithDelay(generate_question_time, generate_new_question_read, 0)
 	end
 end
 function select_question_read(id)
-	if check_pause() then
-		return
-	end
+	--if check_pause() then
+	--	return
+	--end
 	if now_qid == id then --no need to update
 		return
 	end
@@ -159,8 +160,9 @@ function finish_question_read(q, isSuccess)
 	prev_qid = now_qid
 	now_qid = -1 -- reset
 	print("finish read question -- select lowest")
-	select_lowest_question()	
+	
 	if not isSuccess then
 		show_correct_ans(c, e)
 	end
+	select_lowest_question()	
 end

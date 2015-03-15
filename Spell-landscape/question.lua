@@ -89,6 +89,7 @@ function getNewQuestionInfo()
 	
 	return words[qindex][1], words[qindex][2]
 end
+
 function playVocaSound(onComplete)
 	if audio.isChannelActive(vocaSoundChannel) then
 		print("channel is already playing")

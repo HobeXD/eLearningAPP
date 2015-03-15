@@ -17,6 +17,9 @@ local widget = require "widget"
 -- delete all print()
 -- bug: read錯誤後直接播放
 
+-- audio.loadSound 會將整個音頻載入記憶體, 適用於較短且可能重複使用的音效
+-- audio.loadStream 一次只載入一段音頻, 適用於背景音樂這種較長的音樂, 比較吃 CPU 且有可能延遲
+
 local countDownTime = 20
 
 local listenQuestion = {}
