@@ -9,7 +9,7 @@ gameData = {
 	EMPTY_CHAR_NUM = 5, -- at most input 5 characters
 	-- variable
 	question_score = 10,
-	char_score = 1,
+	character_score = 1,
 	penalty_score = 1,
 	score = 0, 
 	now_wrong_num = 0,
@@ -17,7 +17,7 @@ gameData = {
 }
 function gameData:reset()
 	self.question_score = 10
-	self.char_score = 1
+	self.character_score = 1
 	self.penalty_score = 1
 	self.score = 0
 	self.now_wrong_num = 0
@@ -49,11 +49,11 @@ end
 function gameData:updateScore(isCorrect)
 	if isCorrect then
 		self.penalty_score = 1 -- reset penalty score
-		self.score = self.score + self.char_score
-		self.char_score = self.char_score + 1
+		self.score = self.score + self.character_score
+		self.character_score = self.character_score + 1
 		score_text.text = self.score
 	else 
-		self.char_score = 1
+		self.character_score = 1
 		self.score = self.score - self.penalty_score
 		self.penalty_score = self.penalty_score + 1
 		score_text.text = self.score

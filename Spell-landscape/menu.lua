@@ -16,15 +16,7 @@ end
 
 local function blink_text(event)
 	print("blink!") 
-	transition.blink(playtext , {time = 3600, delay = 1800})
-	--[[if isblink then
-		playtext.alpha = 0.3
-		isblink = false
-	else
-		playtext.alpha = 1
-		isblink = true
-	end]]
-	
+	transition.blink(playtext , {time = 3600, delay = 1800})	
 end
 
 local nowbgmnum = 1
@@ -39,7 +31,6 @@ local function set_bgm()
 		--audio.loadStream( "sound/bgm/icy-town-short.mp3" ),
 		--audio.loadStream( "sound/bgm/pinball-three-short.mp3" )
 	}
-	audio.setVolume( 0.4 , {channel= mainBGMChannel} )
 	--audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 	if debugMode ~= 1 then
 		audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
@@ -53,6 +44,12 @@ function scene:create( event )
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
+	-- initial setup
+	print(tostring(audio.setVolume( 0.25, { channel=mainBGMChannel }))) -- set the volume on channel 1
+	audio.setVolume( 0.75, { channel=vocaSoundChannel }) -- set the volume on channel 1
+	audio.setVolume( 0.75, { channel=winLoseSoundChannel }) -- set the volume on channel 1
+	
+	
 	set_bgm()
 	
 	Runtime:addEventListener("key", handle_system_key)
@@ -156,14 +153,10 @@ function scene:destroy( event )
 	end
 end
 
----------------------------------------------------------------------------------
-
 -- Listener setup
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
-
------------------------------------------------------------------------------------------
 
 return scene

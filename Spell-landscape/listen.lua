@@ -2,34 +2,84 @@ local widget = require "widget"
 -------------
 -- Listen.lua, for listening stage
 ------------
--- refactor: question, reading, listening
--- add sound player at wrong-answer scene
--- bug: 音檔名 和 單字的不同
--- refactor : main status in question.lua
+-- refactor: question, reading, listening(ok)
+-- bug: 音檔名 和 單字的不同 (ok)
+-- refactor : main status in question.lua (gamedata)
 -- bug:audio play oncomplete 可能是取消？(not effected)
 -- bug:錯了以後倒數繼續(ok)
--- bug:玩第二次後的
--- bug:對錯聲音大小
 -- bug:暫停後倒數問題(剩n秒時停止) (ok)
+-- 玩完listen回複bgm (ok)
+-- generate_new_question_read(sceneGroup, levelName) 參數設 global (ok)
+-- bug:玩第二次後的 (目前沒有)
+-- bug:對錯聲音大小
 -- gamedata.lua -- self. 需要嗎
+-- add sound player at wrong-answer scene
+-- delete all print()
+-- bug: read錯誤後直接播放
 
 local countDownTime = 20
 
-local nowVocaSound
 local listenQuestion = {}
 local playing_q_button
-function recoverListenButton()
-	print("recover listen")
-	display.remove(playing_q_button)
-	listenQuestion["q_button"].alpha = 1
+
+function generate_new_question_listen() 
+	is_generate_question = true
+
+	local q_engligh, q_chinese = getNewQuestionInfo()
+	if(q_engligh == nil) then -- no available question 
+		return
+	end
+	
+	local listen_button = createSoundButton(screencx-80, screenTop)
+	nowSceneGroup:insert(listen_button)
+	
+	listenQuestion["eng"] = q_engligh
+	listenQuestion["chi"] = q_chinese
+	listenQuestion["q_button"] = listen_button
+	listenQuestion["question_count"] = question_count --id
+	listenQuestion["solved"] = false
+	listenQuestion["wrong_trial"] = 0
+	listenQuestion["count_down"] = countDownTime
+	
+	fillHint(listenQuestion)
+	
+	questions[question_count] = listenQuestion
+	listen_button.alpha = 1
+	
+	changeImageAndPlayVocaSound()
+	
+	print("ans = " .. listenQuestion["eng"])
+	select_question_listen(question_count)
+	
+	countDownText.text = listenQuestion["count_down"]
+	countDownTimer = timer.performWithDelay(1000,countDown,-1)
+	
+	is_generate_question = false
 end
-function playVocaSound(event)
+
+function createSoundButton(left, top)
+	local listen_button = widget.newButton
+	{
+		onPress = changeImageAndPlayVocaSound,
+		id = question_count,
+		left = left,
+		top = top,
+		defaultFile = "img/no_sound.png",
+		overFile = "img/no_sound.png",
+		width = 54,
+		height = 100,
+		alpha = 0
+	}
+	return listen_button
+end
+
+function changeImageAndPlayVocaSound(event)
 	if audio.isChannelActive(vocaSoundChannel) then
 		print("channel is already playing")
 		return
 	end
-	isPlayingSound = true
-	print("playsound")
+	
+	print("changeImageAndPlayVocaSound")
 	listenQuestion["q_button"].alpha = 0
 	playing_q_button = widget.newButton
 	{
@@ -44,63 +94,19 @@ function playVocaSound(event)
 	listenQuestion["playing_q_button"] = playing_q_button
 	nowSceneGroup:insert(playing_q_button)
 	
-	audio.play(nowVocaSound, {channel = vocaSoundChannel, onComplete = recoverListenButton})
-	if check_pause() then
-		print(" pause, so audio pause")
-		audio.pause(vocaSoundChannel)
-	end
+	playVocaSound(recoverListenButton)
 end
-function generate_new_question_listen(sceneGroup, levelName) 
-	is_generate_question = true
-	if sceneGroup ~= nil then
-		nowSceneGroup = sceneGroup
-	end
-	nowLevelName = levelName
-
-	local q_engligh, q_chinese = getNewQuestionInfo()
-	if(q_engligh == nil) then -- no available question 
+function recoverListenButton(event)
+	print("recover listen")
+	if event.completed == false then
+		print("not fully play yet")
 		return
 	end
-	
-	local q_button = widget.newButton
-	{
-		onPress = playVocaSound,
-		id = question_count,
-		left = screencx-80,
-		top = screenTop,
-		defaultFile = "img/no_sound.png",
-		overFile = "img/no_sound.png",
-		width = 54,
-		height = 100,
-		alpha = 0
-	}
-	nowSceneGroup:insert(q_button)
-	
-	listenQuestion["eng"] = q_engligh
-	listenQuestion["chi"] = q_chinese
-	listenQuestion["q_button"] = q_button
-	listenQuestion["question_count"] = question_count --id
-	listenQuestion["solved"] = false
-	listenQuestion["wrong_trial"] = 0
-	listenQuestion["count_down"] = countDownTime
-	
-	fillHint(listenQuestion)
-	
-	questions[question_count] = listenQuestion
-	q_button.alpha = 1
-	
-	print("pronounce/"  ..levelName  .. "/" .. listenQuestion["eng"] ..".mp3")
-	nowVocaSound = audio.loadStream("pronounce/"  ..levelName  .. "/" .. listenQuestion["eng"] ..".mp3")
-	playVocaSound()
-	
-	print("ans = " .. listenQuestion["eng"])
-	select_question_listen(question_count)
-	
-	countDownText.text = listenQuestion["count_down"]
-	countDownTimer = timer.performWithDelay(1000,countDown,-1)
-	
-	is_generate_question = false
+	display.remove(playing_q_button)
+	listenQuestion["q_button"].alpha = 1
 end
+
+
 function countDown()
 	if listenQuestion["count_down"] == nil or check_pause() then
 		return
@@ -157,5 +163,5 @@ function finish_question_listen(q, isSuccess)
 	if not isSuccess then
 		show_correct_ans(c, e)
 	end
-	generate_new_question_listen(nowSceneGroup, nowLevelName)
+	generate_new_question_listen()
 end

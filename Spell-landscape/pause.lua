@@ -1,13 +1,14 @@
 -- Ref: Rolly Bear World Project by Christian Peeters
 local composer = require "composer"
 local common = require "common"
+local listen = require "listen"
 local widget = require "widget"
+
 local scene = composer.newScene()
 local params
 local group
  
 function catchBackgroundOverlay(event)
-	--print("catchBackgroundOverlay") --debug message
 	return true 
 end
 
@@ -52,12 +53,13 @@ function scene:create( event )
 	local yoffset = 0
 	--check mode to get proper button
 	local mode = event.params.mode
+	local c = event.params.chinese
+	local e = event.params.english
+	local level = event.params.level
 	-- if show, show ans without pause image
 	if mode == "show" then 	
 		backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
 		group:addEventListener("touch", onSlide)
-		local c = event.params.chinese
-		local e = event.params.english
 
 		local textbackground = display.newRect (screenLeft, screenTop, screenW, 140)
 		textbackground:setFillColor( 1,1,1 )
@@ -81,13 +83,16 @@ function scene:create( event )
 		}
 		chi_text = display.newText(options)
 		chi_text:setTextColor(0,0.3,0.7)
+		group:insert (chi_text)
 		
 		options.y = screenTop+80
 		options.text = e
 		eng_text = display.newText(options)
 		eng_text:setTextColor(0,0.3,0.7)
-		group:insert (chi_text)
 		group:insert (eng_text)
+		
+		--local soundButton = createSoundButton(screencx, screency+ yoffset)
+		--group:insert (soundButton)
 	else -- mode == "back" or "pause"
 		--background
 		backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)

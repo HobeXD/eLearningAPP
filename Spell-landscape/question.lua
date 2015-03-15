@@ -31,8 +31,7 @@ local common = require "common"
 local gamedata = require "gamedata"
 nowSceneGroup = display.newGroup()
 nowLevelName = ""
-
-
+nowVocaSound = ""
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
 local failed_sound = audio.loadSound( "sound/failed.wav" )
@@ -84,11 +83,28 @@ function getNewQuestionInfo()
 	end
 
 	dup_question[qindex] = true
+	
+	print("pronounce/"  ..nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
+	nowVocaSound = audio.loadStream("pronounce/"  ..nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
+	
 	return words[qindex][1], words[qindex][2]
+end
+function playVocaSound(onComplete)
+	if audio.isChannelActive(vocaSoundChannel) then
+		print("channel is already playing")
+		return false
+	end
+	print("playsound")
+	audio.play(nowVocaSound, {channel = vocaSoundChannel, onComplete = onComplete})
+	if check_pause() then
+		print(" pause, so audio pause")
+		audio.pause(vocaSoundChannel)
+	end
+	return true
 end
 
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
-	pause_with_ans(c, e)
+	pause_with_ans(c, e, nowLevelName)
 end
 local function check_pause_and_finish() -- for last wrong answer, it should pause instead of goto show score imeediately
 	if not check_pause() then
@@ -101,8 +117,8 @@ local function check_pause_and_finish() -- for last wrong answer, it should paus
 end
 
 function question_failed(q)
-	audio.play(failed_sound)
-	gameData:updateProblemScore(failed)
+	audio.play(failed_sound, {channel = winLoseSoundChannel, volnum})
+	gameData:updateProblemScore(FAILED)
 	local c = q["chi"]
 	local e = q["eng"]
 	if gameData:isGameOver() then
@@ -111,18 +127,18 @@ function question_failed(q)
 		comfirm_timer = timer.performWithDelay(100, check_pause_and_finish, 0)
 		return
 	end
-	finish_question(q, failed)
+	finish_question(q, FAILED)
 end
 function question_success(q)
-	audio.play(finish_sound)
-	gameData:updateProblemScore(success)
+	audio.play(finish_sound, {channel = winLoseSoundChannel})
+	gameData:updateProblemScore(SUCCESS)
 
 	q["solved"] = true
 	if gameData:isGameClear() or question_count == #words then 
 		finish_level("Clear!")
 		return
 	end
-	finish_question(q ,success)
+	finish_question(q ,SUCCESS)
 end
 
 local finish_question -- can be overwritten by listen.lua or read.lua
@@ -161,15 +177,15 @@ function check_select_ans( event ) -- qwerty onpress event
 		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 
 			doShake(event.target, nil)
 			
-			gameData:updateScore(failed)
+			gameData:updateScore(FAILED)
 			q["wrong_trial"] = q["wrong_trial"] + 1
 			if q["wrong_trial"] >= 3 then
 				question_failed(q)
 			end
 			return
 		end
-		--after assure to be success
-		gameData:updateScore(success)
+		--after assure to be SUCCESS
+		gameData:updateScore(SUCCESS)
 		
 		-- ADD correct case(big or small)
 		q["now_anschar"] = replace_char(ans_len+1, q["now_anschar"], string.sub(q["eng"], ans_len+1, ans_len+1))

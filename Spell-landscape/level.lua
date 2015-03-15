@@ -113,15 +113,17 @@ generate_qwerty_button = function ()
 end
 
 local function generate_questions()
+	nowLevelName = levelName
+	nowSceneGroup = sceneGroup
 	if gameType == "Read" then
-		generate_new_question_read(sceneGroup)
+		generate_new_question_read()
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
 		finish_question = finish_question_read
 	else -- listening
 		audio.pause(mainBGMChannel) -- cancel music
 		countDownText = display.newText(sceneGroup, "", screenLeft, screenTop, native.systemFont, 30)-- show countdown time
 		sceneGroup:insert(countDownText)
-		generate_new_question_listen(sceneGroup, levelName)
+		generate_new_question_listen()
 		finish_question = finish_question_listen
 	end
 end
@@ -176,6 +178,7 @@ function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc
 	--timer.cancel(question_timer)
 	Runtime:removeEventListener("enterFrame", move_question) -- no need to remember move_timer
+	audio.stop(vocaSoundChannel)
 	if countDownTimer ~= nil then
 		timer.cancel(countDownTimer)
 	end
@@ -183,6 +186,9 @@ function scene:destroy( event )
 	--ispause = false
 	resume()
 	destroy_setting_group() -- this is out of level scene! belongs to pause scene
+	if audio.isChannelActive(mainBGMChannel) then 
+		audio.resume(mainBGMChannel)
+	end
 end
 
 -- Listener 

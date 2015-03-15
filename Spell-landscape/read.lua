@@ -7,11 +7,8 @@ local questionMoveSpeed = 0.3
 local speed_scale = 1
 local radius = 50
 
-function generate_new_question_read(sceneGroup) -- random choose a word, which is not solved yet
+function generate_new_question_read() -- random choose a word, which is not solved yet
 	is_generate_question = true
-	if sceneGroup ~= nil then
-		nowSceneGroup = sceneGroup
-	end
 
 	local q_engligh, q_chinese = getNewQuestionInfo()
 	if(q_engligh == nil) then -- no available question 
@@ -53,6 +50,7 @@ function generate_new_question_read(sceneGroup) -- random choose a word, which i
 	
 	questions[question_count] = question
 	q_button.alpha = 1
+	playVocaSound()
 	if now_qid == -1 then -- if there is no question selected, select lowest
 		select_lowest_question()
 	end

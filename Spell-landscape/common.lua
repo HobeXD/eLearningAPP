@@ -3,9 +3,9 @@
 ----------------------------------
 local composer = require "composer"
 
-debugMode = 1
-success = true
-failed = false
+debugMode = 0
+SUCCESS = true
+FAILED = false
 
 screenTop = display.screenOriginY
 screenBottom = display.viewableContentHeight + display.screenOriginY
@@ -20,6 +20,7 @@ barh = 40
 
 mainBGMChannel = 1
 vocaSoundChannel = 2
+winLoseSoundChannel = 3
 
 function read_file(filedst)
 	local path = system.pathForFile(filedst)
@@ -59,13 +60,19 @@ function pause_with_exit()
 	resume_btn.alpha = 1;
 	composer.showOverlay( "pause" ,{effect = "flipFadeOutIn" , time = 300, params ={mode = "back"}, isModal = true} ) --change effect
 end
-function pause_with_ans(c, e)
+function pause_with_ans(c, e, nowLevelName)
 	print("pause ans")
 	--timer.pause(question_timer)
 	transition.pause()  -- pause all moving object
 	pause_btn.alpha = 0;
 	resume_btn.alpha = 1;
-	composer.showOverlay( "pause" ,{effect = "flipFadeOutIn" , time = 300, params ={mode = "show", chinese = c, english = e}, isModal = false} )
+	local pause_params = {
+		mode = "show",
+		chinese = c,
+		english = e,
+		level = nowLevelName
+	}
+	composer.showOverlay( "pause" ,{effect = "flipFadeOutIn" , time = 300, params = pause_params, isModal = false} )
 end
 function pause() --disable all buttons(composer helps)
 	print("pause")
