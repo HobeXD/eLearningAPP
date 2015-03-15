@@ -28,12 +28,10 @@
 local widget = require "widget"
 local composer = require "composer"
 local common = require "common"
+local gamedata = require "gamedata"
 nowSceneGroup = display.newGroup()
 nowLevelName = ""
 
-local finish_question_num = 15
-local max_wrong_question_num = 3
-local empty_char_num = 5 -- at most input 5 characters
 
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
@@ -58,7 +56,7 @@ function fillHint(question)
 	question["now_anschar"] = ""
 	local isfill = {}
 	
-	while isfill_num < string.len(question["eng"]) - empty_char_num do
+	while isfill_num < string.len(question["eng"]) - gameData.EMPTY_CHAR_NUM do
 		local tofill = math.random(string.len(question["eng"]))
 		while (isfill[tofill] == 1) do
 			tofill = math.random(string.len(question["eng"]))
@@ -75,7 +73,7 @@ function fillHint(question)
 	end
 end
 function getNewQuestionInfo()
-	if question_count > finish_question_num + max_wrong_question_num or question_count == #words then --make some flag
+	if gameData:isAllQuestionGenerated(question_count) or question_count == #words then --make some flag
 		print("all question generated!, stop generate")
 		return
 	end
@@ -120,8 +118,7 @@ function question_success(q)
 	gameData:updateProblemScore(success)
 
 	q["solved"] = true
-	solved_count = solved_count + 1
-	if solved_count == finish_question_num or question_count == #words then 
+	if gameData:isGameClear() or question_count == #words then 
 		finish_level("Clear!")
 		return
 	end

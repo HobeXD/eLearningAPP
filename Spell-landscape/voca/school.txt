@@ -1,4 +1,4 @@
-﻿Elementary school 國小
+Elementary school 國小
 Junior high school 國中
 Senior high school 高中
 classroom 教室

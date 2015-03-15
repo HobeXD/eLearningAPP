@@ -1,4 +1,4 @@
-﻿airplane 飛機
+airplane 飛機
 bicycle 腳踏車
 boat 船
 bus 公車

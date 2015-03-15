@@ -6,6 +6,7 @@ local common = require "common"
 local question = require "question"
 local listen = require "listen"
 local reading = require "read"
+local gamedata = require "gamedata"
 local sceneGroup = display.newGroup()
 --------------------------------------------
 local create_ans_field, create_score_field, create_pause_buttons, generate_qwerty_button
@@ -18,8 +19,6 @@ local function initial_level()
 	prev_qid = -1
 	now_qid = -1
 	question_count = 0
-	solved_count = 0
-	score = 0
 	
 	gameData:reset()
 	
@@ -49,7 +48,7 @@ create_score_field = function ()
 	star_scale_rate = barh/score_star.width
 	score_star:scale(star_scale_rate, star_scale_rate)
 	
-	score_text = display.newText(sceneGroup, score, screenLeft + 40, barH, native.systemFont, 30)
+	score_text = display.newText(sceneGroup, gameData:getScore(), screenLeft + 40, barH, native.systemFont, 30)
 end
 create_pause_buttons = function(setting_group) --cannot be paused
 	local ctrl_btn_size = 50

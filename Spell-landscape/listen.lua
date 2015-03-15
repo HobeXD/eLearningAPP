@@ -9,6 +9,9 @@ local widget = require "widget"
 -- bug:audio play oncomplete 可能是取消？(not effected)
 -- bug:錯了以後倒數繼續(ok)
 -- bug:玩第二次後的
+-- bug:對錯聲音大小
+-- bug:暫停後倒數問題(剩n秒時停止) (ok)
+-- gamedata.lua -- self. 需要嗎
 
 local countDownTime = 20
 
@@ -94,7 +97,7 @@ function generate_new_question_listen(sceneGroup, levelName)
 	select_question_listen(question_count)
 	
 	countDownText.text = listenQuestion["count_down"]
-	countDownTimer = timer.performWithDelay(1000,countDown,countDownTime)
+	countDownTimer = timer.performWithDelay(1000,countDown,-1)
 	
 	is_generate_question = false
 end
@@ -106,6 +109,7 @@ function countDown()
 	countDownText.text = listenQuestion["count_down"]
 	if(listenQuestion["count_down"] == 0) then
 		print("time up")
+		timer.cancel(countDownTimer)
 		question_failed(listenQuestion)
 	end
 end

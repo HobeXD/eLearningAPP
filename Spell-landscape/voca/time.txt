@@ -1,4 +1,4 @@
-﻿a.m. 上午
+a.m. 上午
 afternoon 下午
 ago 以前
 already 已經

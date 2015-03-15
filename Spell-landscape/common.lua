@@ -69,9 +69,6 @@ function pause_with_ans(c, e)
 end
 function pause() --disable all buttons(composer helps)
 	print("pause")
-	if countDownTimer ~= nil then
-		timer.pause(countDownTimer)
-	end
 	audio.pause(vocaSoundChannel)
 	transition.pause()  -- pause all moving object
 	pause_btn.alpha = 0;
@@ -81,9 +78,6 @@ function pause() --disable all buttons(composer helps)
 end
 function resume()
 	print("resume")
-	if countDownTimer ~= nil then
-		timer.resume(countDownTimer)
-	end
 	audio.resume(vocaSoundChannel)
 	transition.resume() 
 	pause_btn.alpha = 1;
@@ -150,9 +144,8 @@ function finish_level(msg)
 		composer.gotoScene( "menu", pattern, 500)
 	else
 		pattern = "fromBottom"
-		--native.showAlert( msg, "Your Score: ".. score)
-		if score > 0 then
-			scoremsg = "You collect ".. score .. " stars!"
+		if gameData:getScore() > 0 then
+			scoremsg = "You collect ".. gameData:getScore() .. " stars!"
 		else
 			scoremsg = "You do not get any star..."
 		end
@@ -163,7 +156,7 @@ function finish_level(msg)
 			params = {
 				msg = msg,
 				scoremsg = scoremsg,
-				score = score, 
+				score = gameData:getScore(), 
 				star_scale = star_scale_rate
 			}
 		}
