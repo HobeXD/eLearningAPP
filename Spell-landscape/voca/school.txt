@@ -1,6 +1,6 @@
-Elementary school 國小
-Junior high school 國中
-Senior high school 高中
+Elementary_school 國小
+Junior_high_school 國中
+Senior_high_school 高中
 classroom 教室
 playground 操場
 library 圖書館
@@ -29,7 +29,7 @@ History 歷史
 language 語言
 Math 數學
 music 音樂
-Physical Education 體育
+Physical_Education 體育
 classmate 同學
 friend 朋友
 teacher 老師

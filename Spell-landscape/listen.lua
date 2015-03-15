@@ -4,7 +4,7 @@ local widget = require "widget"
 ------------
 -- refactor: question, reading, listening
 -- add sound player at wrong-answer scene
--- 音檔名 和 單字的不同
+-- bug: 音檔名 和 單字的不同
 -- refactor : main status in question.lua
 -- bug:audio play oncomplete 可能是取消？(not effected)
 -- bug:錯了以後倒數繼續(ok)

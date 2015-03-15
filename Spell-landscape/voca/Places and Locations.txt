@@ -14,7 +14,7 @@ bank 銀行
 beach 沙灘
 bookstore 書店
 church 教堂
-department store 百貨公司
+department_store 百貨公司
 factory 工廠
 hospital 醫院
 hotel 旅館
