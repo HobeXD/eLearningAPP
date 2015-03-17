@@ -10,12 +10,13 @@ local widget = require "widget"
 -- bug:暫停後倒數問題(剩n秒時停止) (ok)
 -- 玩完listen回複bgm (ok)
 -- generate_new_question_read(sceneGroup, levelName) 參數設 global (ok)
+-- bug: read錯誤後直接播放(ok)
 -- bug:玩第二次後的 (目前沒有)
 -- bug:對錯聲音大小
 -- gamedata.lua -- self. 需要嗎
 -- add sound player at wrong-answer scene
 -- delete all print()
--- bug: read錯誤後直接播放
+-- score object
 
 -- audio.loadSound 會將整個音頻載入記憶體, 適用於較短且可能重複使用的音效
 -- audio.loadStream 一次只載入一段音頻, 適用於背景音樂這種較長的音樂, 比較吃 CPU 且有可能延遲

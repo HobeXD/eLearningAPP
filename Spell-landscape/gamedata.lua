@@ -2,6 +2,24 @@
 -- gamedata.lua, for general game data
 ------------
 
+function showScore(target, origv, value, duration)  
+    local mt = {}
+    function mt.__index(t, k)
+        if k == 'score' then return t._score end
+    end
+    function mt.__newindex(t, k, value)
+        if k == 'score' then
+            t._score = value
+            target.text = string.format('%d', value)
+        end
+    end
+
+    local scoreTable = {_score = origv}
+    setmetatable(scoreTable, mt)
+
+    transition.to(scoreTable, {score = value, time = duration, transition = easing.inExpo})
+end
+
 gameData = {
 	-- static
 	FINISH_QUESTION_NUM = 15,
@@ -37,25 +55,33 @@ function gameData:isGameClear()
 end
 function gameData:updateProblemScore(isCorrect) -- also update solve and failed num
 	if isCorrect then
+		local origv = self.score
 		self.score = self.score + self.question_score
 		score_text.text = self.score
 		self.now_solved_num = self.now_solved_num + 1
+		showScore(score_text, origv, self.score, 500) 
 	else 
+		local origv = self.score
 		self.score = self.score - self.question_score
 		score_text.text = self.score
 		self.now_wrong_num = self.now_wrong_num + 1
+		showScore(score_text, origv, self.score, 500) 
 	end
 end
 function gameData:updateScore(isCorrect)
 	if isCorrect then
 		self.penalty_score = 1 -- reset penalty score
+		local origv = self.score
 		self.score = self.score + self.character_score
 		self.character_score = self.character_score + 1
-		score_text.text = self.score
+		showScore(score_text, origv, self.score, 500) 
+		--score_text.text = self.score
 	else 
 		self.character_score = 1
+		local origv = self.score
 		self.score = self.score - self.penalty_score
 		self.penalty_score = self.penalty_score + 1
-		score_text.text = self.score
+		showScore(score_text, origv, self.score, 500) 
+		--score_text.text = self.score
 	end
 end
