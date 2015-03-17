@@ -29,7 +29,7 @@ local function choose_Category(event)
 	local gametypeColor = {{default={1, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }}, { default={ 0, 1, 0, 1}, over={ 0.4,0.4,0.8, 1 }}}
 	for i = 1,2 do
 		gametypeBtn[i] = widget.newButton{
-			label = gametypeStr[i],
+			label = gametypeStr[i] .. "ing",
 			id = {gametypeStr[i], levelname, event.target},
 			fontSize = 23,
 			width=90, height=50,

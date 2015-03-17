@@ -33,7 +33,7 @@ function generate_new_question_listen()
 		return
 	end
 	
-	local listen_button = createSoundButton(screencx-80, screenTop)
+	local listen_button = createSoundButton(screencx-27, screenTop)
 	nowSceneGroup:insert(listen_button)
 	
 	listenQuestion["eng"] = q_engligh
@@ -87,7 +87,7 @@ function changeImageAndPlayVocaSound(event)
 	playing_q_button = widget.newButton
 	{
 		id = question_count,
-		left = screencx-80,
+		left = screencx-23.5,
 		top = screenTop,
 		defaultFile = "img/sound.png",
 		overFile = "img/sound.png",
