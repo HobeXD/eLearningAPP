@@ -1,0 +1,5 @@
+aaa 25
+aaa 25
+aaa 25
+DDD 0
+CCC 0

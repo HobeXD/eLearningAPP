@@ -3,7 +3,29 @@
 local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
+local gamedata = require "gamedata"
 local sceneGroup
+
+local function fieldHandler( event )
+	print("field handle")
+	if ( "began" == event.phase ) then
+			-- This is the "keyboard has appeared" event
+			event.target.text = ""
+	elseif ( "ended" == event.phase ) then
+			-- This event is called when the user stops editing a field:
+			-- for example, when they touch a different field or keyboard focus goes away
+			getname = event.target.text
+	elseif ( "submitted" == event.phase ) then
+			-- This event occurs when the user presses the "return" key
+			-- (if available) on the onscreen keyboard
+			getname = event.target.text
+			event.target.isVisible = false
+			-- Hide keyboard
+			native.setKeyboardFocus( nil )
+	else
+			getname = event.target.text
+	end
+end  
 
 function scene:create( event )
 	sceneGroup = self.view
@@ -58,10 +80,15 @@ function scene:create( event )
 	sceneGroup:insert(level_btn)
 end
 
+function getFocus (event)
+
+end
+
 function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		
 		--title_text.text = titlemsg
 		--score_text.text = scoremsg
 		-- Called when the scene is still off screen and is about to move on screen
@@ -70,12 +97,23 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
+		if gameData:isHighScore(nowLevelName) then
+			print("high score!")
+			local defaultField = native.newTextField(20, 120, 280, 40)
+			defaultField.isEditable = true
+			sceneGroup:insert(defaultField)
+			defaultField:addEventListener('userInput', fieldHandler)
+			native.setKeyboardFocus( defaultField)
+			--defaultField:addEventListener('tap', getFocus)
+			gameData:update(nowLevelName, "abc")
+		end
 	end	
 end
 function scene:hide( event )
 	local phase = event.phase
 	
 	if event.phase == "will" then
+		print("hide")
 		-- Called when the scene is on screen and is about to move off screen
 		--
 		-- INSERT code here to pause the scene
@@ -85,7 +123,7 @@ function scene:hide( event )
 	end	
 end
 function scene:destroy( event )
-	
+	print("destory")
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.

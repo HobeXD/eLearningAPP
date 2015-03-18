@@ -111,7 +111,7 @@ local function check_pause_and_finish() -- for last wrong answer, it should paus
 	if not check_pause() then
 		print("user comfirmed ok")
 		timer.cancel(comfirm_timer)
-		finish_level("Fail")
+		finish_level("Fail", nowLevelName)
 	else
 		print("no ok, wait")
 	end
@@ -136,7 +136,7 @@ function question_success(q)
 
 	q["solved"] = true
 	if gameData:isGameClear() or question_count == #words then 
-		finish_level("Clear!")
+		finish_level("Clear!", nowLevelName)
 		return
 	end
 	finish_question(q ,SUCCESS)
@@ -172,7 +172,7 @@ function check_select_ans( event ) -- qwerty onpress event
 			ans_len = ans_len+1
 		end
 		ans_len = ans_len - 1
-		print ("withspace len = " .. ans_len)
+		--print ("withspace len = " .. ans_len)
 	
 		-- if wrong
 		if string.sub(q["eng"], ans_len+1, ans_len+1) ~= clickchar and string.lower(string.sub(q["eng"], ans_len+1, ans_len+1)) ~= clickchar then --if q["eng"][ans_len+1] ~= clickchar then 

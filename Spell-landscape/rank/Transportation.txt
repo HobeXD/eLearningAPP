@@ -1,0 +1,5 @@
+abc 20
+DDD 0
+EEE 0
+CCC 0
+BBB 0

@@ -1,6 +1,7 @@
 -------------
 -- gamedata.lua, for general game data
 ------------
+local debugQuestionNum = 1
 
 function showScore(target, origv, value, duration)  
     local mt = {}
@@ -22,7 +23,7 @@ end
 
 gameData = {
 	-- static
-	FINISH_QUESTION_NUM = 15,
+	FINISH_QUESTION_NUM = (debugMode and debugQuestionNum ) or 15,
 	MAX_WRONG_QUESTION_NUM = 3, 
 	EMPTY_CHAR_NUM = 5, -- at most input 5 characters
 	-- variable
@@ -34,6 +35,7 @@ gameData = {
 	now_solved_num = 0
 }
 function gameData:reset()
+	print("reset")
 	self.question_score = 10
 	self.character_score = 1
 	self.penalty_score = 1
@@ -85,3 +87,60 @@ function gameData:updateScore(isCorrect)
 		--score_text.text = self.score
 	end
 end
+
+function compare(a,b)
+  return a[2] > b[2]
+end
+function gameData:isHighScore(levelName)
+	local scoretable = gameData:load(levelName)
+	if scoretable[#scoretable][2] > self.score then --not in high score
+		return false
+	end
+	return true
+end
+function gameData:update(levelName, name)
+	local scoretable = gameData:load(levelName)
+   --start update
+   table.insert(scoretable, {name, self.score})
+   table.sort(scoretable, compare)
+   --sort
+   --只存五個
+   local path = system.pathForFile( "/rank/" ..levelName..".txt")
+   local file = io.open(path, "w")
+   if ( file ) then
+	  for i = 1, (#scoretable or 5) do
+		local contents = scoretable[i][1] .. " " .. tostring( scoretable[i][2] ) .. "\n"
+		file:write( contents )
+	  end
+      io.close( file )
+	  print("update complete")
+      return
+   else
+      print( "Error: could not read ", "/rank/" ..levelName..".txt", "." )
+      return
+   end
+end
+function gameData:load(levelName)
+	local path = system.pathForFile( "/rank/" ..levelName..".txt")
+	local file = io.open( path, "r" )
+	if ( file ) then
+	  local scoretable = {}
+	  for i = 1, 5 do -- at most 5 high scores
+		local lin = file:read( "*l" )
+		if lin == nil then
+			break
+		end
+		for n, s in string.gmatch(lin, "(.+) (.+)") do
+			local score = tonumber(s)
+			scoretable[i] = {n, score}
+		end
+	  end
+	  io.close( file )
+	  return scoretable
+	else
+	  print( "Error: could not read scores from ", "/rank/" ..levelName..".txt", "." )
+	end
+	return nil
+end
+
+

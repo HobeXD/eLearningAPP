@@ -3,7 +3,7 @@
 ----------------------------------
 local composer = require "composer"
 
-debugMode = 0
+debugMode = true
 SUCCESS = true
 FAILED = false
 
@@ -143,7 +143,7 @@ function go_home(event) --remove scene
 	resume()
 	finish_level("")
 end
-function finish_level(msg)
+function finish_level(msg, nowLevelName)
 	local pattern
 	if msg == "" then
 		pattern = "slideUp"
@@ -168,7 +168,7 @@ function finish_level(msg)
 			}
 		}
 		composer.removeScene("level", false)
-		composer.gotoScene( "show_score", option)
+		composer.gotoScene("show_score", option)
 	end
 end
 

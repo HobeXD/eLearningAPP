@@ -32,7 +32,7 @@ local function set_bgm()
 		--audio.loadStream( "sound/bgm/pinball-three-short.mp3" )
 	}
 	--audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
-	if debugMode ~= 1 then
+	if not debugMode then
 		audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
 	end
 end
@@ -45,10 +45,9 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- initial setup
-	print(tostring(audio.setVolume( 0.25, { channel=mainBGMChannel }))) -- set the volume on channel 1
+	audio.setVolume( 0.25, { channel=mainBGMChannel }) -- set the volume on channel 1
 	audio.setVolume( 0.75, { channel=vocaSoundChannel }) -- set the volume on channel 1
 	audio.setVolume( 0.75, { channel=winLoseSoundChannel }) -- set the volume on channel 1
-	
 	
 	set_bgm()
 	
