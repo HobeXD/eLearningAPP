@@ -6,6 +6,7 @@ local common = require "common"
 --------------------------------------------
 local sceneGroup = display.newGroup()
 
+intolevel = false
 choose_gametype = function (event)
 	if intolevel == false then
 		local options = {

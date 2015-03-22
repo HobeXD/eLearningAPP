@@ -29,9 +29,6 @@ function scene:create( event )
 	print("selectlevel create")
 	sceneGroup = self.view
 	
-	nowGameType = event.params.gametype
-	print ( "now game type = " .. nowGameType)
-	
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = 0, 0
 	background.anchorX = 0
@@ -64,6 +61,8 @@ function scene:show( event )
 	
 	if phase == "will" then
 		intolevel = false
+		nowGameType = event.params.gametype
+		print ( "now game type = " .. nowGameType)
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
