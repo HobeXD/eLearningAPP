@@ -4,12 +4,9 @@ local scene = composer.newScene()
 local widget = require "widget"
 local common = require "common"
 --------------------------------------------
-local choose_Level;
-local nowGameType
 local sceneGroup = display.newGroup()
 
-intolevel = false
-choose_Level = function (event)
+choose_gametype = function (event)
 	if intolevel == false then
 		local options = {
 			effect = "fromBottom",
@@ -17,20 +14,14 @@ choose_Level = function (event)
 			params = {}
 		}
 		intolevel = true
-		options.params.gametype = nowGameType 
-		options.params.category = event.target.id
-		print("gametype = " .. options.params.gametype .. " category = " .. options.params.category)
-		composer.gotoScene( "level", options)
+		options.params.gametype = event.target.id
+		composer.gotoScene( "selectLevel", options)
 		return true	-- indicates successful touch
 	end
 end
 
 function scene:create( event )
-	print("selectlevel create")
 	sceneGroup = self.view
-	
-	nowGameType = event.params.gametype
-	print ( "now game type = " .. nowGameType)
 	
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = 0, 0
@@ -38,23 +29,22 @@ function scene:create( event )
 	background.anchorY = 0
 	sceneGroup:insert( background )
 	
-	stage_str = {"School", "Personal Characteristics", "Transportation", "Places and Locations", "Time"}
+	local stage_str = {"Read", "Listen"}
 	local playBtn = {}
-	for i = 1,5 do
+	for i = 1,2 do
 		playBtn[i] = widget.newButton{
-			label = stage_str[i],
-			id = stage_str[i],
+			label = stage_str[i] .. "ing", -- not good....,
+			id = stage_str[i], 
 			fontSize = 23,
-			width=300, height=50,
+			width=300, height=100,
 			strokeWidth = 0,
 			labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
 			shape = "roundedRect",
 			fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
-			onRelease = choose_Level
+			onRelease = choose_gametype
 		}
 		playBtn[i].anchorX = 0.5; playBtn[i].anchorY = 0.5
-		playBtn[i].x = screencx; playBtn[i].y = screency + (i-3)*65
-		print("y = " .. screency + (i-3)*65)
+		playBtn[i].x = screencx; playBtn[i].y = screency + (i-1.5)*150
 		sceneGroup:insert(playBtn[i])
 	end
 	-- all display objects must be inserted into group

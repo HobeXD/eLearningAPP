@@ -70,7 +70,7 @@ function scene:create( event )
 	backgroundOverlay.anchorX = 0; backgroundOverlay.anchorY = 0
 	backgroundOverlay:setFillColor( black )
 	backgroundOverlay.alpha = 0
-	backgroundOverlay.id = "selectLevel"
+	backgroundOverlay.id = "select_gametype"
 	backgroundOverlay.isHitTestable = true 
 	backgroundOverlay:addEventListener ("tap", gotoScene)
 	backgroundOverlay:addEventListener ("touch", gotoScene)
