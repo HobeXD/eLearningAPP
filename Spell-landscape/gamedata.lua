@@ -32,7 +32,8 @@ gameData = {
 	penalty_score = 1,
 	score = 0, 
 	now_wrong_num = 0,
-	now_solved_num = 0
+	now_solved_num = 0,
+	nowLevelName = ""
 }
 function gameData:reset()
 	print("reset")
@@ -42,7 +43,13 @@ function gameData:reset()
 	self.score = 0
 	self.now_wrong_num = 0
 	self.now_solved_num = 0
+	self.nowLevelName = ""
 end
+
+function gameData:setLevelName(levelName)
+	self.nowLevelName = levelName
+end
+
 function gameData:isAllQuestionGenerated(question_count)
 	return question_count > self.FINISH_QUESTION_NUM + self.MAX_WRONG_QUESTION_NUM
 end
@@ -89,28 +96,34 @@ function gameData:updateScore(isCorrect)
 end
 
 function compare(a,b)
-  return a[2] > b[2]
+  return a[1] > b[1]
 end
 function gameData:isHighScore(levelName)
 	local scoretable = gameData:load(levelName)
-	if scoretable[#scoretable][2] > self.score then --not in high score
+	if scoretable[#scoretable][1] > self.score then --not in high score
 		return false
 	end
 	return true
 end
-function gameData:update(levelName, name)
+function gameData:updateRank(levelName)
 	local scoretable = gameData:load(levelName)
    --start update
-   table.insert(scoretable, {name, self.score})
+   table.insert(scoretable, {self.score})
    table.sort(scoretable, compare)
    --sort
    --只存五個
-   local path = system.pathForFile( "/rank/" ..levelName..".txt")
+   local path = system.pathForFile( "rank/" ..levelName..".txt")
    local file = io.open(path, "w")
+  
+   
    if ( file ) then
-	  for i = 1, (#scoretable or 5) do
-		local contents = scoretable[i][1] .. " " .. tostring( scoretable[i][2] ) .. "\n"
-		file:write( contents )
+		local  writeLineNum = 5
+	   if #scoretable < 5 then
+		writeLineNum = #scoretable
+	   end
+	  for i = 1, writeLineNum do
+		--file:write( scoretable[i][1] .. " " .. tostring( scoretable[i][2] ) .. "\n" )
+		file:write( scoretable[i][1] .. "\n" )
 	  end
       io.close( file )
 	  print("update complete")
@@ -121,7 +134,7 @@ function gameData:update(levelName, name)
    end
 end
 function gameData:load(levelName)
-	local path = system.pathForFile( "/rank/" ..levelName..".txt")
+	local path = system.pathForFile( "rank/" ..levelName..".txt")
 	local file = io.open( path, "r" )
 	if ( file ) then
 	  local scoretable = {}
@@ -130,9 +143,9 @@ function gameData:load(levelName)
 		if lin == nil then
 			break
 		end
-		for n, s in string.gmatch(lin, "(.+) (.+)") do
+		for s in string.gmatch(lin, "(.+)") do
 			local score = tonumber(s)
-			scoretable[i] = {n, score}
+			scoretable[i] = {score}
 		end
 	  end
 	  io.close( file )

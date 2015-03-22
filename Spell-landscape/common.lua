@@ -153,6 +153,11 @@ function finish_level(msg, nowLevelName)
 		pattern = "fromBottom"
 		if gameData:getScore() > 0 then
 			scoremsg = "You collect ".. gameData:getScore() .. " stars!"
+			if gameData:isHighScore(gameData.nowLevelName) then
+				print("high score! : " .. gameData:getScore())
+				gameData:updateRank(gameData.nowLevelName)
+				msg = msg .. " - High Score!"
+			end
 		else
 			scoremsg = "You do not get any star..."
 		end

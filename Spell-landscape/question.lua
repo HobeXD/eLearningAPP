@@ -30,7 +30,7 @@ local composer = require "composer"
 local common = require "common"
 local gamedata = require "gamedata"
 nowSceneGroup = display.newGroup()
-nowLevelName = ""
+
 nowVocaSound = ""
 
 local finish_sound = audio.loadSound( "sound/pass.wav" )
@@ -84,8 +84,8 @@ function getNewQuestionInfo()
 
 	dup_question[qindex] = true
 	
-	print("pronounce/"  ..nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
-	nowVocaSound = audio.loadStream("pronounce/"  ..nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
+	print("pronounce/"  ..gameData.nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
+	nowVocaSound = audio.loadStream("pronounce/"  ..gameData.nowLevelName  .. "/" .. words[qindex][1] ..".mp3")
 	
 	return words[qindex][1], words[qindex][2]
 end
@@ -105,13 +105,13 @@ function playVocaSound(onComplete)
 end
 
 function show_correct_ans(c, e) -- put at the end to prevent below code do not run
-	pause_with_ans(c, e, nowLevelName)
+	pause_with_ans(c, e, gameData.nowLevelName)
 end
 local function check_pause_and_finish() -- for last wrong answer, it should pause instead of goto show score imeediately
 	if not check_pause() then
 		print("user comfirmed ok")
 		timer.cancel(comfirm_timer)
-		finish_level("Fail", nowLevelName)
+		finish_level("Fail", gameData.nowLevelName)
 	else
 		print("no ok, wait")
 	end
@@ -136,7 +136,7 @@ function question_success(q)
 
 	q["solved"] = true
 	if gameData:isGameClear() or question_count == #words then 
-		finish_level("Clear!", nowLevelName)
+		finish_level("Clear!", gameData.nowLevelName)
 		return
 	end
 	finish_question(q ,SUCCESS)

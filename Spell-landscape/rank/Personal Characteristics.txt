@@ -1,6 +1,5 @@
-aaa 25
-abc 25
-aaa 20
-aaa 20
-DDD 0
-CCC 0
+4
+3
+2
+1
+0

@@ -1,6 +1,5 @@
-abc 25
-abc 25
-abc 25
-abc 20
-abc 18
-abc 17
+4
+3
+2
+1
+0

@@ -113,7 +113,7 @@ generate_qwerty_button = function ()
 end
 
 local function generate_questions()
-	nowLevelName = levelName
+	gameData:setLevelName(levelName)
 	nowSceneGroup = sceneGroup
 	if gameType == "Read" then
 		generate_new_question_read()
