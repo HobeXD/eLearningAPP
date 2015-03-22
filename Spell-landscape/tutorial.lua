@@ -13,36 +13,82 @@ local background
 
 local backgroundOverlay1, backgroundOverlay2, backgroundOverlay3
 local welcomeText = "Touch the screen to see how to play!"
-local teachText = {"You can see Chinese words at the top.", "Try to spell out the words in English. Each * means one alphabet.", "Type in a-n-g-r-y to collect stars!", "You can rehear the sound by touching this button", "Try to spell out the words in English. Each * means one alphabet.", "Type in correct characters to collect stars!"}
+local teachText = {"Reading", "You can see Chinese words at the top.", "Try to spell out the words in English. Each * means one alphabet.", "Type in a-n-g-r-y to collect stars!", "Listening", "You can rehear the sound by touching this button", "Try to spell out the words in English. Each * means one alphabet.", "Type in correct characters to collect stars!"}
 
 local function showStep()
-	if stepnum > 5 then
+	if stepnum > 7 then
 		backgroundOverlay3.alpha = 1
 		composer.gotoScene( "menu", "fromBottom", 500 )
 		return
 	end
-	if stepnum > 2 then -- listening
+	if stepnum > 3 then -- listening
 		background.alpha = 0
 		background2.alpha = 1
 	end
 	teachtext.text = teachText[stepnum+1]
-	if stepnum%3 == 0 then
+	if stepnum%4 == 0 then
+		backgroundOverlay1.alpha = 1
+		backgroundOverlay2.alpha = 1
+		backgroundOverlay3.alpha = 1
+		teachtext.alpha = 0
+		categorytext.text = teachText[stepnum+1]
+		categorytext.alpha = 1
+	elseif stepnum%4 == 1 then
+		teachtext.alpha = 1
+		categorytext.alpha = 0
 		backgroundOverlay1.alpha = 0
 		backgroundOverlay2.alpha = 1
 		backgroundOverlay3.alpha = 1
 		teachtext.y = barH
-	elseif stepnum%3 == 1 then
+	elseif stepnum%4 == 2 then
 		backgroundOverlay1.alpha = 1
 		backgroundOverlay2.alpha = 0
 		backgroundOverlay3.alpha = 1
 		teachtext.y = screenTop
-	elseif stepnum%3 == 2 then
+	elseif stepnum%4 == 3 then
 		backgroundOverlay1.alpha = 1
 		backgroundOverlay2.alpha = 1
 		backgroundOverlay3.alpha = 0
 		teachtext.y = barH-40
 	end
 	stepnum = stepnum + 1 
+end
+
+local function createBackgroundOverlay()
+	backgroundOverlay1 = display.newRect(overlayGroup,screenLeft, screenTop, screenW, barH)
+	backgroundOverlay1:setFillColor(0, 0, 0, 0.6)
+	backgroundOverlay1.isHitTestable = true 
+	backgroundOverlay1:addEventListener("tap",showStep)
+	backgroundOverlay2 = display.newRect(overlayGroup,screenLeft, barH, screenW, barh)
+	backgroundOverlay2:setFillColor(0, 0, 0, 0.6)
+	backgroundOverlay2.isHitTestable = true 
+	backgroundOverlay2:addEventListener("tap",showStep)
+	backgroundOverlay3 = display.newRect(overlayGroup,screenLeft, barH+barh, screenW, screenH-barh-barH)
+	backgroundOverlay3:setFillColor(0, 0, 0, 0.6)
+	backgroundOverlay3.isHitTestable = true 
+	backgroundOverlay3:addEventListener("tap",showStep)
+end
+
+local function createText()
+	local options = 
+	{
+		parent = textGroup,
+		text = welcomeText,     
+		x = screenLeft,
+		y = barH+30,
+		width = screenW,
+		font = native.systemFont,
+		fontSize = 25,
+		align = "left"  --new alignment parameter
+	}
+	teachtext = display.newText(options)
+	
+	options.fontSize = 70
+	options.x = 0
+	options.y = 0
+	options.align = "center"
+	options.text = "Reading"
+	categorytext = display.newText(options)
 end
 
 function scene:create( event )
@@ -59,32 +105,8 @@ function scene:create( event )
 	background2.alpha = 0
 	sceneGroup:insert( background2 )
 	
-	local options = 
-	{
-		parent = textGroup,
-		text = welcomeText,     
-		x = screenLeft,
-		y = barH+30,
-		width = screenW,
-		font = native.systemFont,
-		fontSize = 25,
-		align = "left"  --new alignment parameter
-	}
-	teachtext = display.newText(options)
-	
-	backgroundOverlay1 = display.newRect(overlayGroup,screenLeft, screenTop, screenW, barH)
-	backgroundOverlay1:setFillColor(0, 0, 0, 0.6)
-	backgroundOverlay1.isHitTestable = true 
-	backgroundOverlay1:addEventListener("tap",showStep)
-	backgroundOverlay2 = display.newRect(overlayGroup,screenLeft, barH, screenW, barh)
-	backgroundOverlay2:setFillColor(0, 0, 0, 0.6)
-	backgroundOverlay2.isHitTestable = true 
-	backgroundOverlay2:addEventListener("tap",showStep)
-	backgroundOverlay3 = display.newRect(overlayGroup,screenLeft, barH+barh, screenW, screenH-barh-barH)
-	backgroundOverlay3:setFillColor(0, 0, 0, 0.6)
-	backgroundOverlay3.isHitTestable = true 
-	backgroundOverlay3:addEventListener("tap",showStep)
-	
+	createText()
+	createBackgroundOverlay()
 end
 
 function scene:show( event )
@@ -96,9 +118,11 @@ function scene:show( event )
 		textGroup.alpha = 1
 		stepnum = 0
 		teachtext.text = welcomeText
+		categorytext.alpha = 0
 		
 		background.alpha = 1
 		background2.alpha = 0
+		
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
 		-- 
