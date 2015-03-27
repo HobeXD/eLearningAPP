@@ -7,6 +7,7 @@ local common = require "common"
 local playtext
 local teachBtn
 local isblink = true
+local sceneGroup = display.newGroup()
 
 -- 'onRelease' event listener for playBtn
 local function gotoScene(event)
@@ -37,9 +38,34 @@ local function set_bgm()
 	end
 end
 
-function scene:create( event )
-	local sceneGroup = self.view
+local function createSideButton()
+		teachBtn = widget.newButton{
+		label="How to Play?",
+		labelColor = { default={255}, over={128} },
+		id = "tutorial",
+		default="button.png",
+		over="button-over.png",
+		width=154, height=40,
+		onRelease = gotoScene	-- event listener function
+	}
+	teachBtn.x = display.contentWidth - 77; teachBtn.y = display.contentHeight - 20
 	
+	rankBtn = widget.newButton{
+		label="Score",
+		labelColor = { default={255}, over={128} },
+		id = "show_rank",
+		default="button.png",
+		over="button-over.png",
+		width=154, height=40,
+		onRelease = gotoScene	-- event listener function
+	}
+	rankBtn.x = 77; rankBtn.y = display.contentHeight - 20
+	sceneGroup:insert( teachBtn )
+	sceneGroup:insert( rankBtn )
+end
+
+function scene:create( event )
+	sceneGroup = self.view
 	-- Called when the scene's view does not exist.
 	-- INSERT code here to initialize the scene
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
@@ -60,7 +86,7 @@ function scene:create( event )
 	local titleLogo = display.newText("Collect Stars", 264, 42, native.systemFont, 65)
 	titleLogo.x = display.contentWidth * 0.5;	titleLogo.y = 100
 	
-	--加入group的順序會影響上下層關係
+	
 	playtext = display.newText("Touch to play", display.contentWidth*0.5, display.contentHeight - 100, native.systemFont, 30)
 	playtext:setFillColor( 0, 1, 0)
 	transition.blink(playtext , {time = 3400}) -- 
@@ -74,43 +100,13 @@ function scene:create( event )
 	backgroundOverlay.isHitTestable = true 
 	backgroundOverlay:addEventListener ("tap", gotoScene)
 	backgroundOverlay:addEventListener ("touch", gotoScene)
-	
---	backgroundOverlay:toFront()
-	-- create a widget button (which will loads level.lua on release)
-	--[[playBtn = widget.newButton{
-		label="Play",
-		labelColor = { default={255}, over={128} },
-		id = "selectLevel",
-		default="button.png",
-		over="button-over.png",
-		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
-		shape = "roundedRect",
-		--fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
-		fontSize = 50,
-		width=180, height=70,
-		onRelease = gotoScene	-- event listener function
-	}
-	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 100
-		sceneGroup:insert( playBtn )
-	]]
-	
-	teachBtn = widget.newButton{
-		label="How to Play?",
-		labelColor = { default={255}, over={128} },
-		id = "tutorial",
-		default="button.png",
-		over="button-over.png",
-		width=154, height=40,
-		onRelease = gotoScene	-- event listener function
-	}
-	teachBtn.x = display.contentWidth - 77; teachBtn.y = display.contentHeight - 20
-	
-	-- all display objects must be inserted into group
+
+	--加入group的順序會影響上下層關係...
 	sceneGroup:insert( backgroundOverlay )
 	sceneGroup:insert( background )
 	sceneGroup:insert( titleLogo )
-	sceneGroup:insert( teachBtn )
+	createSideButton()
+	-- all display objects must be inserted into group
 	sceneGroup:insert( playtext )
 end
 
@@ -118,6 +114,7 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		print("show menu")
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
@@ -146,10 +143,6 @@ function scene:destroy( event )
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	
-	if playBtn then
-		playBtn:removeSelf()	-- widgets must be manually removed
-		playBtn = nil
-	end
 end
 
 -- Listener setup

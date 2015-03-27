@@ -99,14 +99,14 @@ function compare(a,b)
   return a[1] > b[1]
 end
 function gameData:isHighScore(levelName)
-	local scoretable = gameData:load(levelName)
+	local scoretable = gameData:loadScore(levelName)
 	if scoretable[#scoretable][1] > self.score then --not in high score
 		return false
 	end
 	return true
 end
 function gameData:updateRank(levelName)
-	local scoretable = gameData:load(levelName)
+	local scoretable = gameData:loadScore(levelName)
    --start update
    table.insert(scoretable, {self.score})
    table.sort(scoretable, compare)
@@ -133,7 +133,7 @@ function gameData:updateRank(levelName)
       return
    end
 end
-function gameData:load(levelName)
+function gameData:loadScore(levelName)
 	local path = system.pathForFile( "rank/" ..levelName..".txt")
 	local file = io.open( path, "r" )
 	if ( file ) then

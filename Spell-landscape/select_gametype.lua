@@ -30,12 +30,11 @@ function scene:create( event )
 	background.anchorY = 0
 	sceneGroup:insert( background )
 	
-	local stage_str = {"Read", "Listen"}
 	local playBtn = {}
 	for i = 1,2 do
 		playBtn[i] = widget.newButton{
-			label = stage_str[i] .. "ing", -- not good....,
-			id = stage_str[i], 
+			label = gametypeStr[i], -- not good....,
+			id = gametypeStr[i], 
 			fontSize = 23,
 			width=300, height=100,
 			strokeWidth = 0,

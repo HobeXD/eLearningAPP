@@ -115,7 +115,7 @@ end
 local function generate_questions()
 	gameData:setLevelName(levelName)
 	nowSceneGroup = sceneGroup
-	if gameType == "Read" then
+	if gameType == gametypeStr[1] then -- read
 		generate_new_question_read()
 		move_timer = Runtime:addEventListener("enterFrame", move_question)
 		finish_question = finish_question_read

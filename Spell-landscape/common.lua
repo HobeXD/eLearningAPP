@@ -22,6 +22,9 @@ mainBGMChannel = 1
 vocaSoundChannel = 2
 winLoseSoundChannel = 3
 
+categoryStr = {"School", "Personal Characteristics", "Transportation", "Places and Locations", "Time"}
+gametypeStr = {"Reading", "Listening"}
+
 function read_file(filedst)
 	local path = system.pathForFile(filedst)
 	local file = io.open( path, "r" )
@@ -185,7 +188,7 @@ function handle_back_key() -- so many exception situation
 	elseif current_scene == "show_score" or current_scene == "menu" then -- do nothing
 		return false
 	else
-		composer.gotoScene(composer.getSceneName( "previous"), "slideDown", 500)
+		composer.gotoScene(composer.getSceneName("previous"), "slideDown", 500)
 	end
 	return true
 end

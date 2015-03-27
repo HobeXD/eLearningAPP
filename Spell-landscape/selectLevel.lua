@@ -35,12 +35,11 @@ function scene:create( event )
 	background.anchorY = 0
 	sceneGroup:insert( background )
 	
-	stage_str = {"School", "Personal Characteristics", "Transportation", "Places and Locations", "Time"}
 	local playBtn = {}
 	for i = 1,5 do
 		playBtn[i] = widget.newButton{
-			label = stage_str[i],
-			id = stage_str[i],
+			label = categoryStr[i],
+			id = categoryStr[i],
 			fontSize = 23,
 			width=300, height=50,
 			strokeWidth = 0,
