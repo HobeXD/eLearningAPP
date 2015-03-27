@@ -9,14 +9,18 @@ local gamedata = require "gamedata"
 local defaultCategory = categoryStr[1]
 local defaultGametype = gametypeStr[1]
 local scoreTexts = {}
+local category_text
+local gametype_text
 local sceneGroup = display.newGroup()
 
-local function loadRank(nowCategory, nowGametype)
-	if nowCategory == nil or nowGametype == nil then
-		nowCategory = defaultCategory
-		nowGametype = defaultGametype
-	end
-	return gameData:loadScore(nowCategory)
+local function gotoMenu()
+	local option =
+	{
+		effect = defaultPattern,
+		time = 500,
+		params = {}
+	}
+	composer.gotoScene( "menu", option)
 end
 
 local function showScore(scoretable) 
@@ -40,7 +44,54 @@ local function showScore(scoretable)
 		--sceneGroup:insert(scoreTexts)
 	end
 end
+local function setScore(scoretable)
+	for i = 1, 5 do
+		scoreTexts[i].text = "" .. i .. ".  " .. scoretable[i][1]
+	end
+end
+local function setTitle(nowCategory, nowGametype)
+	category_text.text = nowCategory
+	gametype_text.text = nowGametype
+end
 
+local function createRankText()
+	nowCategory = defaultCategory
+	nowGametype = defaultGametype
+	local scoretable = gameData:loadScore(nowCategory) -- should change to two parament
+	showScore(scoretable) -- must do in gamedata....
+end
+local function reloadRankText(nowCategory, nowGametype)
+	if nowCategory == nil then
+		nowCategory = defaultCategory end
+	if nowGametype == nil then
+		nowGametype = defaultGametype end
+	setTitle(nowCategory, nowGametype)
+	local scoretable = gameData:loadScore(nowCategory) -- should change to two parament
+	setScore(scoretable)
+end
+
+local function getSelectedLevel()
+	local option =
+		{
+			effect = defaultPattern,
+			time = 500,
+			params = {
+				caller = "show_rank"
+			}
+		}
+	composer.gotoScene( "selectLevel", option)
+end
+local function getSelectedCate()
+	local option =
+	{
+		effect = defaultPattern,
+		time = 500,
+		params = {
+			caller = "show_rank"
+		}
+	}
+	composer.gotoScene( "select_gametype", option)
+end
 
 function scene:create( event )
 	sceneGroup = self.view
@@ -49,9 +100,9 @@ function scene:create( event )
 	background.x, background.y = 0, 0; 	background.anchorX = 0; background.anchorY = 0
 	sceneGroup:insert( background )
 	
-	local category_text = display.newText(sceneGroup, defaultCategory, screencx, 20, native.systemFont, 40)
+	category_text = display.newText(sceneGroup, defaultCategory, screencx, 20, native.systemFont, 40)
 	category_text:setFillColor(1,1,1)
-	local gametype_text = display.newText(sceneGroup, defaultGametype, screencx, 55, native.systemFont, 30)	
+	gametype_text = display.newText(sceneGroup, defaultGametype, screencx, 55, native.systemFont, 30)	
 	gametype_text:setFillColor(0,1,0)
 	
 	local back_button = widget.newButton{
@@ -63,18 +114,48 @@ function scene:create( event )
 		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
 		shape = "roundedRect",
 		fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
-		onRelease = handle_back_key
+		onRelease = gotoMenu
 	}
 	back_button.x, back_button.y = 45, 10; back_button.anchorX, back_button.anchorY = 0, 0
 	sceneGroup:insert( back_button )
 	
-	local scoretable = loadRank()
-	showScore(scoretable) -- must do in gamedata....
+	local cate_button = widget.newButton{
+		label = "select\ncategory",
+		id = "category",
+		fontSize = 20,
+		width=100, height=60,
+		x = 45, y = 100,
+		strokeWidth = 0,
+		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
+		shape = "roundedRect",
+		fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+		onRelease = getSelectedLevel
+	}
+	cate_button.anchorX, cate_button.anchorY = 0, 0
+	sceneGroup:insert( cate_button )
+	
+	local cate_button = widget.newButton{
+		label = "select\ngametype",
+		id = "category",
+		fontSize = 20,
+		width=100, height=60,
+		x = 45, y = 200,
+		strokeWidth = 0,
+		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
+		shape = "roundedRect",
+		fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+		onRelease = getSelectedCate
+	}
+	cate_button.anchorX, cate_button.anchorY = 0, 0
+	sceneGroup:insert( cate_button )
+	
+	createRankText()
 end
 function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		reloadRankText(event.params.category, nowGametype)
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen

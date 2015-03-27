@@ -25,6 +25,8 @@ winLoseSoundChannel = 3
 categoryStr = {"School", "Personal Characteristics", "Transportation", "Places and Locations", "Time"}
 gametypeStr = {"Reading", "Listening"}
 
+defaultPattern = "slideUp"
+
 function read_file(filedst)
 	local path = system.pathForFile(filedst)
 	local file = io.open( path, "r" )

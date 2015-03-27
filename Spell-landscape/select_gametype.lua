@@ -5,6 +5,7 @@ local widget = require "widget"
 local common = require "common"
 --------------------------------------------
 local sceneGroup = display.newGroup()
+local redirectScene = "selectLevel"
 
 intolevel = false
 choose_gametype = function (event)
@@ -12,17 +13,20 @@ choose_gametype = function (event)
 		local options = {
 			effect = "fromBottom",
 			time = 500,
-			params = {}
+			params = {gametype = event.target.id}
 		}
 		intolevel = true
-		options.params.gametype = event.target.id
-		composer.gotoScene( "selectLevel", options)
+		composer.gotoScene( redirectScene, options)
 		return true	-- indicates successful touch
 	end
 end
 
 function scene:create( event )
 	sceneGroup = self.view
+	
+	if event.params.caller ~= nil then
+		redirectScene = event.params.caller
+	end
 	
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = 0, 0

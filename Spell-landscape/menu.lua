@@ -11,7 +11,13 @@ local sceneGroup = display.newGroup()
 
 -- 'onRelease' event listener for playBtn
 local function gotoScene(event)
-	composer.gotoScene( event.target.id, "fromBottom", 400 )
+	local option =
+		{
+			effect = "fromBottom",
+			time = 400,
+			params = {}
+		}
+	composer.gotoScene( event.target.id, option)
 	return true	-- indicates successful touch
 end
 

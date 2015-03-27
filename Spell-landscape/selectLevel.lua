@@ -7,6 +7,7 @@ local common = require "common"
 local choose_Level;
 local nowGameType
 local sceneGroup = display.newGroup()
+local redirectScene = "level"
 
 intolevel = false
 choose_Level = function (event)
@@ -14,19 +15,20 @@ choose_Level = function (event)
 		local options = {
 			effect = "fromBottom",
 			time = 500,
-			params = {}
+			params = {gametype = nowGameType, category = event.target.id}
 		}
 		intolevel = true
-		options.params.gametype = nowGameType 
-		options.params.category = event.target.id
-		print("gametype = " .. options.params.gametype .. " category = " .. options.params.category)
-		composer.gotoScene( "level", options)
+		--print("gametype = " .. options.params.gametype .. " category = " .. options.params.category)
+		composer.gotoScene(redirectScene , options)
 		return true	-- indicates successful touch
 	end
 end
 
 function scene:create( event )
 	print("selectlevel create")
+	if event.params.caller ~= nil then
+		redirectScene = event.params.caller
+	end
 	sceneGroup = self.view
 	
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
@@ -61,7 +63,7 @@ function scene:show( event )
 	if phase == "will" then
 		intolevel = false
 		nowGameType = event.params.gametype
-		print ( "now game type = " .. nowGameType)
+		--print ( "now game type = " .. nowGameType)
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
