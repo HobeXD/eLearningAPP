@@ -54,7 +54,7 @@ local function reloadRankText(nowCategory, nowGametype)
 	reloadScore(scoretable)
 end
 
-local rankTransitionEffectTime = 300
+local rankTransitionEffectTime = 250
 local select_option = {
 	effect = softTransition,
 	time = rankTransitionEffectTime,

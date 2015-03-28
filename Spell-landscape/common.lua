@@ -29,10 +29,10 @@ gametypeStr = {"Reading", "Listening"}
 defaultGametype = gametypeStr[1]
 
 defaultPattern = "slideUp"
-softTransition = "crossFade"
+softTransition = "fade"
 
 function createBackground(sceneGroup)
-	local background = display.newImageRect( "/img/star_bg.jpg", display.contentWidth, display.contentHeight )
+	local background = display.newImageRect( "img/star_bg.jpg", display.contentWidth, display.contentHeight )
 	background.x, background.y = 0, 0; 	background.anchorX = 0; background.anchorY = 0
 	sceneGroup:insert( background )
 end
