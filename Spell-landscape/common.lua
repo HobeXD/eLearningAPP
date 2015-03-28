@@ -143,9 +143,14 @@ function doShake(target, onCompleteDo)
 	firstTran()
 end 
 
-function go_select_level(event)
+function go_select_gametype(event)
 	--composer.removeScene("show_score", true)
-	composer.gotoScene( "selectLevel", "slideUp", 500)
+	local options = {
+		effect = "slideUp",
+		time = 500,
+		params = {}
+	}
+	composer.gotoScene( "select_gametype", options)
 end
 function go_home(event) --remove scene
 	composer.removeScene("show_score", false)

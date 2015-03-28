@@ -63,14 +63,20 @@ local function createRankText()
 	createScoreButton(scoretable) -- must do in gamedata....
 end
 local function reloadRankText(nowCategory, nowGametype)
-	if nowCategory == nil then
+	
+	--[[if nowCategory == nil then
 		nowCategory = defaultCategory end
 	defaultCategory = nowCategory
 	if nowGametype == nil then
 		nowGametype = defaultGametype end
 	defaultGametype = nowGametype
-	setTitle(nowCategory, nowGametype)
-	local scoretable = gameData:loadScore(nowCategory, nowGametype) -- should change to two parament
+	]]
+	
+	defaultCategory = gameData.nowLevelName
+	defaultGametype = gameData.nowGametype
+	
+	setTitle(defaultCategory, defaultGametype)
+	local scoretable = gameData:loadScore(defaultCategory, defaultGametype) -- should change to two parament
 	setScore(scoretable)
 end
 
@@ -152,7 +158,7 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		reloadRankText(event.params.category, event.params.gametype)
+		reloadRankText()
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen

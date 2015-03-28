@@ -62,7 +62,7 @@ function scene:create( event )
 		labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
 		shape = "roundedRect",
 		fillColor = { default={ 1, 1, 1, 0.5}, over={ 1,1,1, 1 }}, --transparent
-		onEvent = go_select_level
+		onEvent = go_select_gametype
 	}
 	local home_btn = widget.newButton
 	{

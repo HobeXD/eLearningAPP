@@ -84,11 +84,11 @@ local function createText()
 	teachtext = display.newText(options)
 	
 	options.fontSize = 70
-	options.x = 0
-	options.y = 0
+	options.x = screencx; options.y = screency
 	options.align = "center"
 	options.text = "Reading"
 	categorytext = display.newText(options)
+	categorytext.anchorX = 0.5; categorytext.anchorY = 0.5
 end
 
 function scene:create( event )
