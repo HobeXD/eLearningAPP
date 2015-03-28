@@ -3,7 +3,7 @@
 ----------------------------------
 local composer = require "composer"
 
-debugMode = true
+debugMode = false
 debugQuestionNum = 1
 SUCCESS = true
 FAILED = false
@@ -30,6 +30,12 @@ defaultGametype = gametypeStr[1]
 
 defaultPattern = "slideUp"
 softTransition = "crossFade"
+
+function createBackground(sceneGroup)
+	local background = display.newImageRect( "/img/star_bg.jpg", display.contentWidth, display.contentHeight )
+	background.x, background.y = 0, 0; 	background.anchorX = 0; background.anchorY = 0
+	sceneGroup:insert( background )
+end
 
 function read_file(filedst)
 	local path = system.pathForFile(filedst)

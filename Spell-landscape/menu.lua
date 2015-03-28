@@ -3,7 +3,6 @@ local scene = composer.newScene()
 local widget = require "widget"
 local common = require "common"
 --------------------------------------------
--- forward declarations and other locals
 local playtext
 local teachBtn
 local isblink = true
@@ -30,18 +29,15 @@ local function blink_text(event)
 end
 
 local nowbgmnum = 1
+local bgms = {
+	audio.loadStream( "sound/bgm/deep-emerald-short.mp3" )
+}
+local totalbgmnum = #bgms
 local function changebgm()
-	nowbgmnum = (nowbgmnum)%4 + 1
+	nowbgmnum = (nowbgmnum)%totalbgmnum + 1
 	audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 end
 local function set_bgm()
-	bgms = {
-		audio.loadStream( "sound/bgm/deep-emerald-short.mp3" ),
-		--audio.loadStream( "sound/bgm/happy-inn-short.mp3" ),
-		--audio.loadStream( "sound/bgm/icy-town-short.mp3" ),
-		--audio.loadStream( "sound/bgm/pinball-three-short.mp3" )
-	}
-	--audio.play(bgms[nowbgmnum], { channel=1, onComplete=changebgm } )
 	if not debugMode then
 		audio.play(bgms[nowbgmnum], { channel=1, loops = -1 } )
 	end

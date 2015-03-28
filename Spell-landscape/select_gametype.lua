@@ -39,7 +39,7 @@ function scene:create( event )
 		playBtn[i] = widget.newButton{
 			label = gametypeStr[i], -- not good....,
 			id = gametypeStr[i], 
-			fontSize = 23,
+			fontSize = 35,
 			font = native.systemFont,
 			width=300, height=100,
 			strokeWidth = 0,
