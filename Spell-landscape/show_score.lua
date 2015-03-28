@@ -6,6 +6,7 @@ local widget = require "widget"
 local gamedata = require "gamedata"
 local sceneGroup
 
+--[[
 local function fieldHandler( event )
 	print("field handle")
 	if ( "began" == event.phase ) then
@@ -22,11 +23,11 @@ local function fieldHandler( event )
 			event.target.isVisible = false
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )
-			gameData:updateRank(gameData.nowLevelName, event.text, gameData:getScore())
+			gameData:updateRank(event.text, gameData:getScore())
 	else --editing
 			getname = event.target.text
 	end
-end  
+end  ]]
 
 function scene:create( event )
 	sceneGroup = self.view

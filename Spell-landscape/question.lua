@@ -111,7 +111,7 @@ local function check_pause_and_finish() -- for last wrong answer, it should paus
 	if not check_pause() then
 		print("user comfirmed ok")
 		timer.cancel(comfirm_timer)
-		finish_level("Fail", gameData.nowLevelName)
+		gameData:finish_level("Fail", gameData.nowLevelName)
 	else
 		print("no ok, wait")
 	end
@@ -136,7 +136,7 @@ function question_success(q)
 
 	q["solved"] = true
 	if gameData:isGameClear() or question_count == #words then 
-		finish_level("Clear!", gameData.nowLevelName)
+		gameData:finish_level("Clear!", gameData.nowLevelName)
 		return
 	end
 	finish_question(q ,SUCCESS)

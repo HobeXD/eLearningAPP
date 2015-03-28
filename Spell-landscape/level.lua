@@ -98,6 +98,7 @@ generate_qwerty_button = function ()
 				width = wordw,
 				height = wordh,
 				cornerRadius = 5,
+				font = native.systemFont,
 				fontsize = 20,
 				labelColor = { default={ 0, 0, 0, 1}, over={ 0,0,0, 1 }},
 				fillColor = { default={ 0, 1, 0, 1}, over={ 1, 1, 1, 1} },
@@ -113,7 +114,6 @@ generate_qwerty_button = function ()
 end
 
 local function generate_questions()
-	gameData:setLevelName(levelName)
 	nowSceneGroup = sceneGroup
 	if gameType == gametypeStr[1] then -- read
 		generate_new_question_read()

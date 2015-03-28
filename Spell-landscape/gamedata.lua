@@ -1,7 +1,9 @@
 -------------
 -- gamedata.lua, for general game data
 ------------
-local debugQuestionNum = 1
+local common = require "common"
+local composer = require "composer"
+-- todo: overwrite print() , when nil print "object is nil
 
 function showScore(target, origv, value, duration)  
     local mt = {}
@@ -33,7 +35,8 @@ gameData = {
 	score = 0, 
 	now_wrong_num = 0,
 	now_solved_num = 0,
-	nowLevelName = ""
+	nowLevelName = defaultCategory,
+	nowGametype = defaultGametype
 }
 function gameData:reset()
 	print("reset")
@@ -43,11 +46,18 @@ function gameData:reset()
 	self.score = 0
 	self.now_wrong_num = 0
 	self.now_solved_num = 0
-	self.nowLevelName = ""
+	-- will not reset category and gametype??
+	--self.nowLevelName = ""
+	--self.nowGametype = ""
 end
 
 function gameData:setLevelName(levelName)
 	self.nowLevelName = levelName
+	self:print_category()
+end
+function gameData:setGametype(gametype)
+	self.nowGametype = gametype
+	self:print_gametype()
 end
 
 function gameData:isAllQuestionGenerated(question_count)
@@ -95,26 +105,53 @@ function gameData:updateScore(isCorrect)
 	end
 end
 
+function gameData:finish_level(msg, nowLevelName)
+	local pattern = "fromBottom"
+	if gameData:getScore() > 0 then
+		scoremsg = "You collect ".. gameData:getScore() .. " stars!"
+		if gameData:isHighScore() then
+			print("high score! : " .. gameData:getScore())
+			gameData:updateRank()
+			msg = msg .. " - High Score!"
+		end
+	else
+		scoremsg = "You do not get any star..."
+	end
+	local option =
+	{
+		effect = pattern,
+		time = 500,
+		params = {
+			msg = msg,
+			scoremsg = scoremsg,
+			score = gameData:getScore(), 
+			star_scale = star_scale_rate
+		}
+	}
+	composer.removeScene("level", false)
+	composer.gotoScene("show_score", option)
+end
+
 function compare(a,b)
   return a[1] > b[1]
 end
-function gameData:isHighScore(levelName)
-	local scoretable = gameData:loadScore(levelName)
+function gameData:isHighScore()
+	self:print_category()
+	self:print_gametype()
+	local scoretable = gameData:loadScore(self.nowLevelName, self.nowGametype)
 	if scoretable[#scoretable][1] > self.score then --not in high score
 		return false
 	end
 	return true
 end
-function gameData:updateRank(levelName)
-	local scoretable = gameData:loadScore(levelName)
+function gameData:updateRank()
+	local scoretable = gameData:loadScore(self.nowLevelName, self.nowGametype)
    --start update
    table.insert(scoretable, {self.score})
-   table.sort(scoretable, compare)
-   --sort
+   table.sort(scoretable, compare) --sort again
    --只存五個
-   local path = system.pathForFile( "rank/" ..levelName..".txt")
+   local path = system.pathForFile( "rank/" .. self.nowLevelName .. "-" .. self.nowGametype ..".txt")
    local file = io.open(path, "w")
-  
    
    if ( file ) then
 		local  writeLineNum = 5
@@ -133,8 +170,25 @@ function gameData:updateRank(levelName)
       return
    end
 end
-function gameData:loadScore(levelName)
-	local path = system.pathForFile( "rank/" ..levelName..".txt")
+
+function gameData:print_category()
+	if self.nowLevelName ~= nil then
+		print("now category = " .. self.nowLevelName)
+	else 
+		print("no category!!!")
+	end
+end
+function gameData:print_gametype()
+	if self.nowGametype ~= nil then
+		print("now gametype = " .. self.nowGametype)
+	else 
+		print("no gametype!!!")
+	end
+end
+function gameData:loadScore(category, gametype)
+	self:print_category()
+	self:print_gametype()
+	local path = system.pathForFile( "rank/" .. self.nowLevelName .. "-" .. self.nowGametype ..".txt")
 	local file = io.open( path, "r" )
 	if ( file ) then
 	  local scoretable = {}
@@ -149,9 +203,10 @@ function gameData:loadScore(levelName)
 		end
 	  end
 	  io.close( file )
+	  table.sort(scoretable, compare)
 	  return scoretable
 	else
-	  print( "Error: could not read scores from ", "/rank/" ..levelName..".txt", "." )
+	  print( "Error: could not read scores from ", "/rank/" ..category..".txt", "." )
 	end
 	return nil
 end

@@ -3,32 +3,34 @@ local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
 local common = require "common"
+local gamedata = require "gamedata"
 --------------------------------------------
 local choose_Level;
 local nowGameType
 local sceneGroup = display.newGroup()
-local redirectScene = "level"
+local redirectScene, redirectEffect
 
 intolevel = false
 choose_Level = function (event)
 	if intolevel == false then
 		local options = {
-			effect = "fromBottom",
+			effect = redirectEffect,
 			time = 500,
 			params = {gametype = nowGameType, category = event.target.id}
 		}
 		intolevel = true
+		gameData:setLevelName(event.target.id)
+		gameData:print_category()
+		gameData:print_gametype()
 		--print("gametype = " .. options.params.gametype .. " category = " .. options.params.category)
 		composer.gotoScene(redirectScene , options)
+		
 		return true	-- indicates successful touch
 	end
 end
 
 function scene:create( event )
 	print("selectlevel create")
-	if event.params.caller ~= nil then
-		redirectScene = event.params.caller
-	end
 	sceneGroup = self.view
 	
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
@@ -63,6 +65,13 @@ function scene:show( event )
 	if phase == "will" then
 		intolevel = false
 		nowGameType = event.params.gametype
+		if event.params ~= nil and event.params.caller == "show_rank" then
+			redirectScene = event.params.caller
+			redirectEffect = softTransition
+		else
+			redirectEffect = "fromBottom"
+			redirectScene = "level"
+		end
 		--print ( "now game type = " .. nowGameType)
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then

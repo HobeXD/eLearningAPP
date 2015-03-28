@@ -4,6 +4,7 @@
 local composer = require "composer"
 
 debugMode = true
+debugQuestionNum = 1
 SUCCESS = true
 FAILED = false
 
@@ -23,9 +24,12 @@ vocaSoundChannel = 2
 winLoseSoundChannel = 3
 
 categoryStr = {"School", "Personal Characteristics", "Transportation", "Places and Locations", "Time"}
+defaultCategory = categoryStr[1]
 gametypeStr = {"Reading", "Listening"}
+defaultGametype = gametypeStr[1]
 
 defaultPattern = "slideUp"
+softTransition = "crossFade"
 
 function read_file(filedst)
 	local path = system.pathForFile(filedst)
@@ -146,40 +150,9 @@ end
 function go_home(event) --remove scene
 	composer.removeScene("show_score", false)
 	resume()
-	finish_level("")
-end
-function finish_level(msg, nowLevelName)
-	local pattern
-	if msg == "" then
-		pattern = "slideUp"
-		composer.removeScene("level", false)
-		composer.gotoScene( "menu", pattern, 500)
-	else
-		pattern = "fromBottom"
-		if gameData:getScore() > 0 then
-			scoremsg = "You collect ".. gameData:getScore() .. " stars!"
-			if gameData:isHighScore(gameData.nowLevelName) then
-				print("high score! : " .. gameData:getScore())
-				gameData:updateRank(gameData.nowLevelName)
-				msg = msg .. " - High Score!"
-			end
-		else
-			scoremsg = "You do not get any star..."
-		end
-		local option =
-		{
-			effect = pattern,
-			time = 500,
-			params = {
-				msg = msg,
-				scoremsg = scoremsg,
-				score = gameData:getScore(), 
-				star_scale = star_scale_rate
-			}
-		}
-		composer.removeScene("level", false)
-		composer.gotoScene("show_score", option)
-	end
+	pattern = "slideUp"
+	composer.removeScene("level", false)
+	composer.gotoScene( "menu", pattern, 500)
 end
 
 function handle_back_key() -- so many exception situation

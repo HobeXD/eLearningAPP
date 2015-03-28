@@ -17,6 +17,9 @@ local function gotoScene(event)
 			time = 400,
 			params = {}
 		}
+	if event.target.id == "show_rank" then
+		option.effect = softTransition
+	end
 	composer.gotoScene( event.target.id, option)
 	return true	-- indicates successful touch
 end
@@ -51,6 +54,7 @@ local function createSideButton()
 		id = "tutorial",
 		default="button.png",
 		over="button-over.png",
+		font = native.systemFont,
 		width=154, height=40,
 		onRelease = gotoScene	-- event listener function
 	}
