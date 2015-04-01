@@ -30,6 +30,7 @@ defaultGametype = gametypeStr[1]
 
 defaultPattern = "slideUp"
 softTransition = "fade"
+backEffect = "slideDown"
 
 function createBackground(sceneGroup)
 	local background = display.newImageRect( "img/star_bg.jpg", display.contentWidth, display.contentHeight )
@@ -166,17 +167,33 @@ function go_home(event) --remove scene
 	composer.gotoScene( "menu", pattern, 500)
 end
 
+
+--sceneStr = {"menu", "select_gametype", "selectLevel", "level", "show_score"} -- normal playing 
 function handle_back_key() -- so many exception situation
 	local current_scene = composer.getSceneName("current")
-	if current_scene == "level" then --now in level
-		print("current scene is level")
-		pause_with_exit()		
-	elseif current_scene == "show_score" or current_scene == "menu" then -- do nothing
+	if current_scene == "menu" or current_scene == "show_score" then -- do nothing
 		return false
+	elseif current_scene == "select_gametype" or current_scene == "selectLevel"  then --now in level
+		if composer.getSceneName("previous") == "show_rank" then
+			composer.gotoScene(composer.getSceneName("previous"), softTransition, 500)
+		else
+			returnToMenu()
+		end
+	elseif current_scene == "level" then --now in level
+		if ispause then
+			return false
+		else 
+			pause_with_exit()		
+		end
+	elseif current_scene == "show_rank" then
+		returnToMenu()
 	else
-		composer.gotoScene(composer.getSceneName("previous"), "slideDown", 500)
+		composer.gotoScene(composer.getSceneName("previous"), backEffect, 500)
 	end
 	return true
+end
+function returnToMenu() 
+	composer.gotoScene("menu", backEffect, 500)
 end
 function handle_system_key(event)
     local message = "Key '" .. event.keyName .. "' was pressed " .. event.phase
@@ -189,9 +206,12 @@ function handle_system_key(event)
 		end
 	end
     -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
-    -- This lets the operating system execute its default handling of the key
     return false
 end
 function quit_game() -- can only used in android
 	native.requestExit() 
+end
+
+function init_score() -- only used before building
+
 end

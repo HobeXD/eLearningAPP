@@ -24,7 +24,6 @@ local function onSlide(event)
 			self.y = offset + self.markY-- move object based on calculations above
 		end
 	elseif event.phase == "ended" then
-		--print("swipe ended")
 		if self.y < -screency+50 or offset < -54 then --slide up and resume
 			transition.to(group, {y = -320, time = 300, onComplete = resume_quiet})
 		else --slide not enough! go back
@@ -98,9 +97,26 @@ function scene:create( event )
 		backgroundOverlay:addEventListener ("tap", catchBackgroundOverlay)
 	    backgroundOverlay:addEventListener ("touch", catchBackgroundOverlay)
 		overlay = display.newImage ("img/pausemenu.png", screencx, screency+yoffset)
+		--overlay = display.newRect( group, screencx, screency+yoffset, 300, 166 )
+		--overlay:setFillColor(0,1,0)
 		overlay.anchorX = 0.5
 		overlay.anchorY = 0.5
 		group:insert (overlay)
+		
+		--[[local options = 
+		{
+			parent = group,
+			text = "Paused",     
+			x = screencx,
+			y = screency-50,
+			width = 150,     --required for multi-line and alignment
+			font = native.systemFont,   
+			fontSize = 30, 
+			align = "center"
+		}
+		overlayText = display.newText(options)
+		overlayText.anchorX = 0.5
+		overlayText.anchorY = 0.5]]
 	end
 	-- if back, two button
 	if mode == "back" then
@@ -110,10 +126,10 @@ function scene:create( event )
 			top = screency+10,
 			width = 120,
 			height = 70,
-			shape = "roundedRect",
-			cornerRadius = 5,
+			shape = "rect",
+			--cornerRadius = 5,
 			labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
-			fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+			fillColor = { default={ 0.8, 0.8, 0.8, 1}, over={ 1,1,1, 1 }}, --transparent
 			--strokeWidth = 4, 
 			fontSize = 30, 
 			label = "Quit",
@@ -130,10 +146,10 @@ function scene:create( event )
 			top = screency+ yoffset+10,
 			width = 120,
 			height = 70,
-			shape = "roundedRect",
-			cornerRadius = 5,
+			shape = "rect",
+			--cornerRadius = 5,
 			labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
-			fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+			fillColor = { default={  0.8, 0.8, 0.8, 1}, over={ 1,1,1, 1 }}, --transparent
 			--strokeWidth = 4, 
 			fontSize = 30, 
 			label = home_btn_name,
@@ -150,10 +166,10 @@ function scene:create( event )
 			top = screency+ yoffset,
 			width = 150,
 			height = 70,
-			shape = "roundedRect",
-			cornerRadius = 5,
+			shape = "rect",
+			--cornerRadius = 5,
 			labelColor = { default={ 0, 0, 0, 1}, over={ 0.4,0.4,0.8, 1 }},
-			fillColor = { default={ 1, 1, 1, 0.7}, over={ 1,1,1, 1 }}, --transparent
+			fillColor = { default={  0.8, 0.8, 0.8, 1}, over={ 1,1,1, 1 }}, --transparent
 			--strokeWidth = 4, 
 			fontSize = 30, 
 			label = home_btn_name,

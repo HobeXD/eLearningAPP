@@ -84,6 +84,65 @@ function scene:create( event )
 	set_bgm()
 	
 	Runtime:addEventListener("key", handle_system_key)
+	widget.setTheme( "widget_theme_android")
+	--[[
+	local columnData = 
+{
+    -- Months
+    { 
+        align = "center",
+        width = 140,
+        startIndex = 5,
+        labels = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }
+    },
+    -- Days
+    {
+        align = "center",
+        width = 60,
+        startIndex = 1,
+        labels = {"days"}
+    }
+}
+	
+	local options = {
+    frames = 
+    {
+        { x=0, y=0, width=320, height=222 },
+        { x=320, y=0, width=320, height=222 },
+        { x=640, y=0, width=8, height=222 }
+    },
+    sheetContentWidth = 648,
+    sheetContentHeight = 222
+}
+local pickerWheelSheet = graphics.newImageSheet( "img/pickerSheet.png", options )
+	
+	local pickerWheel2 = widget.newPickerWheel
+{
+    top = display.contentHeight - 222,
+    columns = columnData,
+    sheet = pickerWheelSheet,
+    overlayFrame = 1,
+    overlayFrameWidth = 320,
+    overlayFrameHeight = 222,
+    backgroundFrame = 2,
+    backgroundFrameWidth = 320,
+    backgroundFrameHeight = 222,
+    separatorFrame = 3,
+    separatorFrameWidth = 8,
+    separatorFrameHeight = 222,
+    columnColor = { 0, 0, 0, 0 },
+    fontColor = { 0.4, 0.4, 0.4, 0.5 },
+    fontColorSelected = { 0.2, 0.6, 0.4 }
+}
+local values = pickerWheel:getValues()
+
+-- Get the value for each column in the wheel (by column index)
+local currentMonth = values[1].value
+local currentDay = values[2].value
+local currentYear = values[3].value
+]]
+
+	
 	
 	-- display a background image
 	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )

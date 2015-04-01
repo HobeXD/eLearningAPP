@@ -131,7 +131,11 @@ function scene:show( event )
 		textGroup.alpha = 1
 		stepnum = 0
 		teachtext.text = welcomeText
+		teachtext.y = barH+30
 		categorytext.alpha = 0
+		
+		backgroundOverlay1.alpha, backgroundOverlay2.alpha, backgroundOverlay3.alpha = 1, 1, 1
+		
 		
 		readBackground.alpha = 1
 		listenBackground.alpha = 0
