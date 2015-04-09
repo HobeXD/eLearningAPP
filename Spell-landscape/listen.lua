@@ -81,7 +81,6 @@ end
 
 function changeImageAndPlayVocaSound(event)
 	if audio.isChannelActive(vocaSoundChannel) then
-		print("channel is already playing")
 		return
 	end
 	
@@ -103,7 +102,6 @@ function changeImageAndPlayVocaSound(event)
 	playVocaSound(recoverListenButton)
 end
 function recoverListenButton(event)
-	print("recover listen")
 	if event.completed == false then
 		print("not fully play yet")
 		return
@@ -112,7 +110,6 @@ function recoverListenButton(event)
 	listenQuestion["q_button"].alpha = 1
 end
 
-
 function countDown()
 	if listenQuestion["count_down"] == nil or check_pause() then
 		return
@@ -120,7 +117,6 @@ function countDown()
 	listenQuestion["count_down"] = listenQuestion["count_down"] - 1
 	countDownText.text = listenQuestion["count_down"]
 	if(listenQuestion["count_down"] == 0) then
-		print("time up")
 		timer.cancel(countDownTimer)
 		question_failed(listenQuestion)
 	end
@@ -137,7 +133,6 @@ function select_question_listen(id)
 	prev_qid = now_qid
 	now_qid = id
 	local q = questions[now_qid]
-	--print("select id = ".. now_qid .. " prev = ".. prev_qid .. "eng = " .. q["eng"] .. " chi = " .. q["chi"])
 	--current_question["text"].text = q["chi"];
 	current_question["ans_sheet"].text = q["now_anschar"];
 	
@@ -149,7 +144,6 @@ end
 
 function finish_question_listen(q, isSuccess)
 	-- remove all data relate to this question
-	print("finish_question_listen")
 	local c = q["chi"]
 	local e = q["eng"]
 	display.remove(q["q_button"])
@@ -165,7 +159,6 @@ function finish_question_listen(q, isSuccess)
 	
 	timer.cancel(countDownTimer)
 	audio.stop(vocaSoundChannel)
-	print("finish listen question")
 	if not isSuccess then
 		show_correct_ans(c, e)
 	end

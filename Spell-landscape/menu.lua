@@ -24,7 +24,6 @@ local function gotoScene(event)
 end
 
 local function blink_text(event)
-	print("blink!") 
 	transition.blink(playtext , {time = 3600, delay = 1800})	
 end
 
@@ -179,7 +178,6 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		print("show menu")
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
@@ -203,11 +201,9 @@ function scene:hide( event )
 end
 
 function scene:destroy( event )
-	
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
-	
 end
 
 -- Listener setup

@@ -144,7 +144,6 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then -- Called when the scene is still off screen and is about to move on screen
-		print("level: before show" .. event.phase)
 		words = read_file("voca/".. levelName .. ".txt")
 		dup_question = {}
 		dup_question[#words+1] = false
