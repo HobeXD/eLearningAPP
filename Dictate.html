@@ -1,0 +1,124 @@
+<div>
+  <a href="#" id="start_button" onclick="startDictation(event)">Dictate</a>
+</div>
+
+<div id="results">
+  <textarea id="question" cols="150" rows="10">
+    National Taiwan Normal University is an institution of higher education and normal
+    school operating out of three campuses in Taipei, Taiwan. National Taiwan Normal
+    University is the leading research institute in such disciplines as Education and
+    Linguistics in Taiwan.
+  </textarea></br>
+  Dictate result: <p id="final_span" class="final"></p>
+  Compare Result: <p id="result"><p>
+</div>
+
+<script type="text/javascript">
+  var final_transcript = "";
+  var recognizing = false;
+
+  if ("webkitSpeechRecognition" in window) {
+    var recognition = new webkitSpeechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onstart = function () {
+      recognizing = true;
+    };
+
+    recognition.onerror = function (event) {
+      console.log(event.error);
+    };
+
+    
+    recognition.onend = function () {
+      recognizing = false;
+      result.innerHTML = 'Waiting for result...';
+      quest_list = question.innerHTML.replace(/\W /g, '').split(' ');
+      result_list = final_span.innerHTML.replace(/\W /g, '').split(' ');
+      var n = quest_list.length;
+      var m = result_list.length;
+      var dp = new Array(n);
+      
+      for (var i = 0; i < n; i++) {
+        dp[i] = new Array(m);
+        if (quest_list[i].toUpperCase() === result_list[0].toUpperCase())
+          dp[i][0] = 1;
+        else
+          dp[i][0] = 0;
+      }
+      for (var j = 0; j < m; j++) {
+        if (quest_list[0].toUpperCase() === result_list[j].toUpperCase())
+          dp[0][j] = 1;
+        else
+          dp[0][j] = 0;
+      }
+      for (var i = 1; i < n; i++) {
+        for (var j = 1; j < m; j++) {
+          if (quest_list[i].toUpperCase() === result_list[j].toUpperCase())
+            dp[i][j] = dp[i-1][j-1] + 1;
+          else
+            dp[i][j] = dp[i-1][j-1];
+          if (dp[i-1][j] > dp[i][j])
+            dp[i][j] = dp[i-1][j];
+          if (dp[i][j-1] > dp[i][j])
+            dp[i][j] = dp[i][j-1];
+        }
+      }
+      
+      var s = n-1;
+      var t = m-1;
+      while (s > 0 && t > 0) {
+        if (quest_list[s].toUpperCase() === result_list[t].toUpperCase() && dp[s][t] === dp[s-1][t-1]+1) {
+          result.innerHTML = quest_list[s] + ' ' + result.innerHTML;
+          s--;
+          t--;
+        } else if (dp[s-1][t] === dp[s][t]){
+          result.innerHTML = '<span style="color:red">'+quest_list[s]+' </span>' + result.innerHTML;
+          s--;
+        } else {
+          t--;
+        }
+      }
+      while (s > 0) {
+        result.innerHTML = '<span style="color:red">'+quest_list[s]+' </span>' + result.innerHTML;
+        s--;
+      }
+      
+    };
+    recognition.onresult = function (event) {
+      for (var i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          final_transcript += event.results[i][0].transcript;
+        }
+      }
+      final_transcript = capitalize(final_transcript);
+      final_span.innerHTML = linebreak(final_transcript);
+    };
+  }
+
+  var two_line = /\n\n/g;
+  var one_line = /\n/g;
+  function linebreak(s) {
+    return s.replace(two_line, "<p></p>").replace(one_line, "<br>");
+  }
+
+  function capitalize(s) {
+    return s.replace(s.substr(0, 1), function (m) {
+      return m.toUpperCase();
+    });
+  }
+
+  function startDictation(event) {
+    if (recognizing) {
+      recognition.stop();
+      return;
+    }
+    final_transcript = "";
+    recognition.lang = "en-US";
+    recognition.start();
+    final_span.innerHTML = "";
+    result.innerHTML = "";
+  }
+</script>
