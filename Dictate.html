@@ -38,6 +38,7 @@ The two officials did not want to be named because they did not have permission 
     recognition.onend = function () {
       recognizing = false;
       result.innerHTML = 'Waiting for result...';
+      final_span.innerHTML = linebreak(final_transcript);
       quest_list = question.value.replace(/\W /g, '').split(' ');
       result_list = final_span.innerHTML.replace(/\W /g, '').split(' ');
       var n = quest_list.length;
@@ -102,7 +103,7 @@ The two officials did not want to be named because they did not have permission 
         }
       }
       final_transcript = capitalize(final_transcript);
-      final_span.innerHTML = linebreak(final_transcript);
+      
     };
   }
 
