@@ -39,8 +39,8 @@ The two officials did not want to be named because they did not have permission 
       recognizing = false;
       result.innerHTML = 'Waiting for result...';
       final_span.innerHTML = linebreak(final_transcript);
-      quest_list = question.value.replace(/[^0-9a-zA-Z ]/g, '').replace(/  +/g, ' ');.split(' ');
-      result_list = final_span.innerHTML.replace(/[^0-9a-zA-Z ]/g, '').replace(/  +/g, ' ');.split(' ');
+      quest_list = question.value.replace(/[^0-9a-zA-Z ]/g, '').replace(/  +/g, ' ').split(' ');
+      result_list = final_span.innerHTML.replace(/[^0-9a-zA-Z ]/g, '').replace(/  +/g, ' ').split(' ');
       var n = quest_list.length;
       var m = result_list.length;
       var dp = new Array(n);
