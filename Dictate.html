@@ -1,13 +1,16 @@
 <div>
-  <a href="#" id="start_button" onclick="startDictation(event)">Dictate</a>
+  <a href="#" id="start_button" onclick="startDictation(event)">Dictate</a></br>
+  <a href="#" id="start_button" onclick="stopDictation(event)">Stop</a>
 </div>
 
 <div id="results">
   <textarea id="question" cols="150" rows="10">
-    National Taiwan Normal University is an institution of higher education and normal
-    school operating out of three campuses in Taipei, Taiwan. National Taiwan Normal
-    University is the leading research institute in such disciplines as Education and
-    Linguistics in Taiwan.
+    The United States has been taking a closer look at unidentified flying objects, or UFOs. A report detailing what the government knows about UFOs is expected to be made public this month.
+
+While it is not known what new information the report will include, two officials with knowledge of it said no aliens will be uncovered. The officials, speaking to The Associated Press, said the report found no link to aliens from unexplained sightings also captured on video.
+
+The two officials did not want to be named because they did not have permission to publicly discuss the report. They said the report will not rule out the possibility that unexplained sightings could be linked to military activities involving other nations.
+
   </textarea></br>
   Dictate result: <p id="final_span" class="final"></p>
   Compare Result: <p id="result"><p>
@@ -120,5 +123,11 @@
     recognition.start();
     final_span.innerHTML = "";
     result.innerHTML = "";
+  }
+  function stDictation(event) {
+    if (recognizing) {
+      recognition.stop();
+      return;
+    }
   }
 </script>
